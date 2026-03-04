@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(conteudoDinamico)">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Escadas</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="app">
+
+<nav th:replace="~{fragments/header :: menu_helper}"></nav>
+
+<main class="app__main">
+
+    <th:block th:if="${module != null}">
+        <section th:replace="~{fragments/crud :: crudList(${module}, ${params}, ${rows})}"></section>
+    </th:block>
+
+    <th:block th:if="${module == null}">
+        <div th:replace="${conteudoDinamico}"></div>
+    </th:block>
+
+</main>
+<footer th:replace="~{fragments/footer :: footer_helper}"></footer>
+
+</body>
+</html>

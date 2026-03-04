@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<section th:fragment="crudList(module, params, rows)"
+         class="page">
+
+  <header class="page__header">
+    <h1 class="page__title" th:text="${module.title}">Módulo</h1>
+
+    <form class="crud-search"
+          method="get"
+          th:action="${module.actionUrl}"
+          role="search"
+          aria-label="Filtros">
+      <div class="crud-filters">
+        <div class="crud-filter" th:each="f : ${module.filters}">
+          <label class="crud-filter__label"
+                 th:for="${'flt-' + f.name}"
+                 th:text="${f.label}">
+            Filtro
+          </label>
+
+          <input th:if="${f.type.name() == 'TEXT'}"
+                 class="crud-filter__input"
+                 th:id="${'flt-' + f.name}"
+                 th:name="${f.name}"
+                 type="search"
+                 autocomplete="off"
+                 th:attr="placeholder=${f.placeholder}"
+                 th:value="${params[f.name]}" />
+
+          <input th:if="${f.type.name() == 'NUMBER'}"
+                 class="crud-filter__input"
+                 th:id="${'flt-' + f.name}"
+                 th:name="${f.name}"
+                 type="number"
+                 th:attr="placeholder=${f.placeholder}"
+                 th:value="${params[f.name]}" />
+
+          <input th:if="${f.type.name() == 'DATE'}"
+                 class="crud-filter__input"
+                 th:id="${'flt-' + f.name}"
+                 th:name="${f.name}"
+                 type="date"
+                 th:value="${params[f.name]}" />
+
+          <select th:if="${f.type.name() == 'SELECT'}"
+                  class="crud-filter__select"
+                  th:id="${'flt-' + f.name}"
+                  th:name="${f.name}">
+            <option value="">Todos</option>
+            <option th:each="opt : ${f.options}"
+                    th:value="${opt.value}"
+                    th:text="${opt.label}"
+                    th:selected="${params[f.name] == opt.value}">
+            </option>
+          </select>
+        </div>
+
+        <div class="crud-filter crud-filter--actions">
+          <button class="crud-search__button" type="submit">Aplicar</button>
+        </div>
+      </div>
+    </form>
+  </header>
+
+  <section class="crud-card">
+    <div class="crud-empty"
+         th:if="${rows == null or #lists.isEmpty(rows)}">
+      <div class="crud-empty__title">Nenhum registro encontrado</div>
+      <div class="crud-empty__text">Tente ajustar os filtros.</div>
+    </div>
+
+    <div class="crud-table-wrap"
+         th:if="${rows != null and !#lists.isEmpty(rows)}">
+      <table class="crud-table" aria-label="Tabela do módulo">
+        <thead class="crud-table__head">
+        <tr class="crud-table__tr">
+          <th class="crud-table__th"
+              th:each="c : ${module.columns}"
+              th:text="${c.header}">
+            Coluna
+          </th>
+        </tr>
+        </thead>
+
+        <tbody class="crud-table__body">
+        <tr class="crud-table__tr" th:each="row : ${rows}">
+          <td class="crud-table__td"
+              th:each="c : ${module.columns}"
+              th:text="${row[c.field]}">
+            valor
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</section>
+
+</body>
+</html>

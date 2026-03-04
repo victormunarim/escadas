@@ -1,0 +1,20 @@
+<nav xmlns:th="http://www.thymeleaf.org"
+     th:fragment="menu_helper"
+     class="site-header"
+     aria-label="Navegação principal">
+    <div class="site-header__wrap">
+        <a class="brand" href="/" aria-label="Página inicial">
+            <span class="brand__mark">E</span>
+            <span class="brand__text">
+                <span class="brand__title">Escadas Munarim</span>
+            </span>
+        </a>
+
+        <div class="nav">
+            <!--/*@thymesVar id="modulo" type="com.example.demo.modulos.ModuloNav"*/-->
+            <a th:each="modulo : ${modulos}"
+               th:href="@{${modulo.url}}"
+               th:text="${modulo.nome}"></a>
+        </div>
+    </div>
+</nav>
