@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Logs</title>
+
+    <style>
+
+        body{
+            background:#0f172a;
+            color:#e5e7eb;
+            font-family:monospace;
+            padding:20px;
+        }
+
+        .log{
+            padding:10px;
+            margin-bottom:10px;
+            border-left:4px solid #444;
+            background:#020617;
+        }
+
+        .error{
+            border-left-color:#ef4444;
+            background:#1a0a0a;
+        }
+
+        .warn{
+            border-left-color:#facc15;
+            background:#1a170a;
+        }
+
+        .info{
+            border-left-color:#38bdf8;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h2>Application Logs</h2>
+
+<div id="logs"></div>
+
+<script>
+
+    async function loadLogs(){
+
+        const res = await fetch("/dev/logs")
+        const lines = await res.json()
+
+        const container = document.getElementById("logs")
+        container.innerHTML = ""
+
+        let currentLog = []
+        let level = "info"
+
+        for (let line of lines){
+
+            if (line.includes("ERROR") || line.includes("WARN") || line.includes("INFO")){
+
+                if(currentLog.length){
+                    addLogBlock(currentLog.join("\n"), level)
+                }
+
+                currentLog = [line]
+
+                if(line.includes("ERROR")) level="error"
+                else if(line.includes("WARN")) level="warn"
+                else level="info"
+
+            }else{
+                currentLog.push(line)
+            }
+        }
+
+        if(currentLog.length){
+            addLogBlock(currentLog.join("\n"), level)
+        }
+
+    }
+
+    function addLogBlock(text, level){
+
+        const div = document.createElement("div")
+        div.className = "log " + level
+        div.textContent = text
+        document.getElementById("logs").appendChild(div)
+
+    }
+
+    loadLogs()
+
+</script>
+
+</body>
+</html>

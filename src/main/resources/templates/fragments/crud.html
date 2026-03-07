@@ -14,52 +14,12 @@
           role="search"
           aria-label="Filtros">
       <div class="crud-filters">
-        <div class="crud-filter" th:each="f : ${module.filters}">
-          <label class="crud-filter__label"
-                 th:for="${'flt-' + f.name}"
-                 th:text="${f.label}">
-            Filtro
-          </label>
-
-          <input th:if="${f.type.name() == 'TEXT'}"
-                 class="crud-filter__input"
-                 th:id="${'flt-' + f.name}"
-                 th:name="${f.name}"
-                 type="search"
-                 autocomplete="off"
-                 th:attr="placeholder=${f.placeholder}"
-                 th:value="${params[f.name]}" />
-
-          <input th:if="${f.type.name() == 'NUMBER'}"
-                 class="crud-filter__input"
-                 th:id="${'flt-' + f.name}"
-                 th:name="${f.name}"
-                 type="number"
-                 th:attr="placeholder=${f.placeholder}"
-                 th:value="${params[f.name]}" />
-
-          <input th:if="${f.type.name() == 'DATE'}"
-                 class="crud-filter__input"
-                 th:id="${'flt-' + f.name}"
-                 th:name="${f.name}"
-                 type="date"
-                 th:value="${params[f.name]}" />
-
-          <select th:if="${f.type.name() == 'SELECT'}"
-                  class="crud-filter__select"
-                  th:id="${'flt-' + f.name}"
-                  th:name="${f.name}">
-            <option value="">Todos</option>
-            <option th:each="opt : ${f.options}"
-                    th:value="${opt.value}"
-                    th:text="${opt.label}"
-                    th:selected="${params[f.name] == opt.value}">
-            </option>
-          </select>
-        </div>
+        <th:block th:each="f : ${module.filters}">
+          <th:block th:replace="~{fragments/filters :: ${f.fragmentName()}(${f}, ${params})}"></th:block>
+        </th:block>
 
         <div class="crud-filter crud-filter--actions">
-          <button class="crud-search__button" type="submit">Aplicar</button>
+          <button class="crud-search__button" type="submit">Pesquisar</button>
         </div>
       </div>
     </form>
