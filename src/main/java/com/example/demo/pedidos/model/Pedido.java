@@ -1,7 +1,8 @@
-package com.example.demo.pedidos;
+package com.example.demo.pedidos.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = ColunasPedido.TABELA)
@@ -22,7 +23,7 @@ public class Pedido {
     private String email;
 
     @Column(name = ColunasPedido.CPF)
-    private Integer cpf;
+    private Long cpf;
 
     @Column(name = ColunasPedido.RG)
     private Integer rg;
@@ -40,10 +41,10 @@ public class Pedido {
     private String admObra;
 
     @Column(name = ColunasPedido.TELEFONE)
-    private Integer telefone;
+    private String telefone;
 
     @Column(name = ColunasPedido.TELEFONE_FIXO)
-    private Integer telefoneFixo;
+    private String telefoneFixo;
 
     @Column(name = ColunasPedido.DESCRICAO, columnDefinition = "TEXT")
     private String descricao;
@@ -69,8 +70,8 @@ public class Pedido {
     @Column(name = ColunasPedido.BAIRRO)
     private String bairro;
 
-    @Column(name = ColunasPedido.CIDADE)
-    private String cidade;
+    @Column(name = ColunasPedido.MUNICIPIO)
+    private String municipio;
 
     @Column(name = ColunasPedido.CEP)
     private Integer cep;
@@ -84,8 +85,8 @@ public class Pedido {
     @Column(name = ColunasPedido.BAIRRO_CLIENTE)
     private String bairroCliente;
 
-    @Column(name = ColunasPedido.CIDADE_CLIENTE)
-    private String cidadeCliente;
+    @Column(name = ColunasPedido.MUNICIPIO_CLIENTE)
+    private String municipioCliente;
 
     @Column(name = ColunasPedido.CEP_CLIENTE)
     private Integer cepCliente;
@@ -93,11 +94,11 @@ public class Pedido {
     @Column(name = ColunasPedido.REFERENCIA_CLIENTE)
     private String referenciaCliente;
 
+    @Column(name = ColunasPedido.DATA_CADASTRO)
+    private LocalDateTime dataCadastro;
+
     @Column(name = ColunasPedido.FLAG_OCULTO)
     private Boolean oculto;
-
-    @Column(name = ColunasPedido.CLIENTE)
-    private String cliente;
 
     @Column(name = ColunasPedido.VALOR)
     private BigDecimal valor;
@@ -118,7 +119,7 @@ public class Pedido {
         this.email = email;
     }
 
-    public void setCpf(Integer cpf) {
+    public void setCpf(Long cpf) {
         this.cpf = cpf;
     }
 
@@ -142,11 +143,11 @@ public class Pedido {
         this.admObra = admObra;
     }
 
-    public void setTelefone(Integer telefone) {
+    public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 
-    public void setTelefoneFixo(Integer telefoneFixo) {
+    public void setTelefoneFixo(String telefoneFixo) {
         this.telefoneFixo = telefoneFixo;
     }
 
@@ -182,8 +183,8 @@ public class Pedido {
         this.bairro = bairro;
     }
 
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
+    public void setMunicipio(String municipio) {
+        this.municipio = municipio;
     }
 
     public void setCep(Integer cep) {
@@ -202,8 +203,8 @@ public class Pedido {
         this.bairroCliente = bairroCliente;
     }
 
-    public void setCidadeCliente(String cidadeCliente) {
-        this.cidadeCliente = cidadeCliente;
+    public void setMunicipioCliente(String municipioCliente) {
+        this.municipioCliente = municipioCliente;
     }
 
     public void setCepCliente(Integer cepCliente) {
@@ -216,10 +217,6 @@ public class Pedido {
 
     public void setFlagOculto(Boolean oculto) {
         this.oculto = oculto;
-    }
-
-    public void setCliente(String cliente) {
-        this.cliente = cliente;
     }
 
     public void setValor(BigDecimal valor) {
@@ -238,7 +235,7 @@ public class Pedido {
         return email;
     }
 
-    public Integer getCpf() {
+    public Long getCpf() {
         return cpf;
     }
 
@@ -262,11 +259,11 @@ public class Pedido {
         return admObra;
     }
 
-    public Integer getTelefone() {
+    public String getTelefone() {
         return telefone;
     }
 
-    public Integer getTelefoneFixo() {
+    public String getTelefoneFixo() {
         return telefoneFixo;
     }
 
@@ -302,8 +299,8 @@ public class Pedido {
         return bairro;
     }
 
-    public String getCidade() {
-        return cidade;
+    public String getMunicipio() {
+        return municipio;
     }
 
     public Integer getCep() {
@@ -322,8 +319,8 @@ public class Pedido {
         return bairroCliente;
     }
 
-    public String getCidadeCliente() {
-        return cidadeCliente;
+    public String getMunicipioCliente() {
+        return municipioCliente;
     }
 
     public Integer getCepCliente() {
@@ -334,12 +331,12 @@ public class Pedido {
         return referenciaCliente;
     }
 
-    public Boolean getFlagOculto() {
-        return oculto;
+    public LocalDateTime getDataCadastro() {
+        return dataCadastro;
     }
 
-    public String getCliente() {
-        return cliente;
+    public Boolean getFlagOculto() {
+        return oculto;
     }
 
     public BigDecimal getValor() {

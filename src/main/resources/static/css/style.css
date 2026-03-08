@@ -22,7 +22,7 @@ body{
     background: linear-gradient(180deg, var(--sky-50), #ffffff);
 }
 
-/* Layout para manter o footer no fim da tela */
+
 .aplicativo{
     min-height: 100vh;
     min-height: 100svh;
@@ -34,7 +34,7 @@ body{
     flex: 1;
 }
 
-/* Empurra o footer para o final quando falta conteúdo */
+
 .aplicativo > .rodape-site{
     margin-top: auto;
 }
@@ -45,7 +45,7 @@ main{
     padding: 18px;
 }
 
-/* Header */
+
 .cabecalho-site{
     position: sticky;
     top: 0;
@@ -66,7 +66,7 @@ main{
     gap: 14px;
 }
 
-/* (Opcional) deixa o menu realmente “grudar” à direita quando quebra linha */
+
 .navegacao{
     margin-left: auto;
 }
@@ -144,7 +144,7 @@ main{
     .cabecalho-site__wrap{ padding: 12px 14px; }
 }
 
-/* Footer */
+
 .rodape-site{
     margin-top: 28px;
     border-top: 1px solid rgba(19, 80, 140, .18);
@@ -231,7 +231,7 @@ main{
     .rodape-site__base{ padding: 10px 14px 16px 14px; }
 }
 
-/* CRUD fragment */
+
 .busca-crud{
     display: grid;
     gap: 8px;
@@ -453,12 +453,12 @@ main{
     white-space: nowrap;
 }
 
-.formulario-pedido {
+.formulario-crud {
     display: grid;
     gap: 16px;
 }
 
-.formulario-pedido__grade {
+.formulario-crud__grade {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 14px 16px;
@@ -468,7 +468,7 @@ main{
     grid-column: 1 / -1;
 }
 
-.formulario-pedido__textoarea {
+.formulario-crud__textoarea {
     width: 100%;
     border-radius: 12px;
     border: 1px solid rgba(19, 80, 140, .18);
@@ -478,25 +478,25 @@ main{
     resize: vertical;
 }
 
-.formulario-pedido__textoarea:focus {
+.formulario-crud__textoarea:focus {
     border-color: rgba(42,134,255,.55);
     box-shadow: 0 0 0 4px rgba(42,134,255,.14);
 }
 
-.formulario-pedido__acoes {
+.formulario-crud__acoes {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
     align-items: center;
 }
 
-.formulario-pedido__link {
+.formulario-crud__link {
     color: var(--blue-700);
     text-decoration: none;
     font-weight: 700;
 }
 
-.formulario-pedido__link:hover {
+.formulario-crud__link:hover {
     text-decoration: underline;
 }
 
@@ -542,6 +542,11 @@ main{
 .acoes-tabela__botao--editar {
     background: rgba(27, 111, 209, .12);
     color: var(--blue-800);
+}
+
+.acoes-tabela__botao--pdf {
+    background: rgba(12, 74, 110, .12);
+    color: #0c4a6e;
 }
 
 .acoes-tabela__botao--excluir {

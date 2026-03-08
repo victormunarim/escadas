@@ -1,4 +1,4 @@
-package com.example.demo.pedidos;
+package com.example.demo.pedidos.model;
 
 import java.math.BigDecimal;
 
@@ -7,29 +7,31 @@ public class FormularioPedido {
     private Integer numeroPedido;
     private String nomeCliente;
     private String email;
-    private Integer cpf;
-    private Integer rg;
+    private String cpf;
+    private String rg;
     private String cnpj;
     private String servicoSocial;
     private String profissao;
     private String admObra;
-    private Integer telefone;
-    private Integer telefoneFixo;
+    private String telefone;
+    private String telefoneFixo;
     private String descricao;
     private String acabamento;
     private String tubos;
     private Boolean revestimento;
     private BigDecimal valorTotal;
     private Integer prazoMontagem;
-    private Integer numero;
+    private String numero;
+    private String uf = "SC";
     private String bairro;
-    private String cidade;
-    private Integer cep;
+    private String municipio = "São José";
+    private String cep;
     private String referencia;
-    private Integer numeroCliente;
+    private String numeroCliente;
+    private String ufCliente = "SC";
     private String bairroCliente;
-    private String cidadeCliente;
-    private Integer cepCliente;
+    private String municipioCliente = "São José";
+    private String cepCliente;
     private String referenciaCliente;
     private String cliente;
     private BigDecimal valor;
@@ -58,19 +60,19 @@ public class FormularioPedido {
         this.email = email;
     }
 
-    public Integer getCpf() {
+    public String getCpf() {
         return cpf;
     }
 
-    public void setCpf(Integer cpf) {
+    public void setCpf(String cpf) {
         this.cpf = cpf;
     }
 
-    public Integer getRg() {
+    public String getRg() {
         return rg;
     }
 
-    public void setRg(Integer rg) {
+    public void setRg(String rg) {
         this.rg = rg;
     }
 
@@ -106,19 +108,19 @@ public class FormularioPedido {
         this.admObra = admObra;
     }
 
-    public Integer getTelefone() {
+    public String getTelefone() {
         return telefone;
     }
 
-    public void setTelefone(Integer telefone) {
+    public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 
-    public Integer getTelefoneFixo() {
+    public String getTelefoneFixo() {
         return telefoneFixo;
     }
 
-    public void setTelefoneFixo(Integer telefoneFixo) {
+    public void setTelefoneFixo(String telefoneFixo) {
         this.telefoneFixo = telefoneFixo;
     }
 
@@ -170,12 +172,24 @@ public class FormularioPedido {
         this.prazoMontagem = prazoMontagem;
     }
 
-    public Integer getNumero() {
+    public String getNumero() {
         return numero;
     }
 
-    public void setNumero(Integer numero) {
+    public void setNumero(String numero) {
         this.numero = numero;
+    }
+
+    public String getUf() {
+        return uf;
+    }
+
+    public void setUf(String uf) {
+        if (uf == null || uf.isBlank()) {
+            this.uf = "SC";
+            return;
+        }
+        this.uf = uf.trim().toUpperCase();
     }
 
     public String getBairro() {
@@ -186,19 +200,19 @@ public class FormularioPedido {
         this.bairro = bairro;
     }
 
-    public String getCidade() {
-        return cidade;
+    public String getMunicipio() {
+        return municipio;
     }
 
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
+    public void setMunicipio(String municipio) {
+        this.municipio = municipio;
     }
 
-    public Integer getCep() {
+    public String getCep() {
         return cep;
     }
 
-    public void setCep(Integer cep) {
+    public void setCep(String cep) {
         this.cep = cep;
     }
 
@@ -210,12 +224,24 @@ public class FormularioPedido {
         this.referencia = referencia;
     }
 
-    public Integer getNumeroCliente() {
+    public String getNumeroCliente() {
         return numeroCliente;
     }
 
-    public void setNumeroCliente(Integer numeroCliente) {
+    public void setNumeroCliente(String numeroCliente) {
         this.numeroCliente = numeroCliente;
+    }
+
+    public String getUfCliente() {
+        return ufCliente;
+    }
+
+    public void setUfCliente(String ufCliente) {
+        if (ufCliente == null || ufCliente.isBlank()) {
+            this.ufCliente = "SC";
+            return;
+        }
+        this.ufCliente = ufCliente.trim().toUpperCase();
     }
 
     public String getBairroCliente() {
@@ -226,19 +252,19 @@ public class FormularioPedido {
         this.bairroCliente = bairroCliente;
     }
 
-    public String getCidadeCliente() {
-        return cidadeCliente;
+    public String getMunicipioCliente() {
+        return municipioCliente;
     }
 
-    public void setCidadeCliente(String cidadeCliente) {
-        this.cidadeCliente = cidadeCliente;
+    public void setMunicipioCliente(String municipioCliente) {
+        this.municipioCliente = municipioCliente;
     }
 
-    public Integer getCepCliente() {
+    public String getCepCliente() {
         return cepCliente;
     }
 
-    public void setCepCliente(Integer cepCliente) {
+    public void setCepCliente(String cepCliente) {
         this.cepCliente = cepCliente;
     }
 

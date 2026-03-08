@@ -9,6 +9,10 @@ public final class FiltrosCrud {
         return new FiltroCrudTexto(nome, rotulo, dica);
     }
 
+    public static FiltroCrudData date(String nome, String rotulo, String dica) {
+        return new FiltroCrudData(nome, rotulo, dica);
+    }
+
     public static FiltroCrudSelecao select(String nome, String rotulo, List<OpcaoCrud> opcoes) {
         return new FiltroCrudSelecao(nome, rotulo, opcoes);
     }

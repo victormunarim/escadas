@@ -11,7 +11,6 @@
         </a>
 
         <div class="navegacao">
-            <!--/*@thymesVar id="modulo" type="com.example.demo.modulos.ModuloNavegacao"*/-->
             <a th:each="modulo : ${modulos}"
                th:href="@{${modulo.url}}"
                th:text="${modulo.nome}"></a>

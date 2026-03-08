@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::section})}">
+<section class="pagina">
+    <header class="pagina__cabecalho">
+        <h1 class="pagina__titulo" th:text="${tituloPagina}">Novo Pedido</h1>
+        <p class="pagina__subtitulo" th:text="${subtituloPagina}">
+            Preencha todos os campos (exceto flag oculto) para inserir na tabela.
+        </p>
+    </header>
+
+    <section class="cartao-crud">
+        <div
+                class="alerta-formulario alerta-formulario--sucesso"
+                th:if="${sucesso != null}"
+                th:text="${sucesso}">
+        </div>
+        <th:block
+                th:replace="~{fragments/form :: formCrud(${urlFormulario}, ${textoBotaoSalvar}, ${urlVoltar}, ${camposFormularioPedido}, 'formularioPedido')}">
+        </th:block>
+    </section>
+</section>
+</html>

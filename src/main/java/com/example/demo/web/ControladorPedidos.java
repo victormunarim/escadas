@@ -1,23 +1,47 @@
 package com.example.demo.web;
 
-import com.example.demo.pedidos.Pedido;
-import com.example.demo.pedidos.FormularioPedido;
-import com.example.demo.pedidos.RepositorioPedido;
+import com.example.demo.pedidos.localidade.service.ConsultaLocalidades;
+import com.example.demo.pedidos.model.FormularioPedido;
+import com.example.demo.pedidos.model.Pedido;
+import com.example.demo.pedidos.repository.RepositorioPedido;
+import com.example.demo.pedidos.service.FormularioPedidoService;
+import com.example.demo.pedidos.service.GeradorPdfPedido;
+import com.example.demo.shared.crud.OpcaoCrud;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class ControladorPedidos {
 
     private final RepositorioPedido repositorioPedido;
+    private final GeradorPdfPedido geradorPdfPedido;
+    private final ConsultaLocalidades consultaLocalidades;
+    private final FormularioPedidoService formularioPedidoService;
 
-    public ControladorPedidos(RepositorioPedido repositorioPedido) {
+    public ControladorPedidos(
+            RepositorioPedido repositorioPedido,
+            GeradorPdfPedido geradorPdfPedido,
+            ConsultaLocalidades consultaLocalidades,
+            FormularioPedidoService formularioPedidoService
+    ) {
         this.repositorioPedido = repositorioPedido;
+        this.geradorPdfPedido = geradorPdfPedido;
+        this.consultaLocalidades = consultaLocalidades;
+        this.formularioPedidoService = formularioPedidoService;
     }
 
     @GetMapping("/pedidos")
@@ -28,15 +52,15 @@ public class ControladorPedidos {
 
     @GetMapping("/pedidos/novo")
     public String novoPedido(Model model) {
-        prepararPaginaFormulario(
+        formularioPedidoService.prepararPaginaFormulario(
                 model,
                 new FormularioPedido(),
                 "/pedidos",
                 "Novo Pedido",
-                "Preencha todos os campos (exceto flag oculto) para inserir na tabela.",
+                "Preencha todos os campos para inserir na tabela.",
                 "Salvar pedido"
         );
-        return "pedido-form";
+        return "formulario";
     }
 
     @PostMapping("/pedidos")
@@ -45,7 +69,7 @@ public class ControladorPedidos {
             RedirectAttributes redirectAttributes
     ) {
         Pedido pedido = new Pedido();
-        aplicarFormularioNoPedido(formularioPedido, pedido);
+        formularioPedidoService.aplicarFormularioNoPedido(formularioPedido, pedido);
         pedido.setFlagOculto(Boolean.FALSE);
 
         repositorioPedido.save(pedido);
@@ -54,7 +78,11 @@ public class ControladorPedidos {
     }
 
     @GetMapping("/pedidos/{id}/editar")
-    public String editar(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String editar(
+            @PathVariable Long id,
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) {
         Pedido pedido = repositorioPedido.findById(id).orElse(null);
 
         if (pedido == null) {
@@ -62,8 +90,8 @@ public class ControladorPedidos {
             return "redirect:/crud/pedidos";
         }
 
-        FormularioPedido formularioPedido = criarFormularioDePedido(pedido);
-        prepararPaginaFormulario(
+        FormularioPedido formularioPedido = formularioPedidoService.criarFormularioDePedido(pedido);
+        formularioPedidoService.prepararPaginaFormulario(
                 model,
                 formularioPedido,
                 "/pedidos/" + id + "/editar",
@@ -71,7 +99,7 @@ public class ControladorPedidos {
                 "Atualize os dados do pedido selecionado.",
                 "Salvar alterações"
         );
-        return "pedido-form";
+        return "formulario";
     }
 
     @PostMapping("/pedidos/{id}/editar")
@@ -87,7 +115,7 @@ public class ControladorPedidos {
             return "redirect:/crud/pedidos";
         }
 
-        aplicarFormularioNoPedido(formularioPedido, pedido);
+        formularioPedidoService.aplicarFormularioNoPedido(formularioPedido, pedido);
         repositorioPedido.save(pedido);
         redirectAttributes.addFlashAttribute("sucesso", "Pedido atualizado com sucesso.");
         return "redirect:/pedidos/" + id + "/editar";
@@ -108,84 +136,50 @@ public class ControladorPedidos {
         return "redirect:/crud/pedidos";
     }
 
-    private void prepararPaginaFormulario(
-            Model model,
-            FormularioPedido formularioPedido,
-            String urlFormulario,
-            String tituloPagina,
-            String subtituloPagina,
-            String textoBotaoSalvar
+    @GetMapping("/pedidos/{id}/pdf")
+    public ResponseEntity<byte[]> pdf(@PathVariable Long id) {
+        Pedido pedido = repositorioPedido.findById(id).orElse(null);
+
+        if (pedido == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        byte[] pdf = geradorPdfPedido.gerarPdfPedido(pedido);
+        String nomeArquivo = "pedido-" + id + ".pdf";
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.inline()
+                                .filename(nomeArquivo)
+                                .build()
+                                .toString()
+                )
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    @GetMapping("/pedidos/localidades/bairros")
+    @ResponseBody
+    public List<OpcaoCrud> buscarBairros(
+            @RequestParam(name = "q", defaultValue = "") String termo,
+            @RequestParam(name = "uf", defaultValue = "SC") String uf,
+            @RequestParam(name = "limit", defaultValue = "15") Integer limite
     ) {
-        model.addAttribute("formularioPedido", formularioPedido);
-        model.addAttribute("urlFormulario", urlFormulario);
-        model.addAttribute("tituloPagina", tituloPagina);
-        model.addAttribute("subtituloPagina", subtituloPagina);
-        model.addAttribute("textoBotaoSalvar", textoBotaoSalvar);
+        return consultaLocalidades.buscarBairros(termo, uf, limite).stream()
+                .map(valor -> new OpcaoCrud(valor, valor))
+                .collect(Collectors.toList());
     }
 
-    private FormularioPedido criarFormularioDePedido(Pedido pedido) {
-        FormularioPedido formulario = new FormularioPedido();
-        formulario.setNumeroPedido(pedido.getNumeroPedido());
-        formulario.setNomeCliente(pedido.getNomeCliente());
-        formulario.setEmail(pedido.getEmail());
-        formulario.setCpf(pedido.getCpf());
-        formulario.setRg(pedido.getRg());
-        formulario.setCnpj(pedido.getCnpj());
-        formulario.setServicoSocial(pedido.getServicoSocial());
-        formulario.setProfissao(pedido.getProfissao());
-        formulario.setAdmObra(pedido.getAdmObra());
-        formulario.setTelefone(pedido.getTelefone());
-        formulario.setTelefoneFixo(pedido.getTelefoneFixo());
-        formulario.setDescricao(pedido.getDescricao());
-        formulario.setAcabamento(pedido.getAcabamento());
-        formulario.setTubos(pedido.getTubos());
-        formulario.setRevestimento(pedido.getRevestimento());
-        formulario.setValorTotal(pedido.getValorTotal());
-        formulario.setPrazoMontagem(pedido.getPrazoMontagem());
-        formulario.setNumero(pedido.getNumero());
-        formulario.setBairro(pedido.getBairro());
-        formulario.setCidade(pedido.getCidade());
-        formulario.setCep(pedido.getCep());
-        formulario.setReferencia(pedido.getReferencia());
-        formulario.setNumeroCliente(pedido.getNumeroCliente());
-        formulario.setBairroCliente(pedido.getBairroCliente());
-        formulario.setCidadeCliente(pedido.getCidadeCliente());
-        formulario.setCepCliente(pedido.getCepCliente());
-        formulario.setReferenciaCliente(pedido.getReferenciaCliente());
-        formulario.setCliente(pedido.getCliente());
-        formulario.setValor(pedido.getValor());
-        return formulario;
-    }
-
-    private void aplicarFormularioNoPedido(FormularioPedido formularioPedido, Pedido pedido) {
-        pedido.setNumeroPedido(formularioPedido.getNumeroPedido());
-        pedido.setNomeCliente(formularioPedido.getNomeCliente());
-        pedido.setEmail(formularioPedido.getEmail());
-        pedido.setCpf(formularioPedido.getCpf());
-        pedido.setRg(formularioPedido.getRg());
-        pedido.setCnpj(formularioPedido.getCnpj());
-        pedido.setServicoSocial(formularioPedido.getServicoSocial());
-        pedido.setProfissao(formularioPedido.getProfissao());
-        pedido.setAdmObra(formularioPedido.getAdmObra());
-        pedido.setTelefone(formularioPedido.getTelefone());
-        pedido.setTelefoneFixo(formularioPedido.getTelefoneFixo());
-        pedido.setDescricao(formularioPedido.getDescricao());
-        pedido.setAcabamento(formularioPedido.getAcabamento());
-        pedido.setTubos(formularioPedido.getTubos());
-        pedido.setRevestimento(formularioPedido.getRevestimento());
-        pedido.setValorTotal(formularioPedido.getValorTotal());
-        pedido.setPrazoMontagem(formularioPedido.getPrazoMontagem());
-        pedido.setNumero(formularioPedido.getNumero());
-        pedido.setBairro(formularioPedido.getBairro());
-        pedido.setCidade(formularioPedido.getCidade());
-        pedido.setCep(formularioPedido.getCep());
-        pedido.setReferencia(formularioPedido.getReferencia());
-        pedido.setNumeroCliente(formularioPedido.getNumeroCliente());
-        pedido.setBairroCliente(formularioPedido.getBairroCliente());
-        pedido.setCidadeCliente(formularioPedido.getCidadeCliente());
-        pedido.setCepCliente(formularioPedido.getCepCliente());
-        pedido.setReferenciaCliente(formularioPedido.getReferenciaCliente());
-        pedido.setCliente(formularioPedido.getCliente());
-        pedido.setValor(formularioPedido.getValor());
+    @GetMapping("/pedidos/localidades/municipios")
+    @ResponseBody
+    public List<OpcaoCrud> buscarMunicipios(
+            @RequestParam(name = "q", defaultValue = "") String termo,
+            @RequestParam(name = "uf", defaultValue = "SC") String uf,
+            @RequestParam(name = "limit", defaultValue = "15") Integer limite
+    ) {
+        return consultaLocalidades.buscarMunicipios(termo, uf, limite).stream()
+                .map(valor -> new OpcaoCrud(valor, valor))
+                .collect(Collectors.toList());
     }
 }

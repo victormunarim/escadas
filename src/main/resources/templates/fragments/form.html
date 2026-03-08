@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="formCrud(urlFormulario, textoBotaoSalvar, urlVoltar, campos, objetoFormularioNome)">
+    <form
+            class="formulario-crud"
+            method="post"
+            th:action="${urlFormulario}"
+            th:object="${__${objetoFormularioNome}__}">
+        <div class="formulario-crud__grade">
+            <th:block th:each="campo : ${campos}">
+                <th:block
+                        th:replace="~{fragments/form :: ${campo.nomeFragmento()}(${campo})}">
+                </th:block>
+            </th:block>
+        </div>
+
+        <div class="formulario-crud__acoes">
+            <button
+                    class="busca-crud__botao"
+                    type="submit"
+                    th:text="${textoBotaoSalvar}">
+                Salvar
+            </button>
+            <a class="formulario-crud__link" th:href="${urlVoltar}">Voltar para listagem</a>
+        </div>
+    </form>
+</th:block>
+
+<th:block th:fragment="campoTexto(campo)">
+    <label
+            class="filtro-crud campo"
+            th:classappend="
+                ${campo.classeCssCampo != null and !#strings.isEmpty(campo.classeCssCampo)}
+                ? ' ' + campo.classeCssCampo : ''
+            ">
+        <span class="filtro-crud__rotulo" th:text="${campo.rotulo}">Campo</span>
+        <input
+                class="filtro-crud__entrada"
+                th:type="${campo.tipoHtml}"
+                th:field="*{__${campo.nome}__}"
+                th:classappend="${campo.nome == 'cep' or campo.nome == 'cepCliente' ? ' js-cep-input' : (campo.nome == 'numero' or campo.nome == 'numeroCliente' ? ' js-int10-input' : (campo.nome == 'rg' ? ' js-int12-input' : (campo.nome == 'cpf' ? ' js-int14-input' : (campo.nome == 'telefone' or campo.nome == 'telefoneFixo' ? ' js-int20-input' : ''))))}"
+                th:attr="
+                    placeholder=${campo.dica},
+                    required=${campo.obrigatorio ? 'required' : null},
+                    maxlength=${campo.maximoCaracteres},
+                    inputmode=${campo.nome == 'cep' or campo.nome == 'cepCliente' or campo.nome == 'numero' or campo.nome == 'numeroCliente' or campo.nome == 'rg' or campo.nome == 'cpf' or campo.nome == 'telefone' or campo.nome == 'telefoneFixo' ? 'numeric' : null},
+                    pattern=${campo.nome == 'numero' or campo.nome == 'numeroCliente' ? '[0-9]{1,10}' : (campo.nome == 'rg' ? '[0-9]{1,12}' : (campo.nome == 'cpf' ? '[0-9]{1,14}' : (campo.nome == 'telefone' or campo.nome == 'telefoneFixo' ? '[0-9]{1,20}' : null)))}
+                ">
+    </label>
+</th:block>
+
+<th:block th:fragment="campoNumero(campo)">
+    <label
+            class="filtro-crud campo"
+            th:classappend="
+                ${campo.classeCssCampo != null and !#strings.isEmpty(campo.classeCssCampo)}
+                ? ' ' + campo.classeCssCampo : ''
+            ">
+        <span class="filtro-crud__rotulo" th:text="${campo.rotulo}">Campo</span>
+        <input
+                class="filtro-crud__entrada"
+                th:type="${campo.nome == 'cep' or campo.nome == 'cepCliente' ? 'text' : 'number'}"
+                th:field="*{__${campo.nome}__}"
+                th:classappend="${campo.nome == 'cep' or campo.nome == 'cepCliente' ? ' js-cep-input' : ''}"
+                th:attr="
+                    placeholder=${campo.dica},
+                    required=${campo.obrigatorio ? 'required' : null},
+                    min=${campo.nome == 'cep' or campo.nome == 'cepCliente' ? null : campo.minimo},
+                    max=${campo.nome == 'cep' or campo.nome == 'cepCliente' ? null : campo.maximo},
+                    step=${campo.nome == 'cep' or campo.nome == 'cepCliente' ? null : campo.passo},
+                    inputmode=${campo.nome == 'cep' or campo.nome == 'cepCliente' ? 'numeric' : null},
+                    pattern=${campo.nome == 'cep' or campo.nome == 'cepCliente' ? '[0-9]{8}' : null},
+                    maxlength=${campo.nome == 'cep' or campo.nome == 'cepCliente' ? '8' : null}
+                ">
+    </label>
+</th:block>
+
+<th:block th:fragment="campoSelecao(campo)">
+    <label
+            class="filtro-crud campo"
+            th:classappend="
+                ${campo.classeCssCampo != null and !#strings.isEmpty(campo.classeCssCampo)}
+                ? ' ' + campo.classeCssCampo : ''
+            ">
+        <span class="filtro-crud__rotulo" th:text="${campo.rotulo}">Campo</span>
+        <th:block th:if="${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--bairro')}">
+            <input
+                    class="filtro-crud__entrada js-localidade-input"
+                    type="text"
+                    th:field="*{__${campo.nome}__}"
+                    th:attr="
+                        required=${campo.obrigatorio ? 'required' : null},
+                        list=${'lista-' + campo.nome},
+                        data-list-id=${'lista-' + campo.nome},
+                        data-source-url='/pedidos/localidades/bairros',
+                        data-min-chars='0',
+                        data-max-options='15'
+                    ">
+            <datalist th:attr="id=${'lista-' + campo.nome}"></datalist>
+        </th:block>
+        <th:block th:unless="${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--bairro')}">
+            <select
+                    class="filtro-crud__selecao"
+                    th:field="*{__${campo.nome}__}"
+                    th:classappend="${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio')} ? ' js-municipio-select' : ''"
+                    th:attr="
+                        required=${campo.obrigatorio ? 'required' : null},
+                        data-source-url=${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio') ? '/pedidos/localidades/municipios' : null},
+                        data-uf-field=${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio-cliente') ? 'ufCliente' : (campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio') ? 'uf' : null)},
+                        data-max-options=${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio') ? '500' : null},
+                        disabled=${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio-cliente') and (*{ufCliente} == null or #strings.isEmpty(#strings.trim(*{ufCliente}))) ? 'disabled' : (campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio') and (*{uf} == null or #strings.isEmpty(#strings.trim(*{uf}))) ? 'disabled' : null)}
+                    ">
+                <option value="">Selecione</option>
+                <option
+                        th:each="opt : ${campo.opcoes}"
+                        th:value="${opt.valor}"
+                        th:text="${opt.rotulo}">
+                </option>
+            </select>
+        </th:block>
+    </label>
+</th:block>
+
+<th:block th:fragment="campoTextarea(campo)">
+    <label
+            class="filtro-crud campo"
+            th:classappend="
+                ${campo.classeCssCampo != null and !#strings.isEmpty(campo.classeCssCampo)}
+                ? ' ' + campo.classeCssCampo : ''
+            ">
+        <span class="filtro-crud__rotulo" th:text="${campo.rotulo}">Campo</span>
+        <textarea
+                class="formulario-crud__textoarea"
+                th:field="*{__${campo.nome}__}"
+                th:attr="
+                    placeholder=${campo.dica},
+                    required=${campo.obrigatorio ? 'required' : null},
+                    rows=${campo.linhas},
+                    maxlength=${campo.maximoCaracteres}
+                "></textarea>
+    </label>
+</th:block>
+
+</body>
+</html>
