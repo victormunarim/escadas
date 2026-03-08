@@ -1,14 +1,14 @@
-package com.example.demo.ENUM;
+package com.example.demo.pedidos;
 
-import com.example.demo.entidades.Pedido;
+import com.example.demo.pedidos.Pedido;
 
 import java.util.function.Function;
 
-public enum PedidoColuna {
+public enum ColunaPedido {
 
     ID_PEDIDO("id_pedido", Pedido::getId),
     NUMERO_PEDIDO("numero_pedido", Pedido::getNumeroPedido),
-    CLIENTE_NOME("cliente_nome", Pedido::getClienteNome),
+    CLIENTE_NOME("cliente_nome", Pedido::getNomeCliente),
     EMAIL("email", Pedido::getEmail),
     CPF("cpf", Pedido::getCpf),
     RG("rg", Pedido::getRg),
@@ -41,7 +41,7 @@ public enum PedidoColuna {
     private final String coluna;
     private final Function<Pedido, Object> extractor;
 
-    PedidoColuna(String coluna, Function<Pedido, Object> extractor) {
+    ColunaPedido(String coluna, Function<Pedido, Object> extractor) {
         this.coluna = coluna;
         this.extractor = extractor;
     }

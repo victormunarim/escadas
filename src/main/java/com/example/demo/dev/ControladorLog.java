@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-public class LogController {
+public class ControladorLog {
 
     private static final int MAX_LINES = 200;
 

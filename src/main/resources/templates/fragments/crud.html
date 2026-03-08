@@ -2,55 +2,75 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<section th:fragment="crudList(module, params, rows)"
-         class="page">
+<section th:fragment="crudList(modulo, parametros, linhas)"
+         class="pagina">
 
-  <header class="page__header">
-    <h1 class="page__title" th:text="${module.title}">Módulo</h1>
+  <header class="pagina__cabecalho">
+    <h1 class="pagina__titulo" th:text="${modulo.titulo}">Módulo</h1>
 
-    <form class="crud-search"
+    <form class="busca-crud"
           method="get"
-          th:action="${module.actionUrl}"
+          th:action="${modulo.urlAcao}"
           role="search"
           aria-label="Filtros">
-      <div class="crud-filters">
-        <th:block th:each="f : ${module.filters}">
-          <th:block th:replace="~{fragments/filters :: ${f.fragmentName()}(${f}, ${params})}"></th:block>
+      <div class="filtros-crud">
+        <th:block th:each="f : ${modulo.filtros}">
+          <th:block th:replace="~{fragments/filters :: ${f.nomeFragmento()}(${f}, ${parametros})}"></th:block>
         </th:block>
 
-        <div class="crud-filter crud-filter--actions">
-          <button class="crud-search__button" type="submit">Pesquisar</button>
+        <div class="filtro-crud filtro-crud--acoes">
+          <button class="busca-crud__botao" type="submit">Pesquisar</button>
         </div>
       </div>
     </form>
   </header>
 
-  <section class="crud-card">
-    <div class="crud-empty"
-         th:if="${rows == null or #lists.isEmpty(rows)}">
-      <div class="crud-empty__title">Nenhum registro encontrado</div>
-      <div class="crud-empty__text">Tente ajustar os filtros.</div>
+  <section class="cartao-crud">
+    <div class="alerta-formulario alerta-formulario--sucesso"
+         th:if="${sucesso != null}"
+         th:text="${sucesso}"></div>
+
+    <div class="vazio-crud"
+         th:if="${linhas == null or #lists.isEmpty(linhas)}">
+      <div class="vazio-crud__titulo">Nenhum registro encontrado</div>
+      <div class="vazio-crud__texto">Tente ajustar os filtros.</div>
     </div>
 
-    <div class="crud-table-wrap"
-         th:if="${rows != null and !#lists.isEmpty(rows)}">
-      <table class="crud-table" aria-label="Tabela do módulo">
-        <thead class="crud-table__head">
-        <tr class="crud-table__tr">
-          <th class="crud-table__th"
-              th:each="c : ${module.columns}"
-              th:text="${c.header}">
+    <div class="tabela-crud-wrap"
+         th:if="${linhas != null and !#lists.isEmpty(linhas)}">
+      <table class="tabela-crud" aria-label="Tabela do módulo">
+        <thead class="tabela-crud__cabecalho">
+        <tr class="tabela-crud__linha">
+          <th class="tabela-crud__coluna"
+              th:each="c : ${modulo.colunas}"
+              th:text="${c.cabecalho}">
             Coluna
           </th>
+          <th class="tabela-crud__coluna" th:if="${modulo.chave == 'pedidos'}">Ações</th>
         </tr>
         </thead>
 
-        <tbody class="crud-table__body">
-        <tr class="crud-table__tr" th:each="row : ${rows}">
-          <td class="crud-table__td"
-              th:each="c : ${module.columns}"
-              th:text="${row[c.field]}">
+        <tbody class="tabela-crud__corpo">
+        <tr class="tabela-crud__linha" th:each="row : ${linhas}">
+          <td class="tabela-crud__celula"
+              th:each="c : ${modulo.colunas}"
+              th:text="${row[c.campo]}">
             valor
+          </td>
+          <td class="tabela-crud__celula" th:if="${modulo.chave == 'pedidos'}">
+            <div class="acoes-tabela">
+              <a class="acoes-tabela__botao acoes-tabela__botao--editar"
+                 th:href="@{/pedidos/{id}/editar(id=${row['id_pedido']})}">
+                Editar
+              </a>
+              <form method="post"
+                    th:action="@{/pedidos/{id}/excluir(id=${row['id_pedido']})}"
+                    onsubmit="return confirm('Tem certeza que deseja excluir este pedido?');">
+                <button class="acoes-tabela__botao acoes-tabela__botao--excluir" type="submit">
+                  Excluir
+                </button>
+              </form>
+            </div>
           </td>
         </tr>
         </tbody>

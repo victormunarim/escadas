@@ -8,17 +8,17 @@
 
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
-<body class="app">
+<body class="aplicativo">
 
 <nav th:replace="~{fragments/header :: menu_helper}"></nav>
 
-<main class="app__main">
+<main class="aplicativo__principal">
 
-    <th:block th:if="${module != null}">
-        <section th:replace="~{fragments/crud :: crudList(${module}, ${params}, ${rows})}"></section>
+    <th:block th:if="${modulo != null}">
+        <section th:replace="~{fragments/crud :: crudList(${modulo}, ${parametros}, ${linhas})}"></section>
     </th:block>
 
-    <th:block th:if="${module == null}">
+    <th:block th:if="${modulo == null}">
         <div th:replace="${conteudoDinamico}"></div>
     </th:block>
 

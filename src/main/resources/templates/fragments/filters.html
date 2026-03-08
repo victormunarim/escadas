@@ -2,73 +2,73 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<th:block th:fragment="textFilter(f, params)">
-    <div class="crud-filter">
-        <label class="crud-filter__label"
-               th:for="${'flt-' + f.name}"
-               th:text="${f.label}">
+<th:block th:fragment="filtroTexto(f, parametros)">
+    <div class="filtro-crud">
+        <label class="filtro-crud__rotulo"
+               th:for="${'flt-' + f.nome}"
+               th:text="${f.rotulo}">
             Filtro
         </label>
 
-        <input class="crud-filter__input"
-               th:id="${'flt-' + f.name}"
-               th:name="${f.name}"
+        <input class="filtro-crud__entrada"
+               th:id="${'flt-' + f.nome}"
+               th:name="${f.nome}"
                type="search"
                autocomplete="off"
-               th:attr="placeholder=${f.placeholder}"
-               th:value="${params[f.name]}" />
+               th:attr="placeholder=${f.dica}"
+               th:value="${parametros[f.nome]}" />
     </div>
 </th:block>
 
-<th:block th:fragment="numberFilter(f, params)">
-    <div class="crud-filter">
-        <label class="crud-filter__label"
-               th:for="${'flt-' + f.name}"
-               th:text="${f.label}">
+<th:block th:fragment="filtroNumero(f, parametros)">
+    <div class="filtro-crud">
+        <label class="filtro-crud__rotulo"
+               th:for="${'flt-' + f.nome}"
+               th:text="${f.rotulo}">
             Filtro
         </label>
 
-        <input class="crud-filter__input"
-               th:id="${'flt-' + f.name}"
-               th:name="${f.name}"
+        <input class="filtro-crud__entrada"
+               th:id="${'flt-' + f.nome}"
+               th:name="${f.nome}"
                type="number"
-               th:attr="placeholder=${f.placeholder}"
-               th:value="${params[f.name]}" />
+               th:attr="placeholder=${f.dica}"
+               th:value="${parametros[f.nome]}" />
     </div>
 </th:block>
 
-<th:block th:fragment="dateFilter(f, params)">
-    <div class="crud-filter">
-        <label class="crud-filter__label"
-               th:for="${'flt-' + f.name}"
-               th:text="${f.label}">
+<th:block th:fragment="filtroData(f, parametros)">
+    <div class="filtro-crud">
+        <label class="filtro-crud__rotulo"
+               th:for="${'flt-' + f.nome}"
+               th:text="${f.rotulo}">
             Filtro
         </label>
 
-        <input class="crud-filter__input"
-               th:id="${'flt-' + f.name}"
-               th:name="${f.name}"
+        <input class="filtro-crud__entrada"
+               th:id="${'flt-' + f.nome}"
+               th:name="${f.nome}"
                type="date"
-               th:value="${params[f.name]}" />
+               th:value="${parametros[f.nome]}" />
     </div>
 </th:block>
 
-<th:block th:fragment="selectFilter(f, params)">
-    <div class="crud-filter">
-        <label class="crud-filter__label"
-               th:for="${'flt-' + f.name}"
-               th:text="${f.label}">
+<th:block th:fragment="filtroSelecao(f, parametros)">
+    <div class="filtro-crud">
+        <label class="filtro-crud__rotulo"
+               th:for="${'flt-' + f.nome}"
+               th:text="${f.rotulo}">
             Filtro
         </label>
 
-        <select class="crud-filter__select"
-                th:id="${'flt-' + f.name}"
-                th:name="${f.name}">
+        <select class="filtro-crud__selecao"
+                th:id="${'flt-' + f.nome}"
+                th:name="${f.nome}">
             <option value="">Todos</option>
-            <option th:each="opt : ${f.options}"
-                    th:value="${opt.value}"
-                    th:text="${opt.label}"
-                    th:selected="${params[f.name] == opt.value}">
+            <option th:each="opt : ${f.opcoes}"
+                    th:value="${opt.valor}"
+                    th:text="${opt.rotulo}"
+                    th:selected="${parametros[f.nome] == opt.valor}">
             </option>
         </select>
     </div>

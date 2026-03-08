@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::section})}">
+<section class="pagina">
+    <header class="pagina__cabecalho">
+        <h1 class="pagina__titulo" th:text="${tituloPagina}">Novo Pedido</h1>
+        <p class="pagina__subtitulo" th:text="${subtituloPagina}">Preencha todos os campos (exceto flag oculto) para inserir na tabela.</p>
+    </header>
+
+    <section class="cartao-crud">
+        <div class="alerta-formulario alerta-formulario--sucesso" th:if="${sucesso != null}" th:text="${sucesso}"></div>
+
+        <form class="formulario-pedido" method="post" th:action="${urlFormulario}" th:object="${formularioPedido}">
+            <div class="formulario-pedido__grade">
+                <label class="filtro-crud campo campo--numero-pedido">
+                    <span class="filtro-crud__rotulo">Número do Pedido</span>
+                    <input class="filtro-crud__entrada" type="number" min="1" th:field="*{numeroPedido}" required>
+                </label>
+
+                <label class="filtro-crud campo campo--cliente-nome">
+                    <span class="filtro-crud__rotulo">Cliente Nome</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{nomeCliente}" maxlength="120" required>
+                </label>
+
+                <label class="filtro-crud campo campo--email">
+                    <span class="filtro-crud__rotulo">Email</span>
+                    <input class="filtro-crud__entrada" type="email" th:field="*{email}" maxlength="120">
+                </label>
+
+                <label class="filtro-crud campo campo--cpf">
+                    <span class="filtro-crud__rotulo">CPF</span>
+                    <input class="filtro-crud__entrada" type="number" min="0" th:field="*{cpf}">
+                </label>
+
+                <label class="filtro-crud campo campo--rg">
+                    <span class="filtro-crud__rotulo">RG</span>
+                    <input class="filtro-crud__entrada" type="number" min="0" th:field="*{rg}">
+                </label>
+
+                <label class="filtro-crud campo campo--cnpj">
+                    <span class="filtro-crud__rotulo">CNPJ</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{cnpj}" maxlength="30">
+                </label>
+
+                <label class="filtro-crud campo campo--servico-social">
+                    <span class="filtro-crud__rotulo">Serviço Social</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{servicoSocial}" maxlength="100">
+                </label>
+
+                <label class="filtro-crud campo campo--profissao">
+                    <span class="filtro-crud__rotulo">Profissão</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{profissao}" maxlength="100">
+                </label>
+
+                <label class="filtro-crud campo campo--adm-obra">
+                    <span class="filtro-crud__rotulo">Adm. Obra</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{admObra}" maxlength="100">
+                </label>
+
+                <label class="filtro-crud campo campo--telefone">
+                    <span class="filtro-crud__rotulo">Telefone</span>
+                    <input class="filtro-crud__entrada" type="number" min="0" th:field="*{telefone}">
+                </label>
+
+                <label class="filtro-crud campo campo--telefone-fixo">
+                    <span class="filtro-crud__rotulo">Telefone Fixo</span>
+                    <input class="filtro-crud__entrada" type="number" min="0" th:field="*{telefoneFixo}">
+                </label>
+
+                <label class="filtro-crud campo campo--acabamento">
+                    <span class="filtro-crud__rotulo">Acabamento</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{acabamento}" maxlength="120">
+                </label>
+
+                <label class="filtro-crud campo campo--tubos">
+                    <span class="filtro-crud__rotulo">Tubos</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{tubos}" maxlength="120">
+                </label>
+
+                <label class="filtro-crud campo campo--revestimento">
+                    <span class="filtro-crud__rotulo">Revestimento</span>
+                    <select class="filtro-crud__selecao" th:field="*{revestimento}">
+                        <option value="">Selecione</option>
+                        <option value="true">Sim</option>
+                        <option value="false">Não</option>
+                    </select>
+                </label>
+
+                <label class="filtro-crud campo campo--valor-total">
+                    <span class="filtro-crud__rotulo">Valor Total</span>
+                    <input class="filtro-crud__entrada" type="number" min="0" step="0.01" th:field="*{valorTotal}">
+                </label>
+
+                <label class="filtro-crud campo campo--prazo-montagem">
+                    <span class="filtro-crud__rotulo">Prazo Montagem</span>
+                    <input class="filtro-crud__entrada" type="number" min="0" th:field="*{prazoMontagem}">
+                </label>
+
+                <label class="filtro-crud campo campo--numero">
+                    <span class="filtro-crud__rotulo">Número</span>
+                    <input class="filtro-crud__entrada" type="number" min="0" th:field="*{numero}">
+                </label>
+
+                <label class="filtro-crud campo campo--bairro">
+                    <span class="filtro-crud__rotulo">Bairro</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{bairro}" maxlength="80">
+                </label>
+
+                <label class="filtro-crud campo campo--cidade">
+                    <span class="filtro-crud__rotulo">Cidade</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{cidade}" maxlength="80">
+                </label>
+
+                <label class="filtro-crud campo campo--cep">
+                    <span class="filtro-crud__rotulo">CEP</span>
+                    <input class="filtro-crud__entrada" type="number" min="0" th:field="*{cep}">
+                </label>
+
+                <label class="filtro-crud campo campo--referencia">
+                    <span class="filtro-crud__rotulo">Referência</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{referencia}" maxlength="200">
+                </label>
+
+                <label class="filtro-crud campo campo--numero-cliente">
+                    <span class="filtro-crud__rotulo">Número Cliente</span>
+                    <input class="filtro-crud__entrada" type="number" min="0" th:field="*{numeroCliente}">
+                </label>
+
+                <label class="filtro-crud campo campo--bairro-cliente">
+                    <span class="filtro-crud__rotulo">Bairro Cliente</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{bairroCliente}" maxlength="80">
+                </label>
+
+                <label class="filtro-crud campo campo--cidade-cliente">
+                    <span class="filtro-crud__rotulo">Cidade Cliente</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{cidadeCliente}" maxlength="80">
+                </label>
+
+                <label class="filtro-crud campo campo--cep-cliente">
+                    <span class="filtro-crud__rotulo">CEP Cliente</span>
+                    <input class="filtro-crud__entrada" type="number" min="0" th:field="*{cepCliente}">
+                </label>
+
+                <label class="filtro-crud campo campo--referencia-cliente">
+                    <span class="filtro-crud__rotulo">Referência Cliente</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{referenciaCliente}" maxlength="200">
+                </label>
+
+                <label class="filtro-crud campo campo--cliente">
+                    <span class="filtro-crud__rotulo">Cliente</span>
+                    <input class="filtro-crud__entrada" type="text" th:field="*{cliente}" maxlength="120">
+                </label>
+
+                <label class="filtro-crud campo campo--valor">
+                    <span class="filtro-crud__rotulo">Valor</span>
+                    <input class="filtro-crud__entrada" type="number" min="0" step="0.01" th:field="*{valor}">
+                </label>
+
+                <label class="filtro-crud filtro-crud--completo campo campo--descricao">
+                    <span class="filtro-crud__rotulo">Descrição</span>
+                    <textarea class="formulario-pedido__textoarea" th:field="*{descricao}" rows="4" maxlength="2000"></textarea>
+                </label>
+            </div>
+
+            <div class="formulario-pedido__acoes">
+                <button class="busca-crud__botao" type="submit" th:text="${textoBotaoSalvar}">Salvar pedido</button>
+                <a class="formulario-pedido__link" th:href="@{/crud/pedidos}">Voltar para listagem</a>
+            </div>
+        </form>
+    </section>
+</section>
+</html>

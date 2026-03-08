@@ -1,8 +1,8 @@
-package com.example.demo.entidades;
+package com.example.demo.pedidos;
 
-public final class PedidoCols {
+public final class ColunasPedido {
 
-    private PedidoCols() {}
+    private ColunasPedido() {}
 
     public static final String TABELA = "pedidos";
 
