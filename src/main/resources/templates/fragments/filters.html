@@ -64,7 +64,7 @@
         <select class="filtro-crud__selecao"
                 th:id="${'flt-' + f.nome}"
                 th:name="${f.nome}">
-            <option value="">Todos</option>
+            <option value="" th:if="${f.nome != 'size'}">Todos</option>
             <option th:each="opt : ${f.opcoes}"
                     th:value="${opt.valor}"
                     th:text="${opt.rotulo}"

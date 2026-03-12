@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::section})}">
+<section class="pagina pedido-visualizacao">
+    <div class="alerta-formulario alerta-formulario--sucesso"
+         th:if="${sucesso != null}"
+         th:text="${sucesso}"></div>
+    <div class="alerta-formulario alerta-formulario--erro"
+         th:if="${erro != null}"
+         th:text="${erro}"></div>
+
+    <header class="pagina__cabecalho pedido-visualizacao__cabecalho">
+        <div>
+            <h1 class="pagina__titulo">Visualização do Pedido</h1>
+            <p class="pagina__subtitulo" th:text="'Pedido #' + ${pedidoId}">Pedido</p>
+        </div>
+        <div class="pedido-visualizacao__acoes">
+            <a class="acoes-tabela__botao acoes-tabela__botao--editar"
+               th:href="@{/pedidos/{id}/editar(id=${pedidoId})}">
+                Editar
+            </a>
+            <a class="acoes-tabela__botao acoes-tabela__botao--pdf"
+               th:href="@{/pedidos/{id}/pdf(id=${pedidoId})}"
+               target="_blank"
+               rel="noopener">
+                PDF
+            </a>
+            <a class="formulario-crud__link" th:href="@{/crud/pedidos}">Voltar para listagem</a>
+        </div>
+    </header>
+
+    <div class="pedido-visualizacao__grade">
+        <section class="cartao-crud pedido-visualizacao__bloco">
+            <h2 class="pedido-visualizacao__titulo">Resumo do Pedido</h2>
+            <dl class="pedido-visualizacao__lista">
+                <div class="pedido-visualizacao__item" th:each="item : ${resumoPedido}">
+                    <dt th:text="${item.key}">Campo</dt>
+                    <dd th:text="${#strings.isEmpty(item.value) ? '-' : item.value}">Valor</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="cartao-crud pedido-visualizacao__bloco">
+            <h2 class="pedido-visualizacao__titulo">Dados do Cliente</h2>
+            <dl class="pedido-visualizacao__lista">
+                <div class="pedido-visualizacao__item" th:each="item : ${dadosCliente}">
+                    <dt th:text="${item.key}">Campo</dt>
+                    <dd th:text="${#strings.isEmpty(item.value) ? '-' : item.value}">Valor</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="cartao-crud pedido-visualizacao__bloco">
+            <h2 class="pedido-visualizacao__titulo">Endereço da Obra</h2>
+            <dl class="pedido-visualizacao__lista">
+                <div class="pedido-visualizacao__item" th:each="item : ${enderecoObra}">
+                    <dt th:text="${item.key}">Campo</dt>
+                    <dd th:text="${#strings.isEmpty(item.value) ? '-' : item.value}">Valor</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="cartao-crud pedido-visualizacao__bloco">
+            <h2 class="pedido-visualizacao__titulo">Endereço do Cliente</h2>
+            <dl class="pedido-visualizacao__lista">
+                <div class="pedido-visualizacao__item" th:each="item : ${enderecoCliente}">
+                    <dt th:text="${item.key}">Campo</dt>
+                    <dd th:text="${#strings.isEmpty(item.value) ? '-' : item.value}">Valor</dd>
+                </div>
+            </dl>
+        </section>
+    </div>
+
+    <section class="cartao-crud pedido-visualizacao__bloco-arquivos">
+        <h2 class="pedido-visualizacao__titulo">Arquivos</h2>
+        <form class="pedido-visualizacao__upload"
+              th:action="@{/pedidos/{id}/arquivos(id=${pedidoId})}"
+              method="post"
+              enctype="multipart/form-data">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <input class="pedido-visualizacao__arquivo-input" type="file" name="arquivo" required>
+            <button class="busca-crud__botao" type="submit">Enviar para Google Drive</button>
+        </form>
+
+        <div class="pedido-visualizacao__arquivos-placeholder"
+             th:if="${arquivosPedido == null or #lists.isEmpty(arquivosPedido)}">
+            Nenhum arquivo vinculado a este pedido.
+        </div>
+
+        <ul class="pedido-visualizacao__arquivos-lista"
+            th:if="${arquivosPedido != null and !#lists.isEmpty(arquivosPedido)}">
+            <li class="pedido-visualizacao__arquivo-item" th:each="arquivo : ${arquivosPedido}">
+                <span th:text="${arquivo.nome}">arquivo.pdf</span>
+                <a th:href="${arquivo.link}" target="_blank" rel="noopener">Abrir</a>
+            </li>
+        </ul>
+    </section>
+</section>
+</html>

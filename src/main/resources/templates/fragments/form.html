@@ -110,7 +110,7 @@
                         data-source-url=${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio') ? '/pedidos/localidades/municipios' : null},
                         data-uf-field=${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio-cliente') ? 'ufCliente' : (campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio') ? 'uf' : null)},
                         data-max-options=${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio') ? '500' : null},
-                        disabled=${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio-cliente') and (*{ufCliente} == null or #strings.isEmpty(#strings.trim(*{ufCliente}))) ? 'disabled' : (campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio') and (*{uf} == null or #strings.isEmpty(#strings.trim(*{uf}))) ? 'disabled' : null)}
+                        disabled=${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio-cliente') and (#object.ufCliente == null or #strings.isEmpty(#strings.trim(#object.ufCliente))) ? 'disabled' : (campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio') and (#object.uf == null or #strings.isEmpty(#strings.trim(#object.uf))) ? 'disabled' : null)}
                     ">
                 <option value="">Selecione</option>
                 <option

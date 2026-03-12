@@ -21,12 +21,17 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	runtimeOnly 'com.mysql:mysql-connector-j'
+	implementation 'com.google.auth:google-auth-library-oauth2-http:1.30.1'
+	implementation 'com.google.api-client:google-api-client:2.7.2'
+	implementation 'com.google.apis:google-api-services-drive:v3-rev20220815-2.0.0'
+	implementation 'com.google.oauth-client:google-oauth-client-jetty:1.36.0'
 	implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
 	implementation 'com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10'
 }
@@ -41,4 +46,14 @@ tasks.withType(JavaCompile).configureEach {
 
 bootRun {
 	systemProperty 'file.encoding', 'UTF-8'
+}
+
+tasks.register('geraTokenDrive', JavaExec) {
+	group = 'application'
+	description = 'Gera token.json OAuth para Google Drive usando credentials.json.'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.example.demo.dev.GeradorTokenDrive'
+	if (project.hasProperty('args')) {
+		args project.property('args').toString().split('\\s+')
+	}
 }

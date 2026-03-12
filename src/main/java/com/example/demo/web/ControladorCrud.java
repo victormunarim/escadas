@@ -29,11 +29,13 @@ public class ControladorCrud {
         Model model
     ) {
         ProvedorModuloCrud provedor = registro.obterObrigatorio(chave);
+        Map<String, String> parametrosEfetivos = new java.util.HashMap<>(parametros);
+        parametrosEfetivos.putIfAbsent("size", "50");
 
-        List<Map<String, Object>> linhas = provedor.linhas(parametros);
+        List<Map<String, Object>> linhas = provedor.linhas(parametrosEfetivos);
 
         model.addAttribute("modulo", provedor.modulo());
-        model.addAttribute("parametros", parametros);
+        model.addAttribute("parametros", parametrosEfetivos);
         model.addAttribute("linhas", linhas);
 
         return "index";

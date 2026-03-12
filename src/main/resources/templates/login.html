@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Entrar - Sistema de Escadas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="login-pagina">
+<main class="login-container">
+    <section class="login-cartao">
+        <a class="marca login-marca" href="/" aria-label="Página inicial">
+            <span class="marca__simbolo">E</span>
+            <span class="marca__texto">
+                <span class="marca__titulo">Escadas Munarim</span>
+                <span class="marca__subtitulo">Acesso ao sistema</span>
+            </span>
+        </a>
+
+        <div class="login-alerta login-alerta--erro" th:if="${param.erro}">
+            Usuário ou senha inválidos.
+        </div>
+        <div class="login-alerta login-alerta--ok" th:if="${param.logout}">
+            Sessão encerrada com sucesso.
+        </div>
+
+        <form class="login-formulario" th:action="@{/login}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+            <label class="login-label" for="email">E-mail ou usuário</label>
+            <input class="login-input" id="email" name="email" type="text" autocomplete="username" required autofocus>
+
+            <label class="login-label" for="senha">Senha</label>
+            <input class="login-input" id="senha" name="senha" type="password" autocomplete="current-password" required>
+
+            <button class="login-botao" type="submit">Acessar</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>

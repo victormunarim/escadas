@@ -59,6 +59,10 @@
           </td>
           <td class="tabela-crud__celula" th:if="${modulo.chave == 'pedidos'}">
             <div class="acoes-tabela">
+              <a class="acoes-tabela__botao acoes-tabela__botao--visualizar"
+                 th:href="@{/pedidos/{id}/visualizar(id=${row['id_pedido']})}">
+                Visualizar
+              </a>
               <a class="acoes-tabela__botao acoes-tabela__botao--pdf"
                  th:href="@{/pedidos/{id}/pdf(id=${row['id_pedido']})}"
                  target="_blank"

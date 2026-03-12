@@ -3,9 +3,13 @@ package com.example.demo.util;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.text.Normalizer;
 import java.util.Locale;
 
 public final class FormatacaoUtil {
+    private static final DateTimeFormatter FORMATO_DATA_HORA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private FormatacaoUtil() {
     }
@@ -94,6 +98,56 @@ public final class FormatacaoUtil {
             return "";
         }
         return criarFormatoMoeda().format(valor);
+    }
+
+    public static String formatarTexto(Object valor) {
+        if (valor == null) {
+            return "-";
+        }
+
+        String texto = valor.toString().trim();
+        if (texto.isEmpty()) {
+            return "-";
+        }
+
+        return texto;
+    }
+
+    public static String formatarSimNao(Boolean valor) {
+        if (Boolean.TRUE.equals(valor)) {
+            return "Sim";
+        }
+        if (Boolean.FALSE.equals(valor)) {
+            return "Não";
+        }
+        return "-";
+    }
+
+    public static String formatarDataHora(LocalDateTime dataHora) {
+        if (dataHora == null) {
+            return "-";
+        }
+        return dataHora.format(FORMATO_DATA_HORA);
+    }
+
+    public static String nomePastaPedido(String nomeCliente, Integer numeroPedido) {
+        String cliente = formatarTexto(nomeCliente);
+        if ("-".equals(cliente)) {
+            cliente = "Cliente";
+        }
+
+        cliente = Normalizer.normalize(cliente, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}+", "")
+                .replaceAll("[^a-zA-Z0-9\\s-]", "")
+                .trim()
+                .replaceAll("\\s+", " ");
+
+        if (cliente.isBlank()) {
+            cliente = "Cliente";
+        }
+
+        String numero = numeroPedido == null ? "SemNumero" : String.valueOf(numeroPedido);
+        return cliente + " - Pedido " + numero;
     }
 
     private static DecimalFormat criarFormatoMoeda() {

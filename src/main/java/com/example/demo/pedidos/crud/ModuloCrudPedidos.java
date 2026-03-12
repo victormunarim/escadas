@@ -5,12 +5,10 @@ import com.example.demo.pedidos.model.Pedido;
 import com.example.demo.pedidos.repository.RepositorioPedido;
 import com.example.demo.pedidos.spec.EspecificacaoPedido;
 import com.example.demo.shared.crud.ModuloCrud;
+import com.example.demo.shared.crud.OpcaoCrud;
 import com.example.demo.shared.crud.ProvedorModuloCrud;
 import com.example.demo.shared.crud.filtros.FiltrosCrud;
 import com.example.demo.util.FormatacaoUtil;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
@@ -35,9 +33,15 @@ public class ModuloCrudPedidos implements ProvedorModuloCrud {
         return "pedidos";
     }
 
-
     @Override
     public ModuloCrud modulo() {
+        List<OpcaoCrud> opcoesQuantidade = List.of(
+                new OpcaoCrud("50", "50"),
+                new OpcaoCrud("100", "100"),
+                new OpcaoCrud("200", "200"),
+                new OpcaoCrud("500", "500")
+        );
+
         return new ModuloCrud(
                 chave(),
                 "Pedidos",
@@ -46,7 +50,8 @@ public class ModuloCrudPedidos implements ProvedorModuloCrud {
                         FiltrosCrud.text("busca", "Busca", ""),
                         FiltrosCrud.text("numero_busca", "Numero do pedido", ""),
                         FiltrosCrud.date("data_inicio", "Data Inicial", ""),
-                        FiltrosCrud.date("data_fim", "Data Final", "")
+                        FiltrosCrud.date("data_fim", "Data Final", ""),
+                        FiltrosCrud.select("size", "Quantidade", opcoesQuantidade)
                 ),
                 List.of(
                         col(ColunasPedido.LABEL_ID_PEDIDO, ColunasPedido.ID_PEDIDO),
@@ -67,16 +72,6 @@ public class ModuloCrudPedidos implements ProvedorModuloCrud {
                         col(ColunasPedido.LABEL_REVESTIMENTO, ColunasPedido.REVESTIMENTO),
                         col(ColunasPedido.LABEL_VALOR_TOTAL, ColunasPedido.VALOR_TOTAL),
                         col(ColunasPedido.LABEL_PRAZO_MONTAGEM, ColunasPedido.PRAZO_MONTAGEM),
-                        col(ColunasPedido.LABEL_NUMERO, ColunasPedido.NUMERO),
-                        col(ColunasPedido.LABEL_BAIRRO, ColunasPedido.BAIRRO),
-                        col(ColunasPedido.LABEL_MUNICIPIO, ColunasPedido.MUNICIPIO),
-                        col(ColunasPedido.LABEL_CEP, ColunasPedido.CEP),
-                        col(ColunasPedido.LABEL_REFERENCIA, ColunasPedido.REFERENCIA),
-                        col(ColunasPedido.LABEL_NUMERO_CLIENTE, ColunasPedido.NUMERO_CLIENTE),
-                        col(ColunasPedido.LABEL_BAIRRO_CLIENTE, ColunasPedido.BAIRRO_CLIENTE),
-                        col(ColunasPedido.LABEL_MUNICIPIO_CLIENTE, ColunasPedido.MUNICIPIO_CLIENTE),
-                        col(ColunasPedido.LABEL_CEP_CLIENTE, ColunasPedido.CEP_CLIENTE),
-                        col(ColunasPedido.LABEL_REFERENCIA_CLIENTE, ColunasPedido.REFERENCIA_CLIENTE),
                         col(ColunasPedido.LABEL_DATA_CADASTRO, ColunasPedido.DATA_CADASTRO),
                         col(ColunasPedido.LABEL_VALOR, ColunasPedido.VALOR)
                 )
@@ -90,19 +85,16 @@ public class ModuloCrudPedidos implements ProvedorModuloCrud {
         String dataInicio = parametros.getOrDefault("data_inicio", "").trim();
         String dataFim = parametros.getOrDefault("data_fim", "").trim();
 
-        int page = Integer.parseInt(parametros.getOrDefault("page", "0"));
-        int sizeSolicitado = Integer.parseInt(parametros.getOrDefault("size", "50"));
-        int size = Math.max(1, Math.min(sizeSolicitado, 50));
+        int size = tamanhoPagina(parametros.getOrDefault("size", "50"));
 
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<Pedido> pedidos =
+        List<Pedido> pedidos =
                 pedidoRepository.findAll(
-                        EspecificacaoPedido.filtro(busca, numeroBusca, dataInicio, dataFim),
-                        pageable
+                        EspecificacaoPedido.filtro(busca, numeroBusca, dataInicio, dataFim)
                 );
 
-        return pedidos.getContent().stream()
+        pedidos = pedidos.stream().limit(size).toList();
+
+        return pedidos.stream()
                 .map(p -> {
                     Map<String, Object> row = new HashMap<>();
                     row.put(ColunasPedido.ID_PEDIDO, p.getId());
@@ -146,5 +138,18 @@ public class ModuloCrudPedidos implements ProvedorModuloCrud {
                     return row;
                 })
                 .toList();
+    }
+
+    private int tamanhoPagina(String valor) {
+        if (valor == null || valor.isBlank()) {
+            return 50;
+        }
+        return switch (valor.trim()) {
+            case "50" -> 50;
+            case "100" -> 100;
+            case "200" -> 200;
+            case "500" -> 500;
+            default -> 50;
+        };
     }
 }

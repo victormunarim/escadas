@@ -8,6 +8,6 @@ public class ControladorInicio {
 
     @GetMapping("/")
     public String index() {
-        return "index";
+        return "redirect:/crud/pedidos";
     }
 }
