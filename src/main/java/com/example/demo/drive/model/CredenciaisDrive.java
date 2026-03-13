@@ -25,6 +25,9 @@ public class CredenciaisDrive {
     @Column(name = "token", columnDefinition = "TEXT")
     private String token;
 
+    @Column(name = "parent_folder")
+    private String parentFolder;
+
     protected CredenciaisDrive() {
     }
 
@@ -69,5 +72,13 @@ public class CredenciaisDrive {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getParentFolder() {
+        return parentFolder;
+    }
+
+    public void setParentFolder(String parentFolder) {
+        this.parentFolder = parentFolder;
     }
 }

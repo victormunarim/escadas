@@ -19,7 +19,6 @@ import com.google.api.services.drive.model.Permission;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.UserCredentials;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,9 +38,6 @@ public class ServicoArquivoPedido {
     private final ServicoTokenDrive servicoTokenDrive;
     private final ServicoCredenciaisDrive servicoCredenciaisDrive;
 
-    @Value("${google.drive.parent-folder-id:}")
-    private String pastaPaiId;
-
     public ServicoArquivoPedido(
             RepositorioArquivoPedido repositorioArquivoPedido,
             ServicoTokenDrive servicoTokenDrive,
@@ -60,11 +56,12 @@ public class ServicoArquivoPedido {
     public ArquivoPedido enviarERegistrar(Pedido pedido, MultipartFile multipartFile) {
         validarConfiguracao();
 
+        String pastaPaiId = obterPastaPaiObrigatoria();
         String nomeArquivo = nomeArquivo(multipartFile);
 
         try {
             Drive drive = clienteDrive();
-            String pastaPedidoId = obterOuCriarPastaPedido(drive, pedido);
+            String pastaPedidoId = obterOuCriarPastaPedido(drive, pedido, pastaPaiId);
             String linkArquivo = enviarArquivoParaDrive(drive, pastaPedidoId, nomeArquivo, multipartFile);
 
             ArquivoPedido arquivoPedido = new ArquivoPedido(nomeArquivo, pedido.getId(), linkArquivo);
@@ -112,10 +109,10 @@ public class ServicoArquivoPedido {
         return "https://drive.google.com/file/d/" + arquivoCriado.getId() + "/view";
     }
 
-    private String obterOuCriarPastaPedido(Drive drive, Pedido pedido) throws IOException {
+    private String obterOuCriarPastaPedido(Drive drive, Pedido pedido, String pastaPaiId) throws IOException {
         String nomePasta = FormatacaoUtil.nomePastaPedido(pedido.getNomeCliente(), pedido.getNumeroPedido());
 
-        Optional<String> pastaExistente = buscarPastaPedido(drive, nomePasta);
+        Optional<String> pastaExistente = buscarPastaPedido(drive, nomePasta, pastaPaiId);
         if (pastaExistente.isPresent()) {
             return pastaExistente.get();
         }
@@ -124,9 +121,7 @@ public class ServicoArquivoPedido {
         pastaMetadata.setName(nomePasta);
         pastaMetadata.setMimeType("application/vnd.google-apps.folder");
 
-        if (pastaPaiConfigurada()) {
-            pastaMetadata.setParents(Collections.singletonList(pastaPaiId.trim()));
-        }
+        pastaMetadata.setParents(Collections.singletonList(pastaPaiId.trim()));
 
         File pastaCriada = drive.files()
                 .create(pastaMetadata)
@@ -137,15 +132,12 @@ public class ServicoArquivoPedido {
         return pastaCriada.getId();
     }
 
-    private Optional<String> buscarPastaPedido(Drive drive, String nomePasta) throws IOException {
+    private Optional<String> buscarPastaPedido(Drive drive, String nomePasta, String pastaPaiId) throws IOException {
         StringBuilder consulta = new StringBuilder();
         consulta.append("mimeType = 'application/vnd.google-apps.folder' ");
         consulta.append("and trashed = false ");
         consulta.append("and name = '").append(nomePasta.replace("'", "\\'")).append("'");
-
-        if (pastaPaiConfigurada()) {
-            consulta.append(" and '").append(pastaPaiId.trim()).append("' in parents");
-        }
+        consulta.append(" and '").append(pastaPaiId.trim()).append("' in parents");
 
         FileList resposta = drive.files()
                 .list()
@@ -188,10 +180,6 @@ public class ServicoArquivoPedido {
         return Path.of(original).getFileName().toString();
     }
 
-    private boolean pastaPaiConfigurada() {
-        return pastaPaiId != null && !pastaPaiId.isBlank();
-    }
-
     private void validarConfiguracao() {
         List<String> erros = new ArrayList<>();
 
@@ -201,11 +189,14 @@ public class ServicoArquivoPedido {
         }
 
         if (!servicoCredenciaisDrive.credenciaisConfiguradas()) {
-            erros.add("Credenciais do Google Drive não configuradas. Preencha client_id e client_secret.");
+            erros.add("Credenciais do Google Drive não configuradas. Preencha client_id, project_id, client_secret e parent_folder.");
         }
 
-        if (pastaPaiId == null || pastaPaiId.isBlank()) {
-            erros.add("Configure google.drive.parent-folder-id com a pasta de um Shared Drive.");
+        String pastaPai = servicoCredenciaisDrive.obterCredenciais()
+                .map(CredenciaisDrive::getParentFolder)
+                .orElse(null);
+        if (pastaPai == null || pastaPai.isBlank()) {
+            erros.add("Pasta pai do Google Drive não configurada. Informe a pasta no módulo Google Drive.");
         }
 
         if (!erros.isEmpty()) {
@@ -232,6 +223,16 @@ public class ServicoArquivoPedido {
                 ));
     }
 
+    private String obterPastaPaiObrigatoria() {
+        return servicoCredenciaisDrive.obterCredenciais()
+                .map(CredenciaisDrive::getParentFolder)
+                .filter(valor -> valor != null && !valor.isBlank())
+                .map(String::trim)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Pasta pai do Google Drive não configurada. Informe a pasta no módulo Google Drive."
+                ));
+    }
+
     private IllegalStateException traduzirErroGoogleDrive(GoogleJsonResponseException e) {
         int status = e.getStatusCode();
         String mensagem = e.getDetails() != null && e.getDetails().getMessage() != null
@@ -240,7 +241,7 @@ public class ServicoArquivoPedido {
 
         if (status == 403 && mensagem != null && mensagem.contains("storageQuotaExceeded")) {
             return new IllegalStateException(
-                    "Google Drive recusou o upload por quota. Use Shared Drive e configure google.drive.parent-folder-id com uma pasta desse Shared Drive.",
+                    "Google Drive recusou o upload por quota. Use Shared Drive e configure uma pasta pai desse Shared Drive no módulo Google Drive.",
                     e
             );
         }

@@ -61,7 +61,15 @@
                     <input class="filtro-crud__entrada"
                            type="password"
                            name="clientSecret"
-                           autocomplete="new-password"
+                           autocomplete="new-password">
+                </label>
+                <label class="filtro-crud campo">
+                    <span class="filtro-crud__rotulo">Parent Folder ID</span>
+                    <input class="filtro-crud__entrada"
+                           type="text"
+                           name="parentFolder"
+                           th:value="${parentFolder}"
+                           required>
                 </label>
             </div>
             <div class="formulario-crud__acoes">

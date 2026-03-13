@@ -40,6 +40,7 @@ public class ControladorTokenDrive {
         servicoCredenciaisDrive.obterCredenciais().ifPresent(cred -> {
             model.addAttribute("clientId", cred.getClientId());
             model.addAttribute("projectId", cred.getProjectId());
+            model.addAttribute("parentFolder", cred.getParentFolder());
         });
         model.addAttribute("sucesso", sucesso);
         model.addAttribute("erro", erro);
@@ -51,10 +52,11 @@ public class ControladorTokenDrive {
             @RequestParam(required = false) String clientId,
             @RequestParam(required = false) String projectId,
             @RequestParam(required = false) String clientSecret,
+            @RequestParam(required = false) String parentFolder,
             RedirectAttributes redirectAttributes
     ) {
         try {
-            servicoCredenciaisDrive.salvarCredenciais(clientId, projectId, clientSecret);
+            servicoCredenciaisDrive.salvarCredenciais(clientId, projectId, clientSecret, parentFolder);
             redirectAttributes.addAttribute("sucesso", "Credenciais do Google Drive atualizadas.");
         } catch (Exception e) {
             redirectAttributes.addAttribute("erro", e.getMessage());

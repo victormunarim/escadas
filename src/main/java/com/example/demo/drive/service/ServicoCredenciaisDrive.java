@@ -26,13 +26,15 @@ public class ServicoCredenciaisDrive {
                 .filter(cred -> naoVazio(cred.getClientId()))
                 .filter(cred -> naoVazio(cred.getProjectId()))
                 .filter(cred -> naoVazio(cred.getClientSecret()))
+                .filter(cred -> naoVazio(cred.getParentFolder()))
                 .isPresent();
     }
 
-    public void salvarCredenciais(String clientId, String projectId, String clientSecret) {
+    public void salvarCredenciais(String clientId, String projectId, String clientSecret, String parentFolder) {
         String clientIdLimpo = limpar(clientId);
         String projectIdLimpo = limpar(projectId);
         String clientSecretLimpo = limpar(clientSecret);
+        String parentFolderLimpo = limpar(parentFolder);
 
         CredenciaisDrive credenciais = repositorio.findById(NOME_PADRAO)
                 .orElseGet(() -> new CredenciaisDrive(NOME_PADRAO, "", "", ""));
@@ -43,9 +45,13 @@ public class ServicoCredenciaisDrive {
         if (!naoVazio(projectIdLimpo)) {
             throw new IllegalStateException("project_id é obrigatório.");
         }
+        if (!naoVazio(parentFolderLimpo)) {
+            throw new IllegalStateException("parent_folder é obrigatório.");
+        }
 
         credenciais.setClientId(clientIdLimpo);
         credenciais.setProjectId(projectIdLimpo);
+        credenciais.setParentFolder(parentFolderLimpo);
 
         if (naoVazio(clientSecretLimpo)) {
             credenciais.setClientSecret(clientSecretLimpo);
