@@ -98,7 +98,7 @@ public class Pedido {
     private LocalDateTime dataCadastro;
 
     @Column(name = ColunasPedido.FLAG_OCULTO)
-    private Boolean oculto;
+    private Boolean flagOculto;
 
     @Column(name = ColunasPedido.VALOR)
     private BigDecimal valor;
@@ -215,8 +215,8 @@ public class Pedido {
         this.referenciaCliente = referenciaCliente;
     }
 
-    public void setFlagOculto(Boolean oculto) {
-        this.oculto = oculto;
+    public void setFlagOculto(Boolean flagOculto) {
+        this.flagOculto = flagOculto;
     }
 
     public void setValor(BigDecimal valor) {
@@ -336,7 +336,7 @@ public class Pedido {
     }
 
     public Boolean getFlagOculto() {
-        return oculto;
+        return flagOculto;
     }
 
     public BigDecimal getValor() {

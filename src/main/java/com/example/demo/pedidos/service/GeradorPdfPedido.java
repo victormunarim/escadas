@@ -57,7 +57,7 @@ public class GeradorPdfPedido {
                 )
                 .append("div.header { position: running(header); width: 100%; padding-top: 4mm; } ")
                 .append(
-                        ".logo { position: absolute; top: -2mm; left: -4mm; height: 30mm; width: 70mm; "
+                        ".logo { position: absolute; top: -2mm; left: -8mm; height: 30mm; width: 70mm; "
                                 + "z-index: 100; } "
                 )
                 .append(

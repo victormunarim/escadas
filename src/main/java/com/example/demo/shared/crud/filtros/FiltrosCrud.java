@@ -16,4 +16,8 @@ public final class FiltrosCrud {
     public static FiltroCrudSelecao select(String nome, String rotulo, List<OpcaoCrud> opcoes) {
         return new FiltroCrudSelecao(nome, rotulo, opcoes);
     }
+
+    public static FiltroCrudNumeroExato numeroExato(String nome, String rotulo, String dica) {
+        return new FiltroCrudNumeroExato(nome, rotulo, dica);
+    }
 }

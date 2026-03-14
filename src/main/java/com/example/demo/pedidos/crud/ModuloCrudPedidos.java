@@ -1,16 +1,19 @@
 package com.example.demo.pedidos.crud;
 
 import com.example.demo.pedidos.model.ColunasPedido;
-import com.example.demo.pedidos.model.Pedido;
+import com.example.demo.pedidos.dto.PedidoResumo;
 import com.example.demo.pedidos.repository.RepositorioPedido;
 import com.example.demo.pedidos.spec.EspecificacaoPedido;
 import com.example.demo.shared.crud.ModuloCrud;
 import com.example.demo.shared.crud.OpcaoCrud;
 import com.example.demo.shared.crud.ProvedorModuloCrud;
-import com.example.demo.shared.crud.filtros.FiltrosCrud;
+import com.example.demo.shared.crud.filtros.FiltrosCrudBuilder;
+import com.example.demo.shared.crud.filtros.OpcoesDataCrud;
 import com.example.demo.util.FormatacaoUtil;
 import org.springframework.stereotype.Component;
+import org.springframework.data.domain.PageRequest;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -46,13 +49,14 @@ public class ModuloCrudPedidos implements ProvedorModuloCrud {
                 chave(),
                 "Pedidos",
                 "/crud/" + chave(),
-                List.of(
-                        FiltrosCrud.text("busca", "Busca", ""),
-                        FiltrosCrud.text("numero_busca", "Numero do pedido", ""),
-                        FiltrosCrud.date("data_inicio", "Data Inicial", ""),
-                        FiltrosCrud.date("data_fim", "Data Final", ""),
-                        FiltrosCrud.select("size", "Quantidade", opcoesQuantidade)
-                ),
+                FiltrosCrudBuilder.criar()
+                        .texto("busca", "Busca", "")
+                        .texto("numero_busca", "Numero do pedido", "")
+                        .selecao("dia", "Dia", OpcoesDataCrud.DIAS)
+                        .selecao("mes", "Mês", OpcoesDataCrud.MESES)
+                        .selecao("ano", "Ano", OpcoesDataCrud.ANOS)
+                        .selecao("size", "Quantidade", opcoesQuantidade)
+                        .build(),
                 List.of(
                         col(ColunasPedido.LABEL_ID_PEDIDO, ColunasPedido.ID_PEDIDO),
                         col(ColunasPedido.LABEL_NUMERO_PEDIDO, ColunasPedido.NUMERO_PEDIDO),
@@ -82,17 +86,29 @@ public class ModuloCrudPedidos implements ProvedorModuloCrud {
     public List<Map<String, Object>> linhas(Map<String, String> parametros) {
         String busca = parametros.getOrDefault("busca", "").trim();
         String numeroBusca = parametros.getOrDefault("numero_busca", "").trim();
-        String dataInicio = parametros.getOrDefault("data_inicio", "").trim();
-        String dataFim = parametros.getOrDefault("data_fim", "").trim();
+        String dia = parametros.getOrDefault("dia", "").trim();
+        String mes = parametros.getOrDefault("mes", "").trim();
+        String ano = parametros.getOrDefault("ano", "").trim();
+
+        LocalDate hoje = LocalDate.now();
+        if (!parametros.containsKey("mes")) {
+            mes = String.valueOf(hoje.getMonthValue());
+            parametros.put("mes", mes);
+        }
+        if (!parametros.containsKey("ano")) {
+            ano = String.valueOf(hoje.getYear());
+            parametros.put("ano", ano);
+        }
+        if (!parametros.containsKey("dia")) {
+            parametros.put("dia", "");
+        }
 
         int size = tamanhoPagina(parametros.getOrDefault("size", "50"));
 
-        List<Pedido> pedidos =
-                pedidoRepository.findAll(
-                        EspecificacaoPedido.filtro(busca, numeroBusca, dataInicio, dataFim)
-                );
-
-        pedidos = pedidos.stream().limit(size).toList();
+        List<PedidoResumo> pedidos = pedidoRepository.buscarResumo(
+                EspecificacaoPedido.filtro(busca, numeroBusca, dia, mes, ano),
+                PageRequest.of(0, size)
+        );
 
         return pedidos.stream()
                 .map(p -> {

@@ -1,22 +1,32 @@
 package com.example.demo.pedidos.spec;
 
+import com.example.demo.pedidos.model.ColunasPedido;
 import com.example.demo.pedidos.model.Pedido;
+import com.example.demo.shared.crud.filtros.compostos.FiltroNumeroExato;
+import com.example.demo.shared.spec.BuscaSpecification;
 import org.springframework.data.jpa.domain.Specification;
 
 import jakarta.persistence.criteria.Predicate;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class EspecificacaoPedido {
+
+    private static final List<String> CAMPOS_BUSCA = List.of(
+            ColunasPedido.CAMPO_CLIENTE_NOME,
+            ColunasPedido.CAMPO_EMAIL,
+            ColunasPedido.CAMPO_MUNICIPIO,
+            ColunasPedido.CAMPO_BAIRRO,
+            ColunasPedido.CAMPO_DESCRICAO
+    );
 
     public static Specification<Pedido> filtro(
             String busca,
             String numeroBusca,
-            String dataInicio,
-            String dataFim
+            String dia,
+            String mes,
+            String ano
     ) {
 
         return (root, query, cb) -> {
@@ -24,49 +34,54 @@ public class EspecificacaoPedido {
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(
                     cb.or(
-                            cb.isFalse(root.get("oculto")),
-                            cb.isNull(root.get("oculto"))
+                            cb.isFalse(root.get(ColunasPedido.CAMPO_FLAG_OCULTO)),
+                            cb.isNull(root.get(ColunasPedido.CAMPO_FLAG_OCULTO))
                     )
             );
 
-            if (numeroBusca != null && !numeroBusca.isBlank()) {
-                try {
-                    Integer numero = Integer.parseInt(numeroBusca);
+            Optional<Integer> numero = FiltroNumeroExato.parse(numeroBusca);
+            numero.ifPresent(valor ->
+                    predicates.add(cb.equal(root.get(ColunasPedido.CAMPO_NUMERO_PEDIDO), valor))
+            );
+
+            Predicate buscaPredicate = BuscaSpecification
+                    .<Pedido>textoLike(busca, CAMPOS_BUSCA)
+                    .toPredicate(root, query, cb);
+            if (buscaPredicate != null) {
+                predicates.add(buscaPredicate);
+            }
+
+            Integer mesValor = parseInt(mes);
+            Integer anoValor = parseInt(ano);
+            Integer diaValor = parseInt(dia);
+
+            if (anoValor != null && mesValor != null) {
+                predicates.add(
+                        cb.equal(
+                                cb.function("year", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)),
+                                anoValor
+                        )
+                );
+                predicates.add(
+                        cb.equal(
+                                cb.function("month", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)),
+                                mesValor
+                        )
+                );
+                if (diaValor != null) {
                     predicates.add(
-                            cb.equal(root.get("numeroPedido"), numero)
+                            cb.equal(
+                                    cb.function("day", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)),
+                                    diaValor
+                            )
                     );
-                } catch (NumberFormatException ignored) {}
-            }
-
-            if (busca != null && !busca.isBlank()) {
-
-                String like = "%" + busca.toLowerCase() + "%";
-
-                List<Predicate> orPredicates = new ArrayList<>();
-
-                orPredicates.add(cb.like(cb.lower(root.get("nomeCliente")), like));
-                orPredicates.add(cb.like(cb.lower(root.get("email")), like));
-                orPredicates.add(cb.like(cb.lower(root.get("municipio")), like));
-                orPredicates.add(cb.like(cb.lower(root.get("bairro")), like));
-                orPredicates.add(cb.like(cb.lower(root.get("descricao")), like));
-
+                }
+            } else if (anoValor != null) {
                 predicates.add(
-                        cb.or(orPredicates.toArray(new Predicate[0]))
-                );
-            }
-
-            LocalDate inicio = parseData(dataInicio);
-            if (inicio != null) {
-                predicates.add(
-                        cb.greaterThanOrEqualTo(root.get("dataCadastro"), inicio.atStartOfDay())
-                );
-            }
-
-            LocalDate fim = parseData(dataFim);
-            if (fim != null) {
-                LocalDateTime inicioProximoDia = fim.plusDays(1).atStartOfDay();
-                predicates.add(
-                        cb.lessThan(root.get("dataCadastro"), inicioProximoDia)
+                        cb.equal(
+                                cb.function("year", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)),
+                                anoValor
+                        )
                 );
             }
 
@@ -74,13 +89,13 @@ public class EspecificacaoPedido {
         };
     }
 
-    private static LocalDate parseData(String valor) {
+    private static Integer parseInt(String valor) {
         if (valor == null || valor.isBlank()) {
             return null;
         }
         try {
-            return LocalDate.parse(valor.trim());
-        } catch (DateTimeParseException ignored) {
+            return Integer.parseInt(valor.trim());
+        } catch (NumberFormatException ignored) {
             return null;
         }
     }

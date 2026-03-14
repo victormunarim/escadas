@@ -399,6 +399,13 @@ main{
     color: var(--blue-900);
 }
 
+.filtro-crud__linha{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
 .filtro-crud__entrada,
 .filtro-crud__selecao{
     width: 100%;

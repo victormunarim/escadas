@@ -125,6 +125,7 @@ public final class ColunasPedido {
 
     public static final String DATA_CADASTRO = "data_cadastro";
     public static final String LABEL_DATA_CADASTRO = "Data Cadastro";
+    public static final String CAMPO_DATA_CADASTRO = "dataCadastro";
 
     public static final String FLAG_OCULTO = "flag_oculto";
     public static final String LABEL_FLAG_OCULTO = "Flag Oculto";
