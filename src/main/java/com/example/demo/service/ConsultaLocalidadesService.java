@@ -1,27 +1,29 @@
-package com.example.demo.repository;
+package com.example.demo.service;
 
 import com.example.demo.entity.BairroEntity;
 import com.example.demo.entity.EstadoEntity;
-import com.example.demo.entity.LocalidadeIdEntity;
 import com.example.demo.entity.MunicipioEntity;
+import com.example.demo.repository.BairroRepository;
+import com.example.demo.repository.EstadoRepository;
+import com.example.demo.repository.MunicipioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-@Repository
-public class ConsultaLocalidadesRepository {
-    private static final Logger log = LoggerFactory.getLogger(ConsultaLocalidadesRepository.class);
+@Service
+public class ConsultaLocalidadesService {
+    private static final Logger log = LoggerFactory.getLogger(ConsultaLocalidadesService.class);
 
     private final BairroRepository repositorioBairro;
     private final MunicipioRepository repositorioMunicipio;
     private final EstadoRepository repositorioEstado;
 
-    public ConsultaLocalidadesRepository(
+    public ConsultaLocalidadesService(
             BairroRepository repositorioBairro,
             MunicipioRepository repositorioMunicipio,
             EstadoRepository repositorioEstado
@@ -38,10 +40,8 @@ public class ConsultaLocalidadesRepository {
 
         try {
             return filtrarNomes(
-                    repositorioBairro.findDistinctByIdUfIgnoreCaseOrderByIdNomeAsc(ufNormalizada).stream()
-                            .map(BairroEntity::getId)
-                            .filter(id -> id != null)
-                            .map(LocalidadeIdEntity::getNome),
+                    repositorioBairro.findDistinctByUfIgnoreCaseOrderByNomeAsc(ufNormalizada).stream()
+                            .map(BairroEntity::getNome),
                     termoNormalizado,
                     limiteSeguro
             );
@@ -58,10 +58,8 @@ public class ConsultaLocalidadesRepository {
 
         try {
             return filtrarNomes(
-                    repositorioMunicipio.findDistinctByIdUfIgnoreCaseOrderByIdNomeAsc(ufNormalizada).stream()
-                            .map(MunicipioEntity::getId)
-                            .filter(id -> id != null)
-                            .map(LocalidadeIdEntity::getNome),
+                    repositorioMunicipio.findDistinctByUfIgnoreCaseOrderByNomeAsc(ufNormalizada).stream()
+                            .map(MunicipioEntity::getNome),
                     termoNormalizado,
                     limiteSeguro
             );

@@ -93,24 +93,21 @@
                     th:attr="
                         required=${campo.obrigatorio ? 'required' : null},
                         list=${'lista-' + campo.nome},
-                        data-list-id=${'lista-' + campo.nome},
-                        data-source-url='/pedidos/localidades/bairros',
-                        data-min-chars='0',
-                        data-max-options='15'
+                        data-list-id=${'lista-' + campo.nome}
                     ">
-            <datalist th:attr="id=${'lista-' + campo.nome}"></datalist>
+            <datalist th:attr="id=${'lista-' + campo.nome}">
+                <option
+                        th:each="opt : ${campo.opcoes}"
+                        th:value="${opt.valor}">
+                </option>
+            </datalist>
         </th:block>
         <th:block th:unless="${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--bairro')}">
             <select
                     class="filtro-crud__selecao"
                     th:field="*{__${campo.nome}__}"
-                    th:classappend="${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio')} ? ' js-municipio-select' : ''"
                     th:attr="
-                        required=${campo.obrigatorio ? 'required' : null},
-                        data-source-url=${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio') ? '/pedidos/localidades/municipios' : null},
-                        data-uf-field=${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio-cliente') ? 'ufCliente' : (campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio') ? 'uf' : null)},
-                        data-max-options=${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio') ? '500' : null},
-                        disabled=${campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio-cliente') and (#object.ufCliente == null or #strings.isEmpty(#strings.trim(#object.ufCliente))) ? 'disabled' : (campo.classeCssCampo != null and #strings.contains(campo.classeCssCampo, 'campo--municipio') and (#object.uf == null or #strings.isEmpty(#strings.trim(#object.uf))) ? 'disabled' : null)}
+                        required=${campo.obrigatorio ? 'required' : null}
                     ">
                 <option value="">Selecione</option>
                 <option

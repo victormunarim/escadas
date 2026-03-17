@@ -1,32 +1,68 @@
 package com.example.demo.entity;
 
+import com.example.demo.dto.ArquivoPedidoDTO;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.springframework.beans.BeanUtils;
 
 @Entity
 @Table(name = "arquivos")
 public class ArquivoPedidoEntity {
 
-    @EmbeddedId
-    private ArquivoPedidoIdEntity id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
-    protected ArquivoPedidoEntity() {
+    @Column(name = "nome", nullable = false)
+    private String nome;
+
+    @Column(name = "pedido_id", nullable = false)
+    private Long pedidoId;
+
+    @Column(name = "link", nullable = false, length = 1000)
+    private String link;
+
+    public ArquivoPedidoEntity() {
     }
 
-    public ArquivoPedidoEntity(String nome, Long pedidoId, String link) {
-        this.id = new ArquivoPedidoIdEntity(nome, pedidoId, link);
+    public ArquivoPedidoEntity(ArquivoPedidoDTO arquivoPedidoDTO) {
+        BeanUtils.copyProperties(arquivoPedidoDTO, this);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {
-        return id == null ? null : id.getNome();
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public Long getPedidoId() {
-        return id == null ? null : id.getPedidoId();
+        return pedidoId;
+    }
+
+    public void setPedidoId(Long pedidoId) {
+        this.pedidoId = pedidoId;
     }
 
     public String getLink() {
-        return id == null ? null : id.getLink();
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 }

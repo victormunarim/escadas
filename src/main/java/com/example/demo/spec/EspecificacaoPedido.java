@@ -1,7 +1,7 @@
 package com.example.demo.spec;
 
 import com.example.demo.constants.ColunasPedido;
-import com.example.demo.entity.PedidoEntity;
+import com.example.demo.entity.PedidoResumoEntity;
 import com.example.demo.crud.filtros.compostos.FiltroNumeroExato;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -15,12 +15,10 @@ public class EspecificacaoPedido {
     private static final List<String> CAMPOS_BUSCA = List.of(
             ColunasPedido.CAMPO_CLIENTE_NOME,
             ColunasPedido.CAMPO_EMAIL,
-            ColunasPedido.CAMPO_MUNICIPIO,
-            ColunasPedido.CAMPO_BAIRRO,
             ColunasPedido.CAMPO_DESCRICAO
     );
 
-    public static Specification<PedidoEntity> filtro(
+    public static Specification<PedidoResumoEntity> filtro(
             String busca,
             String numeroBusca,
             String dia,
@@ -43,8 +41,7 @@ public class EspecificacaoPedido {
                     predicates.add(cb.equal(root.get(ColunasPedido.CAMPO_NUMERO_PEDIDO), valor))
             );
 
-            Predicate buscaPredicate = BuscaSpecification
-                    .<PedidoEntity>textoLike(busca, CAMPOS_BUSCA)
+            Predicate buscaPredicate = textoLike(busca, CAMPOS_BUSCA)
                     .toPredicate(root, query, cb);
             if (buscaPredicate != null) {
                 predicates.add(buscaPredicate);
@@ -97,5 +94,21 @@ public class EspecificacaoPedido {
         } catch (NumberFormatException ignored) {
             return null;
         }
+    }
+
+    private static Specification<PedidoResumoEntity> textoLike(String termo, List<String> campos) {
+        if (termo == null || termo.isBlank() || campos == null || campos.isEmpty()) {
+            return (root, query, cb) -> cb.conjunction();
+        }
+
+        String like = "%" + termo.toLowerCase() + "%";
+
+        return (root, query, cb) -> {
+            List<Predicate> orPredicates = new ArrayList<>();
+            for (String campo : campos) {
+                orPredicates.add(cb.like(cb.lower(root.get(campo)), like));
+            }
+            return cb.or(orPredicates.toArray(new Predicate[0]));
+        };
     }
 }

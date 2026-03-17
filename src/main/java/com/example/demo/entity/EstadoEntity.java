@@ -6,10 +6,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "`Estado`")
+@Table(name = "Estado")
 public class EstadoEntity {
     @Id
-    @Column(name = "`Uf`")
+    @Column(name = "Uf")
     private String uf;
 
     public String getUf() {

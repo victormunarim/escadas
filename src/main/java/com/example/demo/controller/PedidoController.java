@@ -3,13 +3,15 @@ package com.example.demo.controller;
 import com.example.demo.dto.ArquivoPedidoDTO;
 import com.example.demo.dto.FormularioPedidoDTO;
 import com.example.demo.dto.PedidoDTO;
+import com.example.demo.dto.PedidoResumoDTO;
 import com.example.demo.constants.ColunasPedido;
-import com.example.demo.service.FormularioPedidoService;
-import com.example.demo.service.PedidoService;
 import com.example.demo.crud.ModuloCrud;
 import com.example.demo.crud.OpcaoCrud;
 import com.example.demo.crud.filtros.FiltrosCrudBuilder;
 import com.example.demo.crud.filtros.OpcoesDataCrud;
+import com.example.demo.exception.PedidoNaoEncontradoException;
+import com.example.demo.service.FormularioPedidoService;
+import com.example.demo.service.PedidoService;
 import com.example.demo.util.FormatacaoUtil;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -17,24 +19,20 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.example.demo.crud.ColunaCrud.col;
+
 
 @Controller
 public class PedidoController {
@@ -49,31 +47,6 @@ public class PedidoController {
         this.formularioPedidoService = formularioPedidoService;
     }
 
-    @GetMapping(value = "/pedidos", produces = MediaType.TEXT_HTML_VALUE)
-    public String listarHtml(Model model) {
-        model.addAttribute("pedidos", pedidoService.listarTodos());
-        return "redirect:/crud/pedidos";
-    }
-
-    @PostMapping(value = "/pedidos", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public void inserir(@RequestBody PedidoDTO pedidoDTO) {
-        pedidoService.inserir(pedidoDTO);
-    }
-
-    @PutMapping(value = "/pedidos", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public PedidoDTO editar(@RequestBody PedidoDTO pedidoDTO) {
-        return pedidoService.editar(pedidoDTO);
-    }
-
-    @DeleteMapping("/pedidos/{id}")
-    @ResponseBody
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
-        pedidoService.excluir(id);
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping("/crud/pedidos")
     public String crudPedidos(
             @RequestParam Map<String, String> parametros,
@@ -82,7 +55,7 @@ public class PedidoController {
         Map<String, String> parametrosEfetivos = new java.util.HashMap<>(parametros);
         parametrosEfetivos.putIfAbsent("size", "50");
 
-        List<Map<String, Object>> linhas = pedidoService.listarResumo(parametrosEfetivos);
+        List<PedidoResumoDTO> linhas = pedidoService.listarResumo(parametrosEfetivos);
 
         model.addAttribute("modulo", moduloCrudPedidos());
         model.addAttribute("parametros", parametrosEfetivos);
@@ -142,9 +115,10 @@ public class PedidoController {
             Model model,
             RedirectAttributes redirectAttributes
     ) {
-        PedidoDTO pedido = pedidoService.buscarPorId(id);
-
-        if (pedido == null) {
+        PedidoDTO pedido;
+        try {
+            pedido = pedidoService.buscarPorId(id);
+        } catch (PedidoNaoEncontradoException e) {
             redirectAttributes.addFlashAttribute("sucesso", "Pedido não encontrado.");
             return "redirect:/crud/pedidos";
         }
@@ -249,8 +223,10 @@ public class PedidoController {
             Model model,
             RedirectAttributes redirectAttributes
     ) {
-        FormularioPedidoDTO formularioPedido = pedidoService.criarFormulario(id);
-        if (formularioPedido == null) {
+        FormularioPedidoDTO formularioPedido;
+        try {
+            formularioPedido = pedidoService.criarFormulario(id);
+        } catch (PedidoNaoEncontradoException e) {
             redirectAttributes.addFlashAttribute("sucesso", "Pedido não encontrado.");
             return "redirect:/crud/pedidos";
         }
@@ -272,7 +248,9 @@ public class PedidoController {
             @ModelAttribute FormularioPedidoDTO formularioPedido,
             RedirectAttributes redirectAttributes
     ) {
-        if (!pedidoService.atualizarFormulario(id, formularioPedido)) {
+        try {
+            pedidoService.atualizarFormulario(id, formularioPedido);
+        } catch (PedidoNaoEncontradoException e) {
             redirectAttributes.addFlashAttribute("sucesso", "Pedido não encontrado.");
             return "redirect:/crud/pedidos";
         }
@@ -283,20 +261,22 @@ public class PedidoController {
 
     @PostMapping("/pedidos/{id}/excluir")
     public String excluirView(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        if (pedidoService.buscarPorId(id) == null) {
+        try {
+            pedidoService.excluir(id);
+        } catch (PedidoNaoEncontradoException e) {
             redirectAttributes.addFlashAttribute("sucesso", "Pedido não encontrado.");
             return "redirect:/crud/pedidos";
         }
-
-        pedidoService.excluir(id);
         redirectAttributes.addFlashAttribute("sucesso", "Pedido excluído com sucesso.");
         return "redirect:/crud/pedidos";
     }
 
     @GetMapping("/pedidos/{id}/pdf")
     public ResponseEntity<byte[]> pdf(@PathVariable Long id) {
-        byte[] pdf = pedidoService.gerarPdf(id);
-        if (pdf == null) {
+        byte[] pdf;
+        try {
+            pdf = pedidoService.gerarPdf(id);
+        } catch (PedidoNaoEncontradoException e) {
             return ResponseEntity.notFound().build();
         }
 
@@ -314,27 +294,4 @@ public class PedidoController {
                 .body(pdf);
     }
 
-    @GetMapping("/pedidos/localidades/bairros")
-    @ResponseBody
-    public List<OpcaoCrud> buscarBairros(
-            @RequestParam(name = "q", defaultValue = "") String termo,
-            @RequestParam(name = "uf", defaultValue = "SC") String uf,
-            @RequestParam(name = "limit", defaultValue = "15") Integer limite
-    ) {
-        return formularioPedidoService.buscarBairros(termo, uf, limite).stream()
-                .map(valor -> new OpcaoCrud(valor, valor))
-                .collect(Collectors.toList());
-    }
-
-    @GetMapping("/pedidos/localidades/municipios")
-    @ResponseBody
-    public List<OpcaoCrud> buscarMunicipios(
-            @RequestParam(name = "q", defaultValue = "") String termo,
-            @RequestParam(name = "uf", defaultValue = "SC") String uf,
-            @RequestParam(name = "limit", defaultValue = "15") Integer limite
-    ) {
-        return formularioPedidoService.buscarMunicipios(termo, uf, limite).stream()
-                .map(valor -> new OpcaoCrud(valor, valor))
-                .collect(Collectors.toList());
-    }
 }

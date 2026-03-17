@@ -54,27 +54,27 @@
         <tr class="tabela-crud__linha" th:each="row : ${linhas}">
           <td class="tabela-crud__celula"
               th:each="c : ${modulo.colunas}"
-              th:text="${row[c.campo]}">
+              th:text="${row.get(c.campo)}">
             valor
           </td>
           <td class="tabela-crud__celula" th:if="${modulo.chave == 'pedidos'}">
             <div class="acoes-tabela">
               <a class="acoes-tabela__botao acoes-tabela__botao--visualizar"
-                 th:href="@{/pedidos/{id}/visualizar(id=${row['id_pedido']})}">
+                 th:href="@{/pedidos/{id}/visualizar(id=${row.get('id_pedido')})}">
                 Visualizar
               </a>
               <a class="acoes-tabela__botao acoes-tabela__botao--pdf"
-                 th:href="@{/pedidos/{id}/pdf(id=${row['id_pedido']})}"
+                 th:href="@{/pedidos/{id}/pdf(id=${row.get('id_pedido')})}"
                  target="_blank"
                  rel="noopener">
                 PDF
               </a>
               <a class="acoes-tabela__botao acoes-tabela__botao--editar"
-                 th:href="@{/pedidos/{id}/editar(id=${row['id_pedido']})}">
+                 th:href="@{/pedidos/{id}/editar(id=${row.get('id_pedido')})}">
                 Editar
               </a>
               <form method="post"
-                    th:action="@{/pedidos/{id}/excluir(id=${row['id_pedido']})}"
+                    th:action="@{/pedidos/{id}/excluir(id=${row.get('id_pedido')})}"
                     onsubmit="return confirm('Tem certeza que deseja excluir este pedido?');">
                 <button class="acoes-tabela__botao acoes-tabela__botao--excluir" type="submit">
                   Excluir

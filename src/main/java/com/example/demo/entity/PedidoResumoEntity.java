@@ -1,72 +1,83 @@
-package com.example.demo.dto;
+package com.example.demo.entity;
 
 import com.example.demo.constants.ColunasPedido;
-import com.example.demo.entity.PedidoResumoEntity;
-import com.example.demo.util.FormatacaoUtil;
-import org.springframework.beans.BeanUtils;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-public class PedidoResumoDTO {
-    private static final DateTimeFormatter FORMATO_DATA_CADASTRO = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+@Entity
+@Table(name = ColunasPedido.TABELA)
+public class PedidoResumoEntity {
+
+    @Id
+    @Column(name = ColunasPedido.ID_PEDIDO)
     private Long id;
+
+    @Column(name = ColunasPedido.NUMERO_PEDIDO)
     private Integer numeroPedido;
+
+    @Column(name = ColunasPedido.CLIENTE_NOME)
     private String nomeCliente;
+
+    @Column(name = ColunasPedido.EMAIL)
     private String email;
+
+    @Column(name = ColunasPedido.CPF)
     private Long cpf;
+
+    @Column(name = ColunasPedido.RG)
     private Integer rg;
+
+    @Column(name = ColunasPedido.CNPJ)
     private String cnpj;
+
+    @Column(name = ColunasPedido.SERVICO_SOCIAL)
     private String servicoSocial;
+
+    @Column(name = ColunasPedido.PROFISSAO)
     private String profissao;
+
+    @Column(name = ColunasPedido.ADM_OBRA)
     private String admObra;
+
+    @Column(name = ColunasPedido.TELEFONE)
     private String telefone;
+
+    @Column(name = ColunasPedido.TELEFONE_FIXO)
     private String telefoneFixo;
+
+    @Column(name = ColunasPedido.DESCRICAO, columnDefinition = "TEXT")
     private String descricao;
+
+    @Column(name = ColunasPedido.ACABAMENTO)
     private String acabamento;
+
+    @Column(name = ColunasPedido.TUBOS)
     private String tubos;
+
+    @Column(name = ColunasPedido.REVESTIMENTO)
     private Boolean revestimento;
+
+    @Column(name = ColunasPedido.VALOR_TOTAL)
     private BigDecimal valorTotal;
+
+    @Column(name = ColunasPedido.PRAZO_MONTAGEM)
     private Integer prazoMontagem;
+
+    @Column(name = ColunasPedido.DATA_CADASTRO)
     private LocalDateTime dataCadastro;
+
+    @Column(name = ColunasPedido.FLAG_OCULTO)
+    private Boolean flagOculto;
+
+    @Column(name = ColunasPedido.VALOR)
     private BigDecimal valor;
 
-    public PedidoResumoDTO() {
-    }
-
-    public PedidoResumoDTO(PedidoResumoEntity pedido) {
-        BeanUtils.copyProperties(pedido, this);
-    }
-
-    public Object get(String campo) {
-        if (campo == null) {
-            return null;
-        }
-        return switch (campo) {
-            case ColunasPedido.ID_PEDIDO -> getId();
-            case ColunasPedido.NUMERO_PEDIDO -> getNumeroPedido();
-            case ColunasPedido.CLIENTE_NOME -> getNomeCliente();
-            case ColunasPedido.EMAIL -> getEmail();
-            case ColunasPedido.CPF -> FormatacaoUtil.formatarCpf(getCpf());
-            case ColunasPedido.RG -> FormatacaoUtil.formatarRg(getRg());
-            case ColunasPedido.CNPJ -> getCnpj();
-            case ColunasPedido.SERVICO_SOCIAL -> getServicoSocial();
-            case ColunasPedido.PROFISSAO -> getProfissao();
-            case ColunasPedido.ADM_OBRA -> getAdmObra();
-            case ColunasPedido.TELEFONE -> FormatacaoUtil.formatarTelefoneCelular(getTelefone());
-            case ColunasPedido.TELEFONE_FIXO -> FormatacaoUtil.formatarTelefoneFixo(getTelefoneFixo());
-            case ColunasPedido.DESCRICAO -> getDescricao();
-            case ColunasPedido.ACABAMENTO -> getAcabamento();
-            case ColunasPedido.TUBOS -> getTubos();
-            case ColunasPedido.REVESTIMENTO -> Boolean.TRUE.equals(getRevestimento()) ? "Sim" : "Não";
-            case ColunasPedido.VALOR_TOTAL -> FormatacaoUtil.formatarValor(getValorTotal());
-            case ColunasPedido.PRAZO_MONTAGEM -> getPrazoMontagem();
-            case ColunasPedido.DATA_CADASTRO ->
-                    getDataCadastro() == null ? "" : getDataCadastro().format(FORMATO_DATA_CADASTRO);
-            case ColunasPedido.VALOR -> FormatacaoUtil.formatarValor(getValor());
-            default -> null;
-        };
+    public PedidoResumoEntity() {
     }
 
     public Long getId() {
@@ -219,6 +230,14 @@ public class PedidoResumoDTO {
 
     public void setDataCadastro(LocalDateTime dataCadastro) {
         this.dataCadastro = dataCadastro;
+    }
+
+    public Boolean getFlagOculto() {
+        return flagOculto;
+    }
+
+    public void setFlagOculto(Boolean flagOculto) {
+        this.flagOculto = flagOculto;
     }
 
     public BigDecimal getValor() {

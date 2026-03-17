@@ -3,7 +3,7 @@ package com.example.demo.service;
 import com.example.demo.constants.ColunasPedido;
 import com.example.demo.dto.FormularioPedidoDTO;
 import com.example.demo.entity.PedidoEntity;
-import com.example.demo.repository.ConsultaLocalidadesRepository;
+import com.example.demo.service.ConsultaLocalidadesService;
 import com.example.demo.crud.OpcaoCrud;
 import com.example.demo.crud.formulario.CampoFormularioCrud;
 import com.example.demo.crud.formulario.CamposFormularioCrud;
@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 @Service
 public class FormularioPedidoService {
 
-    private final ConsultaLocalidadesRepository consultaLocalidades;
+    private final ConsultaLocalidadesService consultaLocalidades;
 
-    public FormularioPedidoService(ConsultaLocalidadesRepository consultaLocalidades) {
+    public FormularioPedidoService(ConsultaLocalidadesService consultaLocalidades) {
         this.consultaLocalidades = consultaLocalidades;
     }
 
@@ -54,8 +54,12 @@ public class FormularioPedidoService {
                 camposFormularioPedido(
                         opcoesUf(formularioPedido.getUf()),
                         opcoesUf(formularioPedido.getUfCliente()),
-                        opcoesDoValoresAtuais(
-                                formularioPedido.getBairro(),
+                        opcoesBairrosPorUf(
+                                formularioPedido.getUf(),
+                                formularioPedido.getBairro()
+                        ),
+                        opcoesBairrosPorUf(
+                                formularioPedido.getUfCliente(),
                                 formularioPedido.getBairroCliente()
                         ),
                         opcoesMunicipiosPorUf(
@@ -138,6 +142,7 @@ public class FormularioPedidoService {
             List<OpcaoCrud> opcoesUf,
             List<OpcaoCrud> opcoesUfCliente,
             List<OpcaoCrud> opcoesBairro,
+            List<OpcaoCrud> opcoesBairroCliente,
             List<OpcaoCrud> opcoesMunicipio,
             List<OpcaoCrud> opcoesMunicipioCliente
     ) {
@@ -343,7 +348,7 @@ public class FormularioPedidoService {
                         ColunasPedido.CAMPO_BAIRRO_CLIENTE,
                         ColunasPedido.LABEL_BAIRRO_CLIENTE,
                         false,
-                        opcoesBairro,
+                        opcoesBairroCliente,
                         "campo--bairro-cliente"
                 ),
                 CamposFormularioCrud.texto(
@@ -429,6 +434,31 @@ public class FormularioPedidoService {
         }
 
         List<OpcaoCrud> opcoes = consultaLocalidades.buscarMunicipios("", uf, 500).stream()
+                .map(valor -> new OpcaoCrud(valor, valor))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        LinkedHashSet<String> valores = opcoes.stream()
+                .map(OpcaoCrud::valor)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        for (String valorAtual : valoresAtuais) {
+            if (valorAtual == null || valorAtual.isBlank()) {
+                continue;
+            }
+            if (valores.add(valorAtual)) {
+                opcoes.add(0, new OpcaoCrud(valorAtual, valorAtual));
+            }
+        }
+
+        return opcoes;
+    }
+
+    private List<OpcaoCrud> opcoesBairrosPorUf(String uf, String... valoresAtuais) {
+        if (uf == null || uf.isBlank()) {
+            return opcoesDoValoresAtuais(valoresAtuais);
+        }
+
+        List<OpcaoCrud> opcoes = consultaLocalidades.buscarBairros("", uf, 500).stream()
                 .map(valor -> new OpcaoCrud(valor, valor))
                 .collect(Collectors.toCollection(ArrayList::new));
 

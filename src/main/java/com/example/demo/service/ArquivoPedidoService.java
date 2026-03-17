@@ -48,13 +48,13 @@ public class ArquivoPedidoService {
     }
 
     public List<ArquivoPedidoDTO> listarPorPedido(Long pedidoId) {
-        return repositorioArquivoPedido.findByIdPedidoIdOrderByIdNomeAsc(pedidoId).stream()
-                .map(arquivo -> new ArquivoPedidoDTO(arquivo.getNome(), arquivo.getPedidoId(), arquivo.getLink()))
+        return repositorioArquivoPedido.findByPedidoIdOrderByNomeAsc(pedidoId).stream()
+                .map(ArquivoPedidoDTO::new)
                 .toList();
     }
 
     @Transactional
-    public ArquivoPedidoDTO enviarERegistrar(PedidoEntity pedido, MultipartFile multipartFile) {
+    public void enviarERegistrar(PedidoEntity pedido, MultipartFile multipartFile) {
         validarConfiguracao();
 
         String pastaPaiId = obterPastaPaiObrigatoria();
@@ -65,9 +65,14 @@ public class ArquivoPedidoService {
             String pastaPedidoId = obterOuCriarPastaPedido(drive, pedido, pastaPaiId);
             String linkArquivo = enviarArquivoParaDrive(drive, pastaPedidoId, nomeArquivo, multipartFile);
 
-            ArquivoPedidoEntity arquivoPedido = new ArquivoPedidoEntity(nomeArquivo, pedido.getId(), linkArquivo);
+            ArquivoPedidoDTO arquivoDTO = new ArquivoPedidoDTO();
+            arquivoDTO.setNome(nomeArquivo);
+            arquivoDTO.setPedidoId(pedido.getId());
+            arquivoDTO.setLink(linkArquivo);
+
+            ArquivoPedidoEntity arquivoPedido = new ArquivoPedidoEntity(arquivoDTO);
             ArquivoPedidoEntity salvo = repositorioArquivoPedido.save(arquivoPedido);
-            return new ArquivoPedidoDTO(salvo.getNome(), salvo.getPedidoId(), salvo.getLink());
+            new ArquivoPedidoDTO(salvo);
         } catch (GoogleJsonResponseException e) {
             throw traduzirErroGoogleDrive(e);
         } catch (IOException | GeneralSecurityException e) {
@@ -228,7 +233,7 @@ public class ArquivoPedidoService {
     private String obterPastaPaiObrigatoria() {
         return servicoCredenciaisDrive.obterCredenciais()
                 .map(CredenciaisDriveEntity::getParentFolder)
-                .filter(valor -> valor != null && !valor.isBlank())
+                .filter(valor -> !valor.isBlank())
                 .map(String::trim)
                 .orElseThrow(() -> new IllegalStateException(
                         "Pasta pai do Google Drive não configurada. Informe a pasta no módulo Google Drive."

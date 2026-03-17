@@ -88,7 +88,7 @@ public final class ColunasPedido {
     public static final String CAMPO_UF_CLIENTE = "ufCliente";
 
     public static final String BAIRRO = "bairro";
-    public static final String LABEL_BAIRRO = "BairroEntity Obra";
+    public static final String LABEL_BAIRRO = "Bairro Obra";
     public static final String CAMPO_BAIRRO = "bairro";
 
     public static final String MUNICIPIO = "municipio";
@@ -108,7 +108,7 @@ public final class ColunasPedido {
     public static final String CAMPO_NUMERO_CLIENTE = "numeroCliente";
 
     public static final String BAIRRO_CLIENTE = "bairro_cliente";
-    public static final String LABEL_BAIRRO_CLIENTE = "BairroEntity Cliente";
+    public static final String LABEL_BAIRRO_CLIENTE = "Bairro Cliente";
     public static final String CAMPO_BAIRRO_CLIENTE = "bairroCliente";
 
     public static final String MUNICIPIO_CLIENTE = "municipio_cliente";
@@ -128,7 +128,6 @@ public final class ColunasPedido {
     public static final String CAMPO_DATA_CADASTRO = "dataCadastro";
 
     public static final String FLAG_OCULTO = "flag_oculto";
-    public static final String LABEL_FLAG_OCULTO = "Flag Oculto";
     public static final String CAMPO_FLAG_OCULTO = "flagOculto";
 
     public static final String VALOR = "valor";
