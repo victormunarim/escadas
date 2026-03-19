@@ -15,19 +15,6 @@ public class UsuarioService {
         this.repositorioUsuario = repositorioUsuario;
     }
 
-    public Optional<UsuarioEntity> buscarPorLogin(String login) {
-        if (login == null || login.isBlank()) {
-            return Optional.empty();
-        }
-
-        Optional<UsuarioEntity> usuarioPorEmail = repositorioUsuario.findByEmailIgnoreCase(login);
-        if (usuarioPorEmail.isPresent()) {
-            return usuarioPorEmail;
-        }
-
-        return repositorioUsuario.findByNomeIgnoreCase(login);
-    }
-
     public UsuarioEntity salvar(UsuarioEntity usuario) {
         return repositorioUsuario.save(usuario);
     }

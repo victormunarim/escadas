@@ -16,10 +16,9 @@
                th:text="${modulo.nome}"></a>
         </div>
 
-        <div class="usuario-barra" th:if="${usuarioLogadoNome != null}">
-            <span class="usuario-nome" th:text="${usuarioLogadoNome}"></span>
+        <div class="usuario-barra">
+            <span class="usuario-nome" th:if="${usuarioLogadoNome != null}" th:text="${usuarioLogadoNome}"></span>
             <form th:action="@{/logout}" method="post">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 <button type="submit" class="usuario-sair">Sair</button>
             </form>
         </div>

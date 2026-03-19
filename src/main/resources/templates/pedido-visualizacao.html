@@ -16,7 +16,7 @@
         </div>
         <div class="pedido-visualizacao__acoes">
             <a class="acoes-tabela__botao acoes-tabela__botao--editar"
-               th:href="@{/pedidos/{id}/editar(id=${pedidoId})}">
+                th:href="@{/pedidos/{id}/editar(id=${pedidoId})}">
                 Editar
             </a>
             <a class="acoes-tabela__botao acoes-tabela__botao--pdf"
@@ -77,7 +77,6 @@
               th:action="@{/pedidos/{id}/arquivos(id=${pedidoId})}"
               method="post"
               enctype="multipart/form-data">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <input class="pedido-visualizacao__arquivo-input" type="file" name="arquivo" required>
             <button class="busca-crud__botao" type="submit">Enviar para Google Drive</button>
         </form>

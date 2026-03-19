@@ -38,7 +38,6 @@
         <form class="formulario-crud formulario-crud--separado"
               method="post"
               th:action="@{/token/credenciais}">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <div class="formulario-crud__grade">
                 <label class="filtro-crud campo">
                     <span class="filtro-crud__rotulo">Client ID</span>
