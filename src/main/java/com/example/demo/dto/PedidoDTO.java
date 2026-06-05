@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class PedidoDTO {
-    private Long id;
+    private Integer id;
     private Integer numeroPedido;
     private String nomeCliente;
     private String email;
@@ -26,11 +26,17 @@ public class PedidoDTO {
     private BigDecimal valorTotal;
     private Integer prazoMontagem;
     private Integer numero;
+    private Integer estadoId;
+    private Integer municipioId;
+    private Integer bairroId;
     private String bairro;
     private String municipio;
     private Integer cep;
     private String referencia;
     private Integer numeroCliente;
+    private Integer estadoClienteId;
+    private Integer municipioClienteId;
+    private Integer bairroClienteId;
     private String bairroCliente;
     private String municipioCliente;
     private Integer cepCliente;
@@ -45,11 +51,11 @@ public class PedidoDTO {
 
     public PedidoDTO() {}
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -197,6 +203,30 @@ public class PedidoDTO {
         this.numero = numero;
     }
 
+    public Integer getEstadoId() {
+        return estadoId;
+    }
+
+    public void setEstadoId(Integer estadoId) {
+        this.estadoId = estadoId;
+    }
+
+    public Integer getMunicipioId() {
+        return municipioId;
+    }
+
+    public void setMunicipioId(Integer municipioId) {
+        this.municipioId = municipioId;
+    }
+
+    public Integer getBairroId() {
+        return bairroId;
+    }
+
+    public void setBairroId(Integer bairroId) {
+        this.bairroId = bairroId;
+    }
+
     public String getBairro() {
         return bairro;
     }
@@ -235,6 +265,30 @@ public class PedidoDTO {
 
     public void setNumeroCliente(Integer numeroCliente) {
         this.numeroCliente = numeroCliente;
+    }
+
+    public Integer getEstadoClienteId() {
+        return estadoClienteId;
+    }
+
+    public void setEstadoClienteId(Integer estadoClienteId) {
+        this.estadoClienteId = estadoClienteId;
+    }
+
+    public Integer getMunicipioClienteId() {
+        return municipioClienteId;
+    }
+
+    public void setMunicipioClienteId(Integer municipioClienteId) {
+        this.municipioClienteId = municipioClienteId;
+    }
+
+    public Integer getBairroClienteId() {
+        return bairroClienteId;
+    }
+
+    public void setBairroClienteId(Integer bairroClienteId) {
+        this.bairroClienteId = bairroClienteId;
     }
 
     public String getBairroCliente() {

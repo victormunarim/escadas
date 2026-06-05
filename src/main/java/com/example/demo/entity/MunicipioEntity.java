@@ -6,23 +6,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Municipio")
+@Table(name = "municipio", schema = "escadas")
 public class MunicipioEntity {
     @Id
-    @Column(name = "Id")
-    private Long id;
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
-    @Column(name = "Nome")
+    @Column(name = "nome")
     private String nome;
 
-    @Column(name = "Uf")
-    private String uf;
+    @Column(name = "estado_id")
+    private Integer estadoId;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -34,11 +34,12 @@ public class MunicipioEntity {
         this.nome = nome;
     }
 
-    public String getUf() {
-        return uf;
+    public Integer getEstadoId() {
+        return estadoId;
     }
 
-    public void setUf(String uf) {
-        this.uf = uf;
+    public void setEstadoId(Integer estadoId) {
+        this.estadoId = estadoId;
     }
+
 }

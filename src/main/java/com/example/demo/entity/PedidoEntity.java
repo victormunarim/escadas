@@ -1,362 +1,434 @@
 package com.example.demo.entity;
 
-import com.example.demo.constants.ColunasPedido;
-import com.example.demo.dto.PedidoDTO;
 import jakarta.persistence.*;
-import org.springframework.beans.BeanUtils;
+
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
-@Table(name = ColunasPedido.TABELA)
+@Table(name = "pedidos", schema = "escadas")
 public class PedidoEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = ColunasPedido.ID_PEDIDO)
-    private Long id;
+    @Column(name = "id_pedido", nullable = false)
+    private Integer id;
 
-    @Column(name = ColunasPedido.NUMERO_PEDIDO)
-    private Integer numeroPedido;
-
-    @Column(name = ColunasPedido.CLIENTE_NOME)
-    private String nomeCliente;
-
-    @Column(name = ColunasPedido.EMAIL)
-    private String email;
-
-    @Column(name = ColunasPedido.CPF)
-    private Long cpf;
-
-    @Column(name = ColunasPedido.RG)
-    private Integer rg;
-
-    @Column(name = ColunasPedido.CNPJ)
-    private String cnpj;
-
-    @Column(name = ColunasPedido.SERVICO_SOCIAL)
-    private String servicoSocial;
-
-    @Column(name = ColunasPedido.PROFISSAO)
-    private String profissao;
-
-    @Column(name = ColunasPedido.ADM_OBRA)
-    private String admObra;
-
-    @Column(name = ColunasPedido.TELEFONE)
-    private String telefone;
-
-    @Column(name = ColunasPedido.TELEFONE_FIXO)
-    private String telefoneFixo;
-
-    @Column(name = ColunasPedido.DESCRICAO, columnDefinition = "TEXT")
-    private String descricao;
-
-    @Column(name = ColunasPedido.ACABAMENTO)
+    @Column(name = "acabamento")
     private String acabamento;
 
-    @Column(name = ColunasPedido.TUBOS)
-    private String tubos;
+    @Column(name = "adm_obra")
+    private String admObra;
 
-    @Column(name = ColunasPedido.REVESTIMENTO)
-    private Boolean revestimento;
+    @Column(name = "cnpj")
+    private String cnpj;
 
-    @Column(name = ColunasPedido.VALOR_TOTAL)
-    private BigDecimal valorTotal;
+    @Column(name = "cpf")
+    private Long cpf;
 
-    @Column(name = ColunasPedido.PRAZO_MONTAGEM)
-    private Integer prazoMontagem;
+    @Column(name = "data_cadastro")
+    private Instant dataCadastro;
 
-    @Column(name = ColunasPedido.NUMERO)
-    private Integer numero;
+    @Lob
+    @Column(name = "descricao")
+    private String descricao;
 
-    @Column(name = ColunasPedido.BAIRRO)
-    private String bairro;
+    @Column(name = "email")
+    private String email;
 
-    @Column(name = ColunasPedido.MUNICIPIO)
-    private String municipio;
-
-    @Column(name = ColunasPedido.CEP)
-    private Integer cep;
-
-    @Column(name = ColunasPedido.REFERENCIA)
-    private String referencia;
-
-    @Column(name = ColunasPedido.NUMERO_CLIENTE)
-    private Integer numeroCliente;
-
-    @Column(name = ColunasPedido.BAIRRO_CLIENTE)
-    private String bairroCliente;
-
-    @Column(name = ColunasPedido.MUNICIPIO_CLIENTE)
-    private String municipioCliente;
-
-    @Column(name = ColunasPedido.CEP_CLIENTE)
-    private Integer cepCliente;
-
-    @Column(name = ColunasPedido.REFERENCIA_CLIENTE)
-    private String referenciaCliente;
-
-    @Column(name = ColunasPedido.DATA_CADASTRO)
-    private LocalDateTime dataCadastro;
-
-    @Column(name = ColunasPedido.FLAG_OCULTO)
+    @Column(name = "flag_oculto")
     private Boolean flagOculto;
 
-    @Column(name = ColunasPedido.VALOR)
+    @Column(name = "cliente_nome")
+    private String clienteNome;
+
+    @Column(name = "numero")
+    private Integer numero;
+
+    @Column(name = "numero_cliente")
+    private Integer numeroCliente;
+
+    @Column(name = "numero_pedido")
+    private Integer numeroPedido;
+
+    @Column(name = "prazo_montagem")
+    private Integer prazoMontagem;
+
+    @Column(name = "profissao")
+    private String profissao;
+
+    @Column(name = "revestimento")
+    private Boolean revestimento;
+
+    @Column(name = "rg")
+    private Integer rg;
+
+    @Column(name = "servico_social")
+    private String servicoSocial;
+
+    @Column(name = "telefone")
+    private String telefone;
+
+    @Column(name = "telefone_fixo")
+    private String telefoneFixo;
+
+    @Column(name = "tubos")
+    private String tubos;
+
+    @Column(name = "valor", precision = 38, scale = 2)
     private BigDecimal valor;
 
-    public PedidoEntity(PedidoDTO pedidoDTO) {
-        BeanUtils.copyProperties(pedidoDTO, this);
-    }
+    @Column(name = "valor_total", precision = 38, scale = 2)
+    private BigDecimal valorTotal;
 
-    public PedidoEntity() {}
+    @OneToOne(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private EnderecosEntity endereco;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
-    }
-
-    public void setNumeroPedido(Integer numeroPedido) {
-        this.numeroPedido = numeroPedido;
-    }
-
-    public void setNomeCliente(String nomeCliente) {
-        this.nomeCliente = nomeCliente;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setCpf(Long cpf) {
-        this.cpf = cpf;
-    }
-
-    public void setRg(Integer rg) {
-        this.rg = rg;
-    }
-
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
-    }
-
-    public void setServicoSocial(String servicoSocial) {
-        this.servicoSocial = servicoSocial;
-    }
-
-    public void setProfissao(String profissao) {
-        this.profissao = profissao;
-    }
-
-    public void setAdmObra(String admObra) {
-        this.admObra = admObra;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public void setTelefoneFixo(String telefoneFixo) {
-        this.telefoneFixo = telefoneFixo;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public void setAcabamento(String acabamento) {
-        this.acabamento = acabamento;
-    }
-
-    public void setTubos(String tubos) {
-        this.tubos = tubos;
-    }
-
-    public void setRevestimento(Boolean revestimento) {
-        this.revestimento = revestimento;
-    }
-
-    public void setValorTotal(BigDecimal valorTotal) {
-        this.valorTotal = valorTotal;
-    }
-
-    public void setPrazoMontagem(Integer prazoMontagem) {
-        this.prazoMontagem = prazoMontagem;
-    }
-
-    public void setNumero(Integer numero) {
-        this.numero = numero;
-    }
-
-    public void setBairro(String bairro) {
-        this.bairro = bairro;
-    }
-
-    public void setMunicipio(String municipio) {
-        this.municipio = municipio;
-    }
-
-    public void setCep(Integer cep) {
-        this.cep = cep;
-    }
-
-    public void setReferencia(String referencia) {
-        this.referencia = referencia;
-    }
-
-    public void setNumeroCliente(Integer numeroCliente) {
-        this.numeroCliente = numeroCliente;
-    }
-
-    public void setBairroCliente(String bairroCliente) {
-        this.bairroCliente = bairroCliente;
-    }
-
-    public void setMunicipioCliente(String municipioCliente) {
-        this.municipioCliente = municipioCliente;
-    }
-
-    public void setCepCliente(Integer cepCliente) {
-        this.cepCliente = cepCliente;
-    }
-
-    public void setReferenciaCliente(String referenciaCliente) {
-        this.referenciaCliente = referenciaCliente;
-    }
-
-    public void setDataCadastro(LocalDateTime dataCadastro) {
-        this.dataCadastro = dataCadastro;
-    }
-
-    public void setFlagOculto(Boolean flagOculto) {
-        this.flagOculto = flagOculto;
-    }
-
-    public void setValor(BigDecimal valor) {
-        this.valor = valor;
-    }
-
-    public Integer getNumeroPedido() {
-        return numeroPedido;
-    }
-
-    public String getNomeCliente() {
-        return nomeCliente;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Long getCpf() {
-        return cpf;
-    }
-
-    public Integer getRg() {
-        return rg;
-    }
-
-    public String getCnpj() {
-        return cnpj;
-    }
-
-    public String getServicoSocial() {
-        return servicoSocial;
-    }
-
-    public String getProfissao() {
-        return profissao;
-    }
-
-    public String getAdmObra() {
-        return admObra;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public String getTelefoneFixo() {
-        return telefoneFixo;
-    }
-
-    public String getDescricao() {
-        return descricao;
     }
 
     public String getAcabamento() {
         return acabamento;
     }
 
-    public String getTubos() {
-        return tubos;
+    public void setAcabamento(String acabamento) {
+        this.acabamento = acabamento;
     }
 
-    public Boolean getRevestimento() {
-        return revestimento;
+    public String getAdmObra() {
+        return admObra;
     }
 
-    public BigDecimal getValorTotal() {
-        return valorTotal;
+    public void setAdmObra(String admObra) {
+        this.admObra = admObra;
     }
 
-    public Integer getPrazoMontagem() {
-        return prazoMontagem;
+    public String getCnpj() {
+        return cnpj;
     }
 
-    public Integer getNumero() {
-        return numero;
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
     }
 
-    public String getBairro() {
-        return bairro;
+    public Long getCpf() {
+        return cpf;
     }
 
-    public String getMunicipio() {
-        return municipio;
+    public void setCpf(Long cpf) {
+        this.cpf = cpf;
     }
 
-    public Integer getCep() {
-        return cep;
-    }
-
-    public String getReferencia() {
-        return referencia;
-    }
-
-    public Integer getNumeroCliente() {
-        return numeroCliente;
-    }
-
-    public String getBairroCliente() {
-        return bairroCliente;
-    }
-
-    public String getMunicipioCliente() {
-        return municipioCliente;
-    }
-
-    public Integer getCepCliente() {
-        return cepCliente;
-    }
-
-    public String getReferenciaCliente() {
-        return referenciaCliente;
-    }
-
-    public LocalDateTime getDataCadastro() {
+    public Instant getDataCadastro() {
         return dataCadastro;
+    }
+
+    public void setDataCadastro(Instant dataCadastro) {
+        this.dataCadastro = dataCadastro;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Boolean getFlagOculto() {
         return flagOculto;
     }
 
+    public void setFlagOculto(Boolean flagOculto) {
+        this.flagOculto = flagOculto;
+    }
+
+    public String getClienteNome() {
+        return clienteNome;
+    }
+
+    public void setClienteNome(String clienteNome) {
+        this.clienteNome = clienteNome;
+    }
+
+    public String getNomeCliente() {
+        return clienteNome;
+    }
+
+    public void setNomeCliente(String nomeCliente) {
+        this.clienteNome = nomeCliente;
+    }
+
+    public Integer getNumero() {
+        return numero;
+    }
+
+    public void setNumero(Integer numero) {
+        this.numero = numero;
+    }
+
+    public Integer getNumeroCliente() {
+        return numeroCliente;
+    }
+
+    public void setNumeroCliente(Integer numeroCliente) {
+        this.numeroCliente = numeroCliente;
+    }
+
+    public Integer getNumeroPedido() {
+        return numeroPedido;
+    }
+
+    public void setNumeroPedido(Integer numeroPedido) {
+        this.numeroPedido = numeroPedido;
+    }
+
+    public Integer getPrazoMontagem() {
+        return prazoMontagem;
+    }
+
+    public void setPrazoMontagem(Integer prazoMontagem) {
+        this.prazoMontagem = prazoMontagem;
+    }
+
+    public String getProfissao() {
+        return profissao;
+    }
+
+    public void setProfissao(String profissao) {
+        this.profissao = profissao;
+    }
+
+    public Boolean getRevestimento() {
+        return revestimento;
+    }
+
+    public void setRevestimento(Boolean revestimento) {
+        this.revestimento = revestimento;
+    }
+
+    public Integer getRg() {
+        return rg;
+    }
+
+    public void setRg(Integer rg) {
+        this.rg = rg;
+    }
+
+    public String getServicoSocial() {
+        return servicoSocial;
+    }
+
+    public void setServicoSocial(String servicoSocial) {
+        this.servicoSocial = servicoSocial;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getTelefoneFixo() {
+        return telefoneFixo;
+    }
+
+    public void setTelefoneFixo(String telefoneFixo) {
+        this.telefoneFixo = telefoneFixo;
+    }
+
+    public String getTubos() {
+        return tubos;
+    }
+
+    public void setTubos(String tubos) {
+        this.tubos = tubos;
+    }
+
     public BigDecimal getValor() {
         return valor;
     }
+
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
+    }
+
+    public BigDecimal getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public EnderecosEntity getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(EnderecosEntity endereco) {
+        this.endereco = endereco;
+    }
+
+    public Integer getEstadoId() {
+        return endereco == null ? null : endereco.getEstadoId();
+    }
+
+    public void setEstadoId(Integer estadoId) {
+        ensureEndereco();
+        endereco.setEstadoId(estadoId);
+    }
+
+    public Integer getEstadoClienteId() {
+        return endereco == null ? null : endereco.getEstadoClienteId();
+    }
+
+    public void setEstadoClienteId(Integer estadoClienteId) {
+        ensureEndereco();
+        endereco.setEstadoClienteId(estadoClienteId);
+    }
+
+    public Integer getMunicipioId() {
+        return endereco == null ? null : endereco.getMunicipioId();
+    }
+
+    public void setMunicipioId(Integer municipioId) {
+        ensureEndereco();
+        endereco.setMunicipioId(municipioId);
+    }
+
+    public Integer getMunicipioClienteId() {
+        return endereco == null ? null : endereco.getMunicipioClienteId();
+    }
+
+    public void setMunicipioClienteId(Integer municipioClienteId) {
+        ensureEndereco();
+        endereco.setMunicipioClienteId(municipioClienteId);
+    }
+
+    public Integer getBairroId() {
+        return endereco == null ? null : endereco.getBairroId();
+    }
+
+    public void setBairroId(Integer bairroId) {
+        ensureEndereco();
+        endereco.setBairroId(bairroId);
+    }
+
+    public Integer getBairroClienteId() {
+        return endereco == null ? null : endereco.getBairroClienteId();
+    }
+
+    public void setBairroClienteId(Integer bairroClienteId) {
+        ensureEndereco();
+        endereco.setBairroClienteId(bairroClienteId);
+    }
+
+    public String getBairro() {
+        return endereco == null ? null : String.valueOf(endereco.getBairroId());
+    }
+
+    public void setBairro(String bairro) {
+        ensureEndereco();
+        endereco.setBairroId(parseInteger(bairro));
+    }
+
+    public String getMunicipio() {
+        return endereco == null ? null : String.valueOf(endereco.getMunicipioId());
+    }
+
+    public void setMunicipio(String municipio) {
+        ensureEndereco();
+        endereco.setMunicipioId(parseInteger(municipio));
+    }
+
+    public Integer getCep() {
+        return endereco == null ? null : endereco.getCep();
+    }
+
+    public void setCep(Integer cep) {
+        ensureEndereco();
+        endereco.setCep(cep);
+    }
+
+    public String getReferencia() {
+        return endereco == null ? null : endereco.getReferencia();
+    }
+
+    public void setReferencia(String referencia) {
+        ensureEndereco();
+        endereco.setReferencia(referencia);
+    }
+
+    public Integer getNumeroClienteEndereco() {
+        return endereco == null ? null : endereco.getCepClienteId();
+    }
+
+    public void setCepCliente(Integer cepCliente) {
+        ensureEndereco();
+        endereco.setCepClienteId(cepCliente);
+    }
+
+    public String getBairroCliente() {
+        return endereco == null ? null : String.valueOf(endereco.getBairroClienteId());
+    }
+
+    public void setBairroCliente(String bairroCliente) {
+        ensureEndereco();
+        endereco.setBairroClienteId(parseInteger(bairroCliente));
+    }
+
+    public String getMunicipioCliente() {
+        return endereco == null ? null : String.valueOf(endereco.getMunicipioClienteId());
+    }
+
+    public void setMunicipioCliente(String municipioCliente) {
+        ensureEndereco();
+        endereco.setMunicipioClienteId(parseInteger(municipioCliente));
+    }
+
+    public Integer getCepCliente() {
+        return endereco == null ? null : endereco.getCepClienteId();
+    }
+
+    public void setReferenciaCliente(String referenciaCliente) {
+        ensureEndereco();
+        endereco.setReferenciaCliente(referenciaCliente);
+    }
+
+    public String getReferenciaCliente() {
+        return endereco == null ? null : endereco.getReferenciaCliente();
+    }
+
+    private void ensureEndereco() {
+        if (this.endereco == null) {
+            this.endereco = new EnderecosEntity();
+            this.endereco.setPedido(this);
+        }
+    }
+
+    private Integer parseInteger(String valor) {
+        if (valor == null || valor.isBlank()) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(valor.trim());
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
+    }
+
 }

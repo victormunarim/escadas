@@ -3,12 +3,17 @@ package com.example.demo.service;
 import com.example.demo.constants.ColunasPedido;
 import com.example.demo.dto.FormularioPedidoDTO;
 import com.example.demo.entity.PedidoEntity;
-import com.example.demo.service.ConsultaLocalidadesService;
 import com.example.demo.crud.OpcaoCrud;
 import com.example.demo.crud.formulario.CampoFormularioCrud;
 import com.example.demo.crud.formulario.CamposFormularioCrud;
+import com.example.demo.entity.BairroEntity;
+import com.example.demo.entity.EstadoEntity;
+import com.example.demo.entity.MunicipioEntity;
 import com.example.demo.util.FormatacaoUtil;
 import com.example.demo.util.NumeroUtil;
+import com.example.demo.repository.BairroRepository;
+import com.example.demo.repository.EstadoRepository;
+import com.example.demo.repository.MunicipioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -22,9 +27,20 @@ import java.util.stream.Collectors;
 public class FormularioPedidoService {
 
     private final ConsultaLocalidadesService consultaLocalidades;
+    private final EstadoRepository estadoRepository;
+    private final MunicipioRepository municipioRepository;
+    private final BairroRepository bairroRepository;
 
-    public FormularioPedidoService(ConsultaLocalidadesService consultaLocalidades) {
+    public FormularioPedidoService(
+            ConsultaLocalidadesService consultaLocalidades,
+            EstadoRepository estadoRepository,
+            MunicipioRepository municipioRepository,
+            BairroRepository bairroRepository
+    ) {
         this.consultaLocalidades = consultaLocalidades;
+        this.estadoRepository = estadoRepository;
+        this.municipioRepository = municipioRepository;
+        this.bairroRepository = bairroRepository;
     }
 
     public List<String> buscarBairros(String termo, String uf, int limite) {
@@ -79,14 +95,14 @@ public class FormularioPedidoService {
         formulario.setNumeroPedido(pedido.getNumeroPedido());
         formulario.setNomeCliente(pedido.getNomeCliente());
         formulario.setEmail(pedido.getEmail());
-        formulario.setCpf(FormatacaoUtil.formatarCpf(pedido.getCpf()));
-        formulario.setRg(FormatacaoUtil.formatarRg(pedido.getRg()));
+        formulario.setCpf(NumeroUtil.longParaTexto(pedido.getCpf()));
+        formulario.setRg(NumeroUtil.inteiroParaTexto(pedido.getRg()));
         formulario.setCnpj(pedido.getCnpj());
         formulario.setServicoSocial(pedido.getServicoSocial());
         formulario.setProfissao(pedido.getProfissao());
         formulario.setAdmObra(pedido.getAdmObra());
-        formulario.setTelefone(FormatacaoUtil.formatarTelefoneCelular(pedido.getTelefone()));
-        formulario.setTelefoneFixo(FormatacaoUtil.formatarTelefoneFixo(pedido.getTelefoneFixo()));
+        formulario.setTelefone(NumeroUtil.somenteDigitos(pedido.getTelefone()));
+        formulario.setTelefoneFixo(NumeroUtil.somenteDigitos(pedido.getTelefoneFixo()));
         formulario.setDescricao(pedido.getDescricao());
         formulario.setAcabamento(pedido.getAcabamento());
         formulario.setTubos(pedido.getTubos());
@@ -94,13 +110,15 @@ public class FormularioPedidoService {
         formulario.setValorTotal(pedido.getValorTotal());
         formulario.setPrazoMontagem(pedido.getPrazoMontagem());
         formulario.setNumero(NumeroUtil.inteiroParaTexto(pedido.getNumero()));
-        formulario.setBairro(pedido.getBairro());
-        formulario.setMunicipio(pedido.getMunicipio());
+        formulario.setUf(resolverUf(pedido.getEstadoId()));
+        formulario.setBairro(resolverBairroNome(pedido.getBairroId()));
+        formulario.setMunicipio(resolverMunicipioNome(pedido.getMunicipioId()));
         formulario.setCep(FormatacaoUtil.formatarCep(pedido.getCep()));
         formulario.setReferencia(pedido.getReferencia());
         formulario.setNumeroCliente(NumeroUtil.inteiroParaTexto(pedido.getNumeroCliente()));
-        formulario.setBairroCliente(pedido.getBairroCliente());
-        formulario.setMunicipioCliente(pedido.getMunicipioCliente());
+        formulario.setUfCliente(resolverUf(pedido.getEstadoClienteId()));
+        formulario.setBairroCliente(resolverBairroNome(pedido.getBairroClienteId()));
+        formulario.setMunicipioCliente(resolverMunicipioNome(pedido.getMunicipioClienteId()));
         formulario.setCepCliente(FormatacaoUtil.formatarCep(pedido.getCepCliente()));
         formulario.setReferenciaCliente(pedido.getReferenciaCliente());
         formulario.setValor(pedido.getValor());
@@ -126,13 +144,15 @@ public class FormularioPedidoService {
         pedido.setValorTotal(zeroSeNulo(formularioPedido.getValorTotal()));
         pedido.setPrazoMontagem(zeroSeNulo(formularioPedido.getPrazoMontagem()));
         pedido.setNumero(NumeroUtil.paraInteiro(formularioPedido.getNumero(), 10));
-        pedido.setBairro(vazioSeNulo(formularioPedido.getBairro()));
-        pedido.setMunicipio(vazioSeNulo(formularioPedido.getMunicipio()));
+        pedido.setEstadoId(resolverEstadoId(formularioPedido.getUf()));
+        pedido.setMunicipioId(resolverMunicipioId(formularioPedido.getUf(), formularioPedido.getMunicipio()));
+        pedido.setBairroId(resolverBairroId(formularioPedido.getMunicipio(), formularioPedido.getBairro(), pedido.getMunicipioId()));
         pedido.setCep(NumeroUtil.paraInteiro(formularioPedido.getCep(), 8));
         pedido.setReferencia(vazioSeNulo(formularioPedido.getReferencia()));
         pedido.setNumeroCliente(NumeroUtil.paraInteiro(formularioPedido.getNumeroCliente(), 10));
-        pedido.setBairroCliente(vazioSeNulo(formularioPedido.getBairroCliente()));
-        pedido.setMunicipioCliente(vazioSeNulo(formularioPedido.getMunicipioCliente()));
+        pedido.setEstadoClienteId(resolverEstadoId(formularioPedido.getUfCliente()));
+        pedido.setMunicipioClienteId(resolverMunicipioId(formularioPedido.getUfCliente(), formularioPedido.getMunicipioCliente()));
+        pedido.setBairroClienteId(resolverBairroId(formularioPedido.getMunicipioCliente(), formularioPedido.getBairroCliente(), pedido.getMunicipioClienteId()));
         pedido.setCepCliente(NumeroUtil.paraInteiro(formularioPedido.getCepCliente(), 8));
         pedido.setReferenciaCliente(vazioSeNulo(formularioPedido.getReferenciaCliente()));
         pedido.setValor(zeroSeNulo(formularioPedido.getValor()));
@@ -402,6 +422,62 @@ public class FormularioPedidoService {
 
     private Boolean falsoSeNulo(Boolean valor) {
         return valor != null && valor;
+    }
+
+    private String resolverUf(Integer estadoId) {
+        if (estadoId == null) {
+            return "SC";
+        }
+        return estadoRepository.findById(estadoId)
+                .map(EstadoEntity::getSigla)
+                .filter(valor -> valor != null && !valor.isBlank())
+                .orElse("SC");
+    }
+
+    private String resolverMunicipioNome(Integer municipioId) {
+        if (municipioId == null) {
+            return "";
+        }
+        return municipioRepository.findById(municipioId)
+                .map(MunicipioEntity::getNome)
+                .orElse("");
+    }
+
+    private String resolverBairroNome(Integer bairroId) {
+        if (bairroId == null) {
+            return "";
+        }
+        return bairroRepository.findById(bairroId)
+                .map(BairroEntity::getNome)
+                .orElse("");
+    }
+
+    private Integer resolverEstadoId(String uf) {
+        if (uf == null || uf.isBlank()) {
+            return null;
+        }
+        return estadoRepository.findBySiglaIgnoreCase(uf.trim())
+                .map(EstadoEntity::getId)
+                .orElse(null);
+    }
+
+    private Integer resolverMunicipioId(String uf, String municipioNome) {
+        Integer estadoId = resolverEstadoId(uf);
+        if (estadoId == null || municipioNome == null || municipioNome.isBlank()) {
+            return null;
+        }
+        return municipioRepository.findByNomeIgnoreCaseAndEstadoId(municipioNome.trim(), estadoId)
+                .map(MunicipioEntity::getId)
+                .orElse(null);
+    }
+
+    private Integer resolverBairroId(String municipioNome, String bairroNome, Integer municipioId) {
+        if (municipioId == null || bairroNome == null || bairroNome.isBlank()) {
+            return null;
+        }
+        return bairroRepository.findByNomeIgnoreCaseAndMunicipioId(bairroNome.trim(), municipioId)
+                .map(BairroEntity::getId)
+                .orElse(null);
     }
 
     private List<OpcaoCrud> opcoesDoValoresAtuais(String... valoresAtuais) {

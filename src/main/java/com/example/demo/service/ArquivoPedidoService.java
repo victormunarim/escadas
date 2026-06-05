@@ -67,7 +67,7 @@ public class ArquivoPedidoService {
 
             ArquivoPedidoDTO arquivoDTO = new ArquivoPedidoDTO();
             arquivoDTO.setNome(nomeArquivo);
-            arquivoDTO.setPedidoId(pedido.getId());
+            arquivoDTO.setPedidoId(pedido.getId() == null ? null : pedido.getId().longValue());
             arquivoDTO.setLink(linkArquivo);
 
             ArquivoPedidoEntity arquivoPedido = new ArquivoPedidoEntity(arquivoDTO);

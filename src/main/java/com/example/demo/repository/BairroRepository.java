@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface BairroRepository extends JpaRepository<BairroEntity, Long> {
-    List<BairroEntity> findDistinctByUfIgnoreCaseOrderByNomeAsc(String uf);
+public interface BairroRepository extends JpaRepository<BairroEntity, Integer> {
+    List<BairroEntity> findDistinctByEstadoIdOrderByNomeAsc(Integer estadoId);
+    List<BairroEntity> findDistinctByMunicipioIdOrderByNomeAsc(Integer municipioId);
+    java.util.Optional<BairroEntity> findByNomeIgnoreCaseAndMunicipioId(String nome, Integer municipioId);
 }

@@ -1,7 +1,13 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.PedidoEntity;
 import com.example.demo.util.FormatacaoUtil;
+import com.example.demo.entity.BairroEntity;
+import com.example.demo.entity.EstadoEntity;
+import com.example.demo.entity.MunicipioEntity;
+import com.example.demo.entity.PedidoEntity;
+import com.example.demo.repository.BairroRepository;
+import com.example.demo.repository.EstadoRepository;
+import com.example.demo.repository.MunicipioRepository;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -15,6 +21,19 @@ import java.util.Base64;
 @Service
 public class GeradorPdfPedidoService {
     private String logoBase64Cache = null;
+    private final EstadoRepository estadoRepository;
+    private final MunicipioRepository municipioRepository;
+    private final BairroRepository bairroRepository;
+
+    public GeradorPdfPedidoService(
+            EstadoRepository estadoRepository,
+            MunicipioRepository municipioRepository,
+            BairroRepository bairroRepository
+    ) {
+        this.estadoRepository = estadoRepository;
+        this.municipioRepository = municipioRepository;
+        this.bairroRepository = bairroRepository;
+    }
 
     public byte[] gerarPdfPedido(PedidoEntity pedido) {
         String html = montarHtmlPedido(pedido);
@@ -142,9 +161,11 @@ public class GeradorPdfPedidoService {
                 .append("</span></td>")
                 .append("</tr><tr>")
                 .append("<td colspan='2'><span class='label'>Endereço do Cliente</span><span class='value'>")
-                .append(valor(pedido.getBairroCliente()))
+                .append(resolverBairro(pedido.getBairroClienteId()))
                 .append(", ")
-                .append(valor(pedido.getMunicipioCliente()))
+                .append(resolverMunicipio(pedido.getMunicipioClienteId()))
+                .append(" - ")
+                .append(resolverEstado(pedido.getEstadoClienteId()))
                 .append("</span></td>")
                 .append("<td><span class='label'>CEP</span><span class='value'>")
                 .append(FormatacaoUtil.formatarCep(pedido.getCepCliente()))
@@ -165,11 +186,13 @@ public class GeradorPdfPedidoService {
                 .append("</span></td>")
                 .append("</tr><tr>")
                 .append("<td colspan='2'><span class='label'>Endereço da Obra</span><span class='value'>")
-                .append(valor(pedido.getBairro()))
+                .append(resolverBairro(pedido.getBairroId()))
                 .append(", ")
                 .append(valor(pedido.getNumero()))
                 .append(" - ")
-                .append(valor(pedido.getMunicipio()))
+                .append(resolverMunicipio(pedido.getMunicipioId()))
+                .append(" - ")
+                .append(resolverEstado(pedido.getEstadoId()))
                 .append("</span></td>")
                 .append("<td><span class='label'>CEP</span><span class='value'>")
                 .append(FormatacaoUtil.formatarCep(pedido.getCep()))
@@ -370,5 +393,35 @@ public class GeradorPdfPedidoService {
                 .replace(">", "&gt;")
                 .replace("\"", "&quot;")
                 .replace("'", "&#39;");
+    }
+
+    private String resolverEstado(Integer estadoId) {
+        if (estadoId == null) {
+            return "";
+        }
+        return estadoRepository.findById(estadoId)
+                .map(EstadoEntity::getSigla)
+                .filter(valor -> valor != null && !valor.isBlank())
+                .orElseGet(() -> estadoRepository.findById(estadoId)
+                        .map(EstadoEntity::getNome)
+                        .orElse(""));
+    }
+
+    private String resolverMunicipio(Integer municipioId) {
+        if (municipioId == null) {
+            return "";
+        }
+        return municipioRepository.findById(municipioId)
+                .map(MunicipioEntity::getNome)
+                .orElse("");
+    }
+
+    private String resolverBairro(Integer bairroId) {
+        if (bairroId == null) {
+            return "";
+        }
+        return bairroRepository.findById(bairroId)
+                .map(BairroEntity::getNome)
+                .orElse("");
     }
 }

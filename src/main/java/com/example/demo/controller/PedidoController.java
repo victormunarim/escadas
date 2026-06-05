@@ -5,11 +5,17 @@ import com.example.demo.dto.FormularioPedidoDTO;
 import com.example.demo.dto.PedidoDTO;
 import com.example.demo.dto.PedidoResumoDTO;
 import com.example.demo.constants.ColunasPedido;
+import com.example.demo.entity.BairroEntity;
+import com.example.demo.entity.EstadoEntity;
+import com.example.demo.entity.MunicipioEntity;
 import com.example.demo.crud.ModuloCrud;
 import com.example.demo.crud.OpcaoCrud;
 import com.example.demo.crud.filtros.FiltrosCrudBuilder;
 import com.example.demo.crud.filtros.OpcoesDataCrud;
 import com.example.demo.exception.PedidoNaoEncontradoException;
+import com.example.demo.repository.BairroRepository;
+import com.example.demo.repository.EstadoRepository;
+import com.example.demo.repository.MunicipioRepository;
 import com.example.demo.service.FormularioPedidoService;
 import com.example.demo.service.PedidoService;
 import com.example.demo.util.FormatacaoUtil;
@@ -38,13 +44,22 @@ import static com.example.demo.crud.ColunaCrud.col;
 public class PedidoController {
     private final PedidoService pedidoService;
     private final FormularioPedidoService formularioPedidoService;
+    private final EstadoRepository estadoRepository;
+    private final MunicipioRepository municipioRepository;
+    private final BairroRepository bairroRepository;
 
     public PedidoController(
             PedidoService pedidoService,
-            FormularioPedidoService formularioPedidoService
+            FormularioPedidoService formularioPedidoService,
+            EstadoRepository estadoRepository,
+            MunicipioRepository municipioRepository,
+            BairroRepository bairroRepository
     ) {
         this.pedidoService = pedidoService;
         this.formularioPedidoService = formularioPedidoService;
+        this.estadoRepository = estadoRepository;
+        this.municipioRepository = municipioRepository;
+        this.bairroRepository = bairroRepository;
     }
 
     @GetMapping("/crud/pedidos")
@@ -148,18 +163,20 @@ public class PedidoController {
         dadosCliente.put("Telefone Fixo", FormatacaoUtil.formatarTelefoneFixo(pedido.getTelefoneFixo()));
 
         Map<String, String> enderecoObra = new LinkedHashMap<>();
-        enderecoObra.put("Número", FormatacaoUtil.formatarTexto(pedido.getNumero()));
-        enderecoObra.put("BairroEntity", FormatacaoUtil.formatarTexto(pedido.getBairro()));
-        enderecoObra.put("Município", FormatacaoUtil.formatarTexto(pedido.getMunicipio()));
+        enderecoObra.put("Estado", resolverEstado(pedido.getEstadoId()));
+        enderecoObra.put("Município", resolverMunicipio(pedido.getMunicipioId()));
+        enderecoObra.put("Bairro", resolverBairro(pedido.getBairroId()));
         enderecoObra.put("CEP", FormatacaoUtil.formatarCep(pedido.getCep()));
         enderecoObra.put("Referência", FormatacaoUtil.formatarTexto(pedido.getReferencia()));
+        enderecoObra.put("Número", FormatacaoUtil.formatarTexto(pedido.getNumero()));
 
         Map<String, String> enderecoCliente = new LinkedHashMap<>();
-        enderecoCliente.put("Número", FormatacaoUtil.formatarTexto(pedido.getNumeroCliente()));
-        enderecoCliente.put("BairroEntity", FormatacaoUtil.formatarTexto(pedido.getBairroCliente()));
-        enderecoCliente.put("Município", FormatacaoUtil.formatarTexto(pedido.getMunicipioCliente()));
+        enderecoCliente.put("Estado", resolverEstado(pedido.getEstadoClienteId()));
+        enderecoCliente.put("Município", resolverMunicipio(pedido.getMunicipioClienteId()));
+        enderecoCliente.put("Bairro", resolverBairro(pedido.getBairroClienteId()));
         enderecoCliente.put("CEP", FormatacaoUtil.formatarCep(pedido.getCepCliente()));
         enderecoCliente.put("Referência", FormatacaoUtil.formatarTexto(pedido.getReferenciaCliente()));
+        enderecoCliente.put("Número", FormatacaoUtil.formatarTexto(pedido.getNumeroCliente()));
 
         List<ArquivoPedidoDTO> arquivosPedido = pedidoService.listarArquivos(id);
 
@@ -171,6 +188,36 @@ public class PedidoController {
         model.addAttribute("arquivosPedido", arquivosPedido);
 
         return "pedido-visualizacao";
+    }
+
+    private String resolverEstado(Integer estadoId) {
+        if (estadoId == null) {
+            return "";
+        }
+        return estadoRepository.findById(estadoId)
+                .map(EstadoEntity::getSigla)
+                .filter(valor -> valor != null && !valor.isBlank())
+                .orElseGet(() -> estadoRepository.findById(estadoId)
+                        .map(EstadoEntity::getNome)
+                        .orElse(""));
+    }
+
+    private String resolverMunicipio(Integer municipioId) {
+        if (municipioId == null) {
+            return "";
+        }
+        return municipioRepository.findById(municipioId)
+                .map(MunicipioEntity::getNome)
+                .orElse("");
+    }
+
+    private String resolverBairro(Integer bairroId) {
+        if (bairroId == null) {
+            return "";
+        }
+        return bairroRepository.findById(bairroId)
+                .map(BairroEntity::getNome)
+                .orElse("");
     }
 
     @PostMapping("/pedidos/{id}/arquivos")

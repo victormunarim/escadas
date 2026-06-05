@@ -1,8 +1,8 @@
 package com.example.demo.spec;
 
 import com.example.demo.constants.ColunasPedido;
-import com.example.demo.entity.PedidoResumoEntity;
 import com.example.demo.crud.filtros.compostos.FiltroNumeroExato;
+import com.example.demo.entity.PedidoResumoEntity;
 import org.springframework.data.jpa.domain.Specification;
 
 import jakarta.persistence.criteria.Predicate;

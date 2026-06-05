@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface EstadoRepository extends JpaRepository<EstadoEntity, String> {
-    List<EstadoEntity> findDistinctByUfIsNotNullOrderByUfAsc();
+public interface EstadoRepository extends JpaRepository<EstadoEntity, Integer> {
+    List<EstadoEntity> findAllByOrderByNomeAsc();
+    java.util.Optional<EstadoEntity> findBySiglaIgnoreCase(String sigla);
 }

@@ -39,8 +39,13 @@ public class ConsultaLocalidadesService {
         String termoNormalizado = normalizarParaBusca(termo);
 
         try {
+            Integer estadoId = buscarEstadoIdPorUf(ufNormalizada);
+            if (estadoId == null) {
+                return List.of();
+            }
+
             return filtrarNomes(
-                    repositorioBairro.findDistinctByUfIgnoreCaseOrderByNomeAsc(ufNormalizada).stream()
+                    repositorioBairro.findDistinctByEstadoIdOrderByNomeAsc(estadoId).stream()
                             .map(BairroEntity::getNome),
                     termoNormalizado,
                     limiteSeguro
@@ -57,8 +62,13 @@ public class ConsultaLocalidadesService {
         String termoNormalizado = normalizarParaBusca(termo);
 
         try {
+            Integer estadoId = buscarEstadoIdPorUf(ufNormalizada);
+            if (estadoId == null) {
+                return List.of();
+            }
+
             return filtrarNomes(
-                    repositorioMunicipio.findDistinctByUfIgnoreCaseOrderByNomeAsc(ufNormalizada).stream()
+                    repositorioMunicipio.findDistinctByEstadoIdOrderByNomeAsc(estadoId).stream()
                             .map(MunicipioEntity::getNome),
                     termoNormalizado,
                     limiteSeguro
@@ -71,8 +81,8 @@ public class ConsultaLocalidadesService {
 
     public List<String> buscarUfs() {
         try {
-            return repositorioEstado.findDistinctByUfIsNotNullOrderByUfAsc().stream()
-                    .map(EstadoEntity::getUf)
+            return repositorioEstado.findAllByOrderByNomeAsc().stream()
+                    .map(EstadoEntity::getSigla)
                     .map(this::normalizarUf)
                     .filter(valor -> !valor.isEmpty())
                     .toList();
@@ -102,6 +112,14 @@ public class ConsultaLocalidadesService {
         }
         String valor = uf.trim().toUpperCase(Locale.ROOT);
         return valor.isEmpty() ? "SC" : valor;
+    }
+
+    private Integer buscarEstadoIdPorUf(String ufNormalizada) {
+        return repositorioEstado.findAllByOrderByNomeAsc().stream()
+                .filter(estado -> estado.getSigla() != null && normalizarUf(estado.getSigla()).equals(ufNormalizada))
+                .map(EstadoEntity::getId)
+                .findFirst()
+                .orElse(null);
     }
 
     private String normalizarParaBusca(String valor) {

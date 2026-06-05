@@ -6,12 +6,13 @@ import com.example.demo.util.FormatacaoUtil;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
 
 public class PedidoResumoDTO {
     private static final DateTimeFormatter FORMATO_DATA_CADASTRO = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private Long id;
+    private Integer id;
     private Integer numeroPedido;
     private String nomeCliente;
     private String email;
@@ -29,7 +30,7 @@ public class PedidoResumoDTO {
     private Boolean revestimento;
     private BigDecimal valorTotal;
     private Integer prazoMontagem;
-    private LocalDateTime dataCadastro;
+    private Instant dataCadastro;
     private BigDecimal valor;
 
     public PedidoResumoDTO() {
@@ -63,17 +64,17 @@ public class PedidoResumoDTO {
             case ColunasPedido.VALOR_TOTAL -> FormatacaoUtil.formatarValor(getValorTotal());
             case ColunasPedido.PRAZO_MONTAGEM -> getPrazoMontagem();
             case ColunasPedido.DATA_CADASTRO ->
-                    getDataCadastro() == null ? "" : getDataCadastro().format(FORMATO_DATA_CADASTRO);
+                    getDataCadastro() == null ? "" : getDataCadastro().atZone(ZoneId.systemDefault()).toLocalDate().format(FORMATO_DATA_CADASTRO);
             case ColunasPedido.VALOR -> FormatacaoUtil.formatarValor(getValor());
             default -> null;
         };
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -213,11 +214,11 @@ public class PedidoResumoDTO {
         this.prazoMontagem = prazoMontagem;
     }
 
-    public LocalDateTime getDataCadastro() {
+    public Instant getDataCadastro() {
         return dataCadastro;
     }
 
-    public void setDataCadastro(LocalDateTime dataCadastro) {
+    public void setDataCadastro(Instant dataCadastro) {
         this.dataCadastro = dataCadastro;
     }
 

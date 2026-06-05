@@ -1,90 +1,86 @@
 package com.example.demo.entity;
 
-import com.example.demo.constants.ColunasPedido;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
-@Table(name = ColunasPedido.TABELA)
+@Table(name = "pedidos", schema = "escadas")
 public class PedidoResumoEntity {
 
     @Id
-    @Column(name = ColunasPedido.ID_PEDIDO)
-    private Long id;
+    @Column(name = "id_pedido", nullable = false)
+    private Integer id;
 
-    @Column(name = ColunasPedido.NUMERO_PEDIDO)
+    @Column(name = "numero_pedido")
     private Integer numeroPedido;
 
-    @Column(name = ColunasPedido.CLIENTE_NOME)
+    @Column(name = "cliente_nome")
     private String nomeCliente;
 
-    @Column(name = ColunasPedido.EMAIL)
+    @Column(name = "email")
     private String email;
 
-    @Column(name = ColunasPedido.CPF)
+    @Column(name = "cpf")
     private Long cpf;
 
-    @Column(name = ColunasPedido.RG)
+    @Column(name = "rg")
     private Integer rg;
 
-    @Column(name = ColunasPedido.CNPJ)
+    @Column(name = "cnpj")
     private String cnpj;
 
-    @Column(name = ColunasPedido.SERVICO_SOCIAL)
+    @Column(name = "servico_social")
     private String servicoSocial;
 
-    @Column(name = ColunasPedido.PROFISSAO)
+    @Column(name = "profissao")
     private String profissao;
 
-    @Column(name = ColunasPedido.ADM_OBRA)
+    @Column(name = "adm_obra")
     private String admObra;
 
-    @Column(name = ColunasPedido.TELEFONE)
+    @Column(name = "telefone")
     private String telefone;
 
-    @Column(name = ColunasPedido.TELEFONE_FIXO)
+    @Column(name = "telefone_fixo")
     private String telefoneFixo;
 
-    @Column(name = ColunasPedido.DESCRICAO, columnDefinition = "TEXT")
+    @Column(name = "descricao")
     private String descricao;
 
-    @Column(name = ColunasPedido.ACABAMENTO)
+    @Column(name = "acabamento")
     private String acabamento;
 
-    @Column(name = ColunasPedido.TUBOS)
+    @Column(name = "tubos")
     private String tubos;
 
-    @Column(name = ColunasPedido.REVESTIMENTO)
+    @Column(name = "revestimento")
     private Boolean revestimento;
 
-    @Column(name = ColunasPedido.VALOR_TOTAL)
+    @Column(name = "valor_total", precision = 38, scale = 2)
     private BigDecimal valorTotal;
 
-    @Column(name = ColunasPedido.PRAZO_MONTAGEM)
+    @Column(name = "prazo_montagem")
     private Integer prazoMontagem;
 
-    @Column(name = ColunasPedido.DATA_CADASTRO)
-    private LocalDateTime dataCadastro;
+    @Column(name = "data_cadastro")
+    private Instant dataCadastro;
 
-    @Column(name = ColunasPedido.FLAG_OCULTO)
+    @Column(name = "flag_oculto")
     private Boolean flagOculto;
 
-    @Column(name = ColunasPedido.VALOR)
+    @Column(name = "valor", precision = 38, scale = 2)
     private BigDecimal valor;
 
-    public PedidoResumoEntity() {
-    }
-
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -224,11 +220,11 @@ public class PedidoResumoEntity {
         this.prazoMontagem = prazoMontagem;
     }
 
-    public LocalDateTime getDataCadastro() {
+    public Instant getDataCadastro() {
         return dataCadastro;
     }
 
-    public void setDataCadastro(LocalDateTime dataCadastro) {
+    public void setDataCadastro(Instant dataCadastro) {
         this.dataCadastro = dataCadastro;
     }
 
