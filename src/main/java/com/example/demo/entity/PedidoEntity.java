@@ -431,4 +431,11 @@ public class PedidoEntity {
         }
     }
 
+    @PrePersist
+    private void preencherDataCadastro() {
+        if (this.dataCadastro == null) {
+            this.dataCadastro = Instant.now();
+        }
+    }
+
 }
