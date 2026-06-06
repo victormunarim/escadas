@@ -34,7 +34,6 @@ gradle-app.setting
 *.class
 *.log
 *.ctxt
-*.jar
 *.war
 *.ear
 hs_err_pid*
