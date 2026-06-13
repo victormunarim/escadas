@@ -3,10 +3,12 @@ package com.example.demo.service;
 import com.example.demo.entity.CredenciaisDriveEntity;
 import com.example.demo.repository.CredenciaisDriveRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class TokenDriveService {
 
     public static final String NOME_PADRAO = "google_drive";
@@ -25,6 +27,7 @@ public class TokenDriveService {
         return obterRefreshToken().filter(token -> !token.isBlank()).isPresent();
     }
 
+    @Transactional
     public void salvarToken(String refreshToken) {
         CredenciaisDriveEntity credenciais = repositorio.findById(NOME_PADRAO)
                 .orElseThrow(() -> new IllegalStateException(

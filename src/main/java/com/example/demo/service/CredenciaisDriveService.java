@@ -4,10 +4,12 @@ import com.example.demo.dto.CredenciaisDriveDTO;
 import com.example.demo.entity.CredenciaisDriveEntity;
 import com.example.demo.repository.CredenciaisDriveRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class CredenciaisDriveService {
 
     public static final String NOME_PADRAO = "google_drive";
@@ -40,6 +42,7 @@ public class CredenciaisDriveService {
                 .isPresent();
     }
 
+    @Transactional
     public void salvarCredenciais(String clientId, String projectId, String clientSecret, String parentFolder) {
         String clientIdLimpo = limpar(clientId);
         String projectIdLimpo = limpar(projectId);

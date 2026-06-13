@@ -5,17 +5,12 @@ import com.example.demo.dto.FormularioPedidoDTO;
 import com.example.demo.dto.PedidoDTO;
 import com.example.demo.dto.PedidoResumoDTO;
 import com.example.demo.constants.ColunasPedido;
-import com.example.demo.entity.BairroEntity;
-import com.example.demo.entity.EstadoEntity;
-import com.example.demo.entity.MunicipioEntity;
 import com.example.demo.crud.ModuloCrud;
 import com.example.demo.crud.OpcaoCrud;
 import com.example.demo.crud.filtros.FiltrosCrudBuilder;
 import com.example.demo.crud.filtros.OpcoesDataCrud;
 import com.example.demo.exception.PedidoNaoEncontradoException;
-import com.example.demo.repository.BairroRepository;
-import com.example.demo.repository.EstadoRepository;
-import com.example.demo.repository.MunicipioRepository;
+import com.example.demo.service.ConsultaLocalidadesService;
 import com.example.demo.service.FormularioPedidoService;
 import com.example.demo.service.PedidoService;
 import com.example.demo.util.FormatacaoUtil;
@@ -44,22 +39,16 @@ import static com.example.demo.crud.ColunaCrud.col;
 public class PedidoController {
     private final PedidoService pedidoService;
     private final FormularioPedidoService formularioPedidoService;
-    private final EstadoRepository estadoRepository;
-    private final MunicipioRepository municipioRepository;
-    private final BairroRepository bairroRepository;
+    private final ConsultaLocalidadesService consultaLocalidadesService;
 
     public PedidoController(
             PedidoService pedidoService,
             FormularioPedidoService formularioPedidoService,
-            EstadoRepository estadoRepository,
-            MunicipioRepository municipioRepository,
-            BairroRepository bairroRepository
+            ConsultaLocalidadesService consultaLocalidadesService
     ) {
         this.pedidoService = pedidoService;
         this.formularioPedidoService = formularioPedidoService;
-        this.estadoRepository = estadoRepository;
-        this.municipioRepository = municipioRepository;
-        this.bairroRepository = bairroRepository;
+        this.consultaLocalidadesService = consultaLocalidadesService;
     }
 
     @GetMapping("/crud/pedidos")
@@ -191,33 +180,15 @@ public class PedidoController {
     }
 
     private String resolverEstado(Integer estadoId) {
-        if (estadoId == null) {
-            return "";
-        }
-        return estadoRepository.findById(estadoId)
-                .map(EstadoEntity::getSigla)
-                .filter(valor -> valor != null && !valor.isBlank())
-                .orElseGet(() -> estadoRepository.findById(estadoId)
-                        .map(EstadoEntity::getNome)
-                        .orElse(""));
+        return consultaLocalidadesService.resolverEstado(estadoId);
     }
 
     private String resolverMunicipio(Integer municipioId) {
-        if (municipioId == null) {
-            return "";
-        }
-        return municipioRepository.findById(municipioId)
-                .map(MunicipioEntity::getNome)
-                .orElse("");
+        return consultaLocalidadesService.resolverMunicipio(municipioId);
     }
 
     private String resolverBairro(Integer bairroId) {
-        if (bairroId == null) {
-            return "";
-        }
-        return bairroRepository.findById(bairroId)
-                .map(BairroEntity::getNome)
-                .orElse("");
+        return consultaLocalidadesService.resolverBairro(bairroId);
     }
 
     @PostMapping("/pedidos/{id}/arquivos")

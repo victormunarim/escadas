@@ -11,8 +11,6 @@ public class UserDetailsImpl implements UserDetails {
 
     private Long id;
 
-    private String name;
-
     private String username;
 
     private String email;

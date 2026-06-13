@@ -11,6 +11,7 @@ import com.example.demo.repository.PedidoResumoRepository;
 import com.example.demo.spec.EspecificacaoPedido;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional(readOnly = true)
 public class PedidoService {
 
     private final PedidoRepository repositorioPedido;
@@ -71,6 +73,7 @@ public class PedidoService {
     }
 
 
+    @Transactional
     public void excluir(Long id) {
         PedidoEntity pedido = obterPedido(id);
         pedido.setFlagOculto(Boolean.TRUE);
@@ -81,6 +84,7 @@ public class PedidoService {
         return new PedidoDTO(obterPedido(id));
     }
 
+    @Transactional
     public void salvarFormulario(FormularioPedidoDTO formularioPedido) {
         PedidoEntity pedido = new PedidoEntity();
         formularioPedidoService.aplicarFormularioNoPedido(formularioPedido, pedido);
@@ -88,6 +92,7 @@ public class PedidoService {
         new PedidoDTO(repositorioPedido.save(pedido));
     }
 
+    @Transactional
     public void atualizarFormulario(Long id, FormularioPedidoDTO formularioPedido) {
         PedidoEntity pedido = obterPedido(id);
         formularioPedidoService.aplicarFormularioNoPedido(formularioPedido, pedido);
@@ -102,6 +107,7 @@ public class PedidoService {
         return servicoArquivoPedido.listarPorPedido(pedidoId);
     }
 
+    @Transactional
     public void enviarArquivo(Long pedidoId, MultipartFile arquivo) {
         servicoArquivoPedido.enviarERegistrar(obterPedido(pedidoId), arquivo);
     }

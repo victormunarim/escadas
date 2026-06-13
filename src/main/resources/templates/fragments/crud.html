@@ -30,6 +30,10 @@
          th:if="${sucesso != null}"
          th:text="${sucesso}"></div>
 
+    <div class="alerta-formulario alerta-formulario--erro"
+         th:if="${erro != null}"
+         th:text="${erro}"></div>
+
     <div class="vazio-crud"
          th:if="${linhas == null or #lists.isEmpty(linhas)}">
       <div class="vazio-crud__titulo">Nenhum registro encontrado</div>

@@ -103,7 +103,7 @@ public class ConsultaLocalidadesService {
     }
 
     private int limitar(int limite) {
-        return Math.max(1, Math.min(limite, 500));
+        return Math.clamp(limite, 1, 500);
     }
 
     private String normalizarUf(String uf) {
@@ -129,5 +129,35 @@ public class ConsultaLocalidadesService {
         String semAcento = Normalizer.normalize(valor, Normalizer.Form.NFD)
                 .replaceAll("\\p{M}+", "");
         return semAcento.toLowerCase(Locale.ROOT).trim();
+    }
+
+    public String resolverEstado(Integer estadoId) {
+        if (estadoId == null) {
+            return "";
+        }
+        return repositorioEstado.findById(estadoId)
+                .map(EstadoEntity::getSigla)
+                .filter(valor -> !valor.isBlank())
+                .orElseGet(() -> repositorioEstado.findById(estadoId)
+                        .map(EstadoEntity::getNome)
+                        .orElse(""));
+    }
+
+    public String resolverMunicipio(Integer municipioId) {
+        if (municipioId == null) {
+            return "";
+        }
+        return repositorioMunicipio.findById(municipioId)
+                .map(MunicipioEntity::getNome)
+                .orElse("");
+    }
+
+    public String resolverBairro(Integer bairroId) {
+        if (bairroId == null) {
+            return "";
+        }
+        return repositorioBairro.findById(bairroId)
+                .map(BairroEntity::getNome)
+                .orElse("");
     }
 }
