@@ -30,12 +30,11 @@ Definidas em `build.gradle`:
 
 1. `src/main/java/com/example/demo`
    - `AplicacaoEscadas.java`: classe principal do Spring Boot.
-   - `web/`: controllers Spring MVC.
-   - `pedidos/`: dominio de pedidos (entidades, repositorios, servicos, CRUD).
-   - `auth/`: autenticacao e seguranca.
-   - `drive/`: integracao com Google Drive.
-   - `shared/`: componentes reutilizaveis (CRUD, navegacao).
-   - `util/`: utilitarios de formatacao e numeros.
+   - `pedidos/`: domínio de pedidos, contendo subpacotes para `controller`, `model` (entidades), `repository`, `service`, `dto`, `config`, `spec` e `exception`.
+   - `auth/`: autenticação e segurança, contendo subpacotes para `controller`, `model`, `repository`, `service`, `dto` e a configuração de segurança do Spring.
+   - `drive/`: integração com Google Drive, contendo subpacotes para `controller`, `model`, `repository`, `service` e `dto`.
+   - `localidades/`: estados, municípios e bairros, contendo subpacotes para `model`, `repository` e `service`.
+   - `shared/`: componentes reutilizáveis (CRUD genérico, tratamento de exceções, utilitários, navegação).
 2. `src/main/resources`
    - `application.properties` e `application-dev.properties`: configuracoes.
    - `templates/`: paginas Thymeleaf.
@@ -291,7 +290,7 @@ Arquivo: `auth/model/Usuario.java`
 
 1. Classe principal: `src/main/java/com/example/demo/AplicacaoEscadas.java`
 2. Configuracao de seguranca: `src/main/java/com/example/demo/auth/security/ConfiguracaoSeguranca.java`
-3. CRUD de pedidos: `src/main/java/com/example/demo/pedidos/crud/ModuloCrudPedidos.java`
-4. Controller de pedidos: `src/main/java/com/example/demo/web/ControladorPedidos.java`
-5. Integracao Drive: `src/main/java/com/example/demo/drive/service/ServicoOAuthDrive.java`
+3. Controller de pedidos: `src/main/java/com/example/demo/pedidos/controller/PedidoController.java`
+4. Servicos de pedidos: `src/main/java/com/example/demo/pedidos/service/PedidoService.java`
+5. Integracao Drive: `src/main/java/com/example/demo/drive/service/OAuthDriveService.java`
 6. Configuracoes: `src/main/resources/application.properties`
