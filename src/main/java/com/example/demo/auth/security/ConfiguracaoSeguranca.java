@@ -46,10 +46,7 @@ public class ConfiguracaoSeguranca {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.cors(Customizer.withDefaults());
-        http.csrf(csrf -> csrf
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/auth/**")
-        )
+        http.csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(
                         exception -> exception.authenticationEntryPoint(unauthorizedHandler)
                 )
