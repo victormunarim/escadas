@@ -65,7 +65,7 @@ public class FormularioPedidoService {
         model.addAttribute("tituloPagina", tituloPagina);
         model.addAttribute("subtituloPagina", subtituloPagina);
         model.addAttribute("textoBotaoSalvar", textoBotaoSalvar);
-        model.addAttribute("urlVoltar", "/crud/pedidos");
+        model.addAttribute("urlVoltar", "/pedidos");
         model.addAttribute(
                 "camposFormularioPedido",
                 FormularioPedidoViewConfig.criarCampos(

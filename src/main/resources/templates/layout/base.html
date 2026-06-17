@@ -15,13 +15,7 @@
 
 <main class="aplicativo__principal">
 
-    <th:block th:if="${modulo != null}">
-        <section th:replace="~{fragments/crud :: crudList(${modulo}, ${parametros}, ${linhas})}"></section>
-    </th:block>
-
-    <th:block th:if="${modulo == null}">
-        <div th:replace="${conteudoDinamico}"></div>
-    </th:block>
+    <div th:replace="${conteudoDinamico}"></div>
 
 </main>
 <footer th:replace="~{fragments/footer :: footer_helper}"></footer>

@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
             RedirectAttributes redirectAttributes
     ) {
         redirectAttributes.addFlashAttribute("erro", "Pedido não encontrado (ID: " + ex.getId() + ").");
-        return "redirect:/crud/pedidos";
+        return "redirect:/pedidos";
     }
 
     @ExceptionHandler(Exception.class)
@@ -23,6 +23,6 @@ public class GlobalExceptionHandler {
             RedirectAttributes redirectAttributes
     ) {
         redirectAttributes.addFlashAttribute("erro", "Ocorreu um erro interno: " + ex.getMessage());
-        return "redirect:/crud/pedidos";
+        return "redirect:/pedidos";
     }
 }

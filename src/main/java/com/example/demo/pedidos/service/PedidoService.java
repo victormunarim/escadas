@@ -1,9 +1,7 @@
 package com.example.demo.pedidos.service;
 import com.example.demo.pedidos.model.PedidoEntity;
 import com.example.demo.pedidos.repository.PedidoRepository;
-import com.example.demo.pedidos.repository.PedidoResumoRepository;
 import com.example.demo.pedidos.dto.PedidoDTO;
-import com.example.demo.pedidos.dto.PedidoResumoDTO;
 import com.example.demo.pedidos.dto.FormularioPedidoDTO;
 import com.example.demo.pedidos.dto.ArquivoPedidoDTO;
 import com.example.demo.pedidos.spec.EspecificacaoPedido;
@@ -23,26 +21,23 @@ import java.util.Map;
 public class PedidoService {
 
     private final PedidoRepository repositorioPedido;
-    private final PedidoResumoRepository repositorioPedidoResumo;
     private final FormularioPedidoService formularioPedidoService;
     private final ArquivoPedidoService servicoArquivoPedido;
     private final GeradorPdfPedidoService geradorPdfPedido;
 
     public PedidoService(
             PedidoRepository repositorioPedido,
-            PedidoResumoRepository repositorioPedidoResumo,
             FormularioPedidoService formularioPedidoService,
             ArquivoPedidoService servicoArquivoPedido,
             GeradorPdfPedidoService geradorPdfPedido
     ) {
         this.repositorioPedido = repositorioPedido;
-        this.repositorioPedidoResumo = repositorioPedidoResumo;
         this.formularioPedidoService = formularioPedidoService;
         this.servicoArquivoPedido = servicoArquivoPedido;
         this.geradorPdfPedido = geradorPdfPedido;
     }
 
-    public List<PedidoResumoDTO> listarResumo(Map<String, String> parametros) {
+    public List<PedidoDTO> listarResumo(Map<String, String> parametros) {
         String busca = parametros.getOrDefault("busca", "").trim();
         String numeroBusca = parametros.getOrDefault("numero_busca", "").trim();
         String dia = parametros.getOrDefault("dia", "").trim();
@@ -64,11 +59,11 @@ public class PedidoService {
 
         int size = tamanhoPagina(parametros.getOrDefault("size", "50"));
 
-        return repositorioPedidoResumo.findAll(
+        return repositorioPedido.findAll(
                 EspecificacaoPedido.filtro(busca, numeroBusca, dia, mes, ano),
                 PageRequest.of(0, size)
         ).stream()
-                .map(PedidoResumoDTO::new)
+                .map(PedidoDTO::new)
                 .toList();
     }
 

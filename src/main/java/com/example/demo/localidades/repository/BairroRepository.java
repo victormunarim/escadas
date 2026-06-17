@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface BairroRepository extends JpaRepository<BairroEntity, Integer> {
     List<BairroEntity> findDistinctByEstadoIdOrderByNomeAsc(Integer estadoId);
-    List<BairroEntity> findDistinctByMunicipioIdOrderByNomeAsc(Integer municipioId);
     java.util.Optional<BairroEntity> findByNomeIgnoreCaseAndMunicipioId(String nome, Integer municipioId);
 }

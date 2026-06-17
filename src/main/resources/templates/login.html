@@ -17,59 +17,24 @@
             </span>
         </a>
 
-        <div id="login-erro" class="login-alerta login-alerta--erro" hidden>
+        <div id="login-erro" class="login-alerta login-alerta--erro" th:if="${param.error}">
             Usuário ou senha inválidos.
         </div>
-        <div id="login-ok" class="login-alerta login-alerta--ok" hidden>
-            Login realizado com sucesso.
+        <div id="login-logout" class="login-alerta login-alerta--ok" th:if="${param.logout}">
+            Você saiu do sistema com sucesso.
         </div>
 
-        <form id="login-form" class="login-formulario" action="#" method="post" novalidate>
+        <form id="login-form" class="login-formulario" th:action="@{/login}" method="post">
 
             <label class="login-label" for="username">Usuário</label>
             <input class="login-input" id="username" name="username" type="text" autocomplete="username" required autofocus>
 
-            <label class="login-label" for="senha">Senha</label>
-            <input class="login-input" id="senha" name="senha" type="password" autocomplete="current-password" required>
+            <label class="login-label" for="password">Senha</label>
+            <input class="login-input" id="password" name="password" type="password" autocomplete="current-password" required>
 
             <button class="login-botao" type="submit">Acessar</button>
         </form>
     </section>
 </main>
-<script>
-    const form = document.getElementById('login-form');
-    const erro = document.getElementById('login-erro');
-    const ok = document.getElementById('login-ok');
-
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        erro.hidden = true;
-        ok.hidden = true;
-
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('senha').value;
-
-        try {
-            const response = await fetch('/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
-                credentials: 'same-origin'
-            });
-
-            if (!response.ok) {
-                erro.hidden = false;
-                return;
-            }
-
-            await response.json();
-
-            ok.hidden = false;
-            window.location.href = '/';
-        } catch (e) {
-            erro.hidden = false;
-        }
-    });
-</script>
 </body>
 </html>

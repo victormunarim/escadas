@@ -11,7 +11,7 @@ public class AtributosGlobaisModelo {
     @ModelAttribute("modulos")
     public List<ModuloNavegacao> modulos() {
         return List.of(
-                new ModuloNavegacao("Pedidos", "/crud/pedidos"),
+                new ModuloNavegacao("Pedidos", "/pedidos"),
                 new ModuloNavegacao("Novo Pedido", "/pedidos/novo"),
                 new ModuloNavegacao("Google Drive", "/token")
         );

@@ -1,5 +1,132 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/base :: layout(~{::section})}">
-<section></section>
+<section class="pagina">
+    <header class="pagina__cabecalho">
+        <h1 class="pagina__titulo">Pedidos</h1>
+
+        <form class="busca-crud" method="get" th:action="@{/pedidos}" role="search" aria-label="Filtros">
+            <div class="filtros-crud">
+                <div class="filtro-crud">
+                    <label class="filtro-crud__rotulo" for="flt-busca">Busca</label>
+                    <input class="filtro-crud__entrada" id="flt-busca" name="busca" type="search" autocomplete="off" placeholder="Nome, email ou descrição..." th:value="${parametros['busca']}" />
+                </div>
+
+                <div class="filtro-crud">
+                    <label class="filtro-crud__rotulo" for="flt-numero_busca">Número do pedido</label>
+                    <input class="filtro-crud__entrada" id="flt-numero_busca" name="numero_busca" type="search" autocomplete="off" placeholder="Número..." th:value="${parametros['numero_busca']}" />
+                </div>
+
+                <div class="filtro-crud">
+                    <label class="filtro-crud__rotulo" for="flt-dia">Dia</label>
+                    <select class="filtro-crud__selecao" id="flt-dia" name="dia">
+                        <option value="">Todos</option>
+                        <option th:each="opt : ${opcoesDias}" th:value="${opt.valor}" th:text="${opt.rotulo}" th:selected="${parametros['dia'] == opt.valor}"></option>
+                    </select>
+                </div>
+
+                <div class="filtro-crud">
+                    <label class="filtro-crud__rotulo" for="flt-mes">Mês</label>
+                    <select class="filtro-crud__selecao" id="flt-mes" name="mes">
+                        <option value="">Todos</option>
+                        <option th:each="opt : ${opcoesMeses}" th:value="${opt.valor}" th:text="${opt.rotulo}" th:selected="${parametros['mes'] == opt.valor}"></option>
+                    </select>
+                </div>
+
+                <div class="filtro-crud">
+                    <label class="filtro-crud__rotulo" for="flt-ano">Ano</label>
+                    <select class="filtro-crud__selecao" id="flt-ano" name="ano">
+                        <option value="">Todos</option>
+                        <option th:each="opt : ${opcoesAnos}" th:value="${opt.valor}" th:text="${opt.rotulo}" th:selected="${parametros['ano'] == opt.valor}"></option>
+                    </select>
+                </div>
+
+                <div class="filtro-crud">
+                    <label class="filtro-crud__rotulo" for="flt-size">Quantidade</label>
+                    <select class="filtro-crud__selecao" id="flt-size" name="size">
+                        <option th:each="opt : ${opcoesQuantidade}" th:value="${opt.valor}" th:text="${opt.rotulo}" th:selected="${parametros['size'] == opt.valor}"></option>
+                    </select>
+                </div>
+
+                <div class="filtro-crud filtro-crud--acoes">
+                    <button class="busca-crud__botao" type="submit">Pesquisar</button>
+                </div>
+            </div>
+        </form>
+    </header>
+
+    <section class="cartao-crud">
+        <div class="alerta-formulario alerta-formulario--sucesso" th:if="${sucesso != null}" th:text="${sucesso}"></div>
+        <div class="alerta-formulario alerta-formulario--erro" th:if="${erro != null}" th:text="${erro}"></div>
+
+        <div class="vazio-crud" th:if="${linhas == null or #lists.isEmpty(linhas)}">
+            <div class="vazio-crud__titulo">Nenhum registro encontrado</div>
+            <div class="vazio-crud__texto">Tente ajustar os filtros.</div>
+        </div>
+
+        <div class="tabela-crud-wrap" th:if="${linhas != null and !#lists.isEmpty(linhas)}">
+            <table class="tabela-crud" aria-label="Tabela de pedidos">
+                <thead class="tabela-crud__cabecalho">
+                <tr class="tabela-crud__linha">
+                    <th class="tabela-crud__coluna">ID</th>
+                    <th class="tabela-crud__coluna">Número do Pedido</th>
+                    <th class="tabela-crud__coluna">Cliente Nome</th>
+                    <th class="tabela-crud__coluna">Email</th>
+                    <th class="tabela-crud__coluna">CPF</th>
+                    <th class="tabela-crud__coluna">RG</th>
+                    <th class="tabela-crud__coluna">CNPJ</th>
+                    <th class="tabela-crud__coluna">Serviço Social</th>
+                    <th class="tabela-crud__coluna">Profissão</th>
+                    <th class="tabela-crud__coluna">Adm. Obra</th>
+                    <th class="tabela-crud__coluna">Telefone</th>
+                    <th class="tabela-crud__coluna">Telefone Fixo</th>
+                    <th class="tabela-crud__coluna">Descrição</th>
+                    <th class="tabela-crud__coluna">Acabamento</th>
+                    <th class="tabela-crud__coluna">Tubos</th>
+                    <th class="tabela-crud__coluna">Revestimento</th>
+                    <th class="tabela-crud__coluna">Valor Total</th>
+                    <th class="tabela-crud__coluna">Prazo Montagem</th>
+                    <th class="tabela-crud__coluna">Data Cadastro</th>
+                    <th class="tabela-crud__coluna">Valor</th>
+                    <th class="tabela-crud__coluna">Ações</th>
+                </tr>
+                </thead>
+                <tbody class="tabela-crud__corpo">
+                <tr class="tabela-crud__linha" th:each="row : ${linhas}">
+                    <td class="tabela-crud__celula" th:text="${row.id}">ID</td>
+                    <td class="tabela-crud__celula" th:text="${row.numeroPedido}">Número</td>
+                    <td class="tabela-crud__celula" th:text="${row.nomeCliente}">Nome</td>
+                    <td class="tabela-crud__celula" th:text="${row.email}">Email</td>
+                    <td class="tabela-crud__celula" th:text="${row.cpfFormatado}">CPF</td>
+                    <td class="tabela-crud__celula" th:text="${row.rgFormatado}">RG</td>
+                    <td class="tabela-crud__celula" th:text="${row.cnpjFormatado}">CNPJ</td>
+                    <td class="tabela-crud__celula" th:text="${row.servicoSocial}">Serviço</td>
+                    <td class="tabela-crud__celula" th:text="${row.profissao}">Profissão</td>
+                    <td class="tabela-crud__celula" th:text="${row.admObra}">Adm. Obra</td>
+                    <td class="tabela-crud__celula" th:text="${row.telefoneFormatado}">Telefone</td>
+                    <td class="tabela-crud__celula" th:text="${row.telefoneFixoFormatado}">Telefone Fixo</td>
+                    <td class="tabela-crud__celula" th:text="${row.descricao}">Descrição</td>
+                    <td class="tabela-crud__celula" th:text="${row.acabamento}">Acabamento</td>
+                    <td class="tabela-crud__celula" th:text="${row.tubos}">Tubos</td>
+                    <td class="tabela-crud__celula" th:text="${row.revestimento ? 'Sim' : 'Não'}">Revestimento</td>
+                    <td class="tabela-crud__celula" th:text="${row.valorTotalFormatado}">Valor Total</td>
+                    <td class="tabela-crud__celula" th:text="${row.prazoMontagem}">Prazo</td>
+                    <td class="tabela-crud__celula" th:text="${row.dataCadastroFormatado}">Data</td>
+                    <td class="tabela-crud__celula" th:text="${row.valorFormatado}">Valor</td>
+                    <td class="tabela-crud__celula">
+                        <div class="acoes-tabela">
+                            <a class="acoes-tabela__botao acoes-tabela__botao--visualizar" th:href="@{/pedidos/{id}/visualizar(id=${row.id})}">Visualizar</a>
+                            <a class="acoes-tabela__botao acoes-tabela__botao--pdf" th:href="@{/pedidos/{id}/pdf(id=${row.id})}" target="_blank" rel="noopener">PDF</a>
+                            <a class="acoes-tabela__botao acoes-tabela__botao--editar" th:href="@{/pedidos/{id}/editar(id=${row.id})}">Editar</a>
+                            <form method="post" th:action="@{/pedidos/{id}/excluir(id=${row.id})}" onsubmit="return confirm('Tem certeza que deseja excluir este pedido?');">
+                                <button class="acoes-tabela__botao acoes-tabela__botao--excluir" type="submit">Excluir</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</section>
 </html>

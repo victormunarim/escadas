@@ -86,7 +86,6 @@ public record PedidoDTO(
         );
     }
 
-    // Compatibilidade com getters JavaBeans para controllers e templates
     public Integer getId() { return id; }
     public Integer getNumeroPedido() { return numeroPedido; }
     public String getNomeCliente() { return nomeCliente; }
@@ -124,4 +123,13 @@ public record PedidoDTO(
     public LocalDateTime getDataCadastro() { return dataCadastro; }
     public Boolean getFlagOculto() { return flagOculto; }
     public BigDecimal getValor() { return valor; }
+
+    public String getCpfFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarCpf(cpf); }
+    public String getRgFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarRg(rg); }
+    public String getCnpjFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarCnpj(cnpj); }
+    public String getTelefoneFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarTelefoneCelular(telefone); }
+    public String getTelefoneFixoFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarTelefoneFixo(telefoneFixo); }
+    public String getValorTotalFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarValor(valorTotal); }
+    public String getValorFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarValor(valor); }
+    public String getDataCadastroFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarDataHora(dataCadastro); }
 }

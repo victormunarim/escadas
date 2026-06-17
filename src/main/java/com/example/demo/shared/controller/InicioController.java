@@ -8,6 +8,6 @@ public class InicioController {
 
     @GetMapping("/")
     public String index() {
-        return "redirect:/crud/pedidos";
+        return "redirect:/pedidos";
     }
 }
