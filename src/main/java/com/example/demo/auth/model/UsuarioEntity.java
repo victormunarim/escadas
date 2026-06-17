@@ -1,11 +1,9 @@
 package com.example.demo.auth.model;
-import com.example.demo.auth.dto.UsuarioDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.springframework.beans.BeanUtils;
 
 @Entity
 @Table(name = "usuarios")
@@ -22,10 +20,6 @@ public class UsuarioEntity {
 
     @Column(nullable = false)
     private String senha;
-
-    public UsuarioEntity(UsuarioDTO usuario) {
-        BeanUtils.copyProperties(usuario, this);
-    }
 
     public UsuarioEntity() {}
 
