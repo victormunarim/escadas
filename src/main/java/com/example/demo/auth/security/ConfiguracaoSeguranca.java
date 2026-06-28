@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -27,19 +28,35 @@ public class ConfiguracaoSeguranca {
 
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/logout", "/css/**", "/js/**", "/logo.png", "/images/**").permitAll()
+                .requestMatchers("/login", "/logout", "/css/**", "/js/**", "/logo.png", "/images/**", "/index.html", "/assets/**", "/vite.svg", "/.well-known/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/pedidos", true)
+                .successHandler((request, response, authentication) -> {
+                    response.setStatus(200);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"sucesso\":true,\"username\":\"" + authentication.getName() + "\"}");
+                })
+                .failureHandler((request, response, exception) -> {
+                    response.setStatus(401);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"erro\":\"Usuário ou senha inválidos.\"}");
+                })
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID", "AUTH_TOKEN")
-                .logoutSuccessUrl("/login?logout")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    response.setStatus(200);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"sucesso\":true}");
+                })
                 .permitAll()
             );
 

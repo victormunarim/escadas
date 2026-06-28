@@ -3,12 +3,13 @@ package com.example.demo.pedidos.config;
 import com.example.demo.shared.crud.OpcaoCrud;
 import com.example.demo.shared.crud.formulario.CampoFormularioCrud;
 import com.example.demo.shared.crud.formulario.CamposFormularioCrud;
+import com.example.demo.pedidos.dto.FormularioPedidoDTO;
 
 import java.util.List;
 
 public class FormularioPedidoViewConfig {
 
-    public static List<CampoFormularioCrud> criarCampos(
+    public static List<CampoFormularioCrud<FormularioPedidoDTO>> criarCampos(
             List<OpcaoCrud> opcoesUf,
             List<OpcaoCrud> opcoesUfCliente,
             List<OpcaoCrud> opcoesBairro,
@@ -24,7 +25,8 @@ public class FormularioPedidoViewConfig {
                         true,
                         "1",
                         null,
-                        "campo--numero-pedido"
+                        "campo--numero-pedido",
+                        FormularioPedidoDTO::getNumeroPedido
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_CLIENTE_NOME,
@@ -32,7 +34,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         true,
                         120,
-                        "campo--cliente-nome"
+                        "campo--cliente-nome",
+                        FormularioPedidoDTO::getNomeCliente
                 ),
                 CamposFormularioCrud.email(
                         ColunasPedido.CAMPO_EMAIL,
@@ -40,7 +43,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         120,
-                        "campo--email"
+                        "campo--email",
+                        FormularioPedidoDTO::getEmail
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_CPF,
@@ -48,7 +52,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         14,
-                        "campo--cpf"
+                        "campo--cpf",
+                        FormularioPedidoDTO::getCpf
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_RG,
@@ -56,7 +61,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         12,
-                        "campo--rg"
+                        "campo--rg",
+                        FormularioPedidoDTO::getRg
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_CNPJ,
@@ -64,7 +70,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         30,
-                        "campo--cnpj"
+                        "campo--cnpj",
+                        FormularioPedidoDTO::getCnpj
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_SERVICO_SOCIAL,
@@ -72,7 +79,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         100,
-                        "campo--servico-social"
+                        "campo--servico-social",
+                        FormularioPedidoDTO::getServicoSocial
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_PROFISSAO,
@@ -80,7 +88,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         100,
-                        "campo--profissao"
+                        "campo--profissao",
+                        FormularioPedidoDTO::getProfissao
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_ADM_OBRA,
@@ -88,7 +97,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         100,
-                        "campo--adm-obra"
+                        "campo--adm-obra",
+                        FormularioPedidoDTO::getAdmObra
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_TELEFONE,
@@ -96,7 +106,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         20,
-                        "campo--telefone"
+                        "campo--telefone",
+                        FormularioPedidoDTO::getTelefone
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_TELEFONE_FIXO,
@@ -104,7 +115,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         20,
-                        "campo--telefone-fixo"
+                        "campo--telefone-fixo",
+                        FormularioPedidoDTO::getTelefoneFixo
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_ACABAMENTO,
@@ -112,7 +124,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         120,
-                        "campo--acabamento"
+                        "campo--acabamento",
+                        FormularioPedidoDTO::getAcabamento
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_TUBOS,
@@ -120,14 +133,16 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         120,
-                        "campo--tubos"
+                        "campo--tubos",
+                        FormularioPedidoDTO::getTubos
                 ),
                 CamposFormularioCrud.selecao(
                         ColunasPedido.CAMPO_REVESTIMENTO,
                         ColunasPedido.LABEL_REVESTIMENTO,
                         false,
                         List.of(new OpcaoCrud("true", "Sim"), new OpcaoCrud("false", "Não")),
-                        "campo--revestimento"
+                        "campo--revestimento",
+                        FormularioPedidoDTO::getRevestimento
                 ),
                 CamposFormularioCrud.numero(
                         ColunasPedido.CAMPO_VALOR_TOTAL,
@@ -136,7 +151,8 @@ public class FormularioPedidoViewConfig {
                         false,
                         "0",
                         "0.01",
-                        "campo--valor-total"
+                        "campo--valor-total",
+                        FormularioPedidoDTO::getValorTotal
                 ),
                 CamposFormularioCrud.numero(
                         ColunasPedido.CAMPO_PRAZO_MONTAGEM,
@@ -145,7 +161,8 @@ public class FormularioPedidoViewConfig {
                         false,
                         "0",
                         null,
-                        "campo--prazo-montagem"
+                        "campo--prazo-montagem",
+                        FormularioPedidoDTO::getPrazoMontagem
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_NUMERO,
@@ -153,28 +170,32 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         10,
-                        "campo--numero"
+                        "campo--numero",
+                        FormularioPedidoDTO::getNumero
                 ),
                 CamposFormularioCrud.selecao(
                         ColunasPedido.CAMPO_UF,
                         ColunasPedido.LABEL_UF,
                         true,
                         opcoesUf,
-                        "campo--uf"
+                        "campo--uf",
+                        FormularioPedidoDTO::getUf
                 ),
                 CamposFormularioCrud.selecao(
                         ColunasPedido.CAMPO_MUNICIPIO,
                         ColunasPedido.LABEL_MUNICIPIO,
                         false,
                         opcoesMunicipio,
-                        "campo--municipio"
+                        "campo--municipio",
+                        FormularioPedidoDTO::getMunicipio
                 ),
                 CamposFormularioCrud.selecao(
                         ColunasPedido.CAMPO_BAIRRO,
                         ColunasPedido.LABEL_BAIRRO,
                         false,
                         opcoesBairro,
-                        "campo--bairro"
+                        "campo--bairro",
+                        FormularioPedidoDTO::getBairro
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_CEP,
@@ -182,7 +203,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         9,
-                        "campo--cep"
+                        "campo--cep",
+                        FormularioPedidoDTO::getCep
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_REFERENCIA,
@@ -190,7 +212,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         200,
-                        "campo--referencia"
+                        "campo--referencia",
+                        FormularioPedidoDTO::getReferencia
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_NUMERO_CLIENTE,
@@ -198,28 +221,32 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         10,
-                        "campo--numero-cliente"
+                        "campo--numero-cliente",
+                        FormularioPedidoDTO::getNumeroCliente
                 ),
                 CamposFormularioCrud.selecao(
                         ColunasPedido.CAMPO_UF_CLIENTE,
                         ColunasPedido.LABEL_UF_CLIENTE,
                         true,
                         opcoesUfCliente,
-                        "campo--uf-cliente"
+                        "campo--uf-cliente",
+                        FormularioPedidoDTO::getUfCliente
                 ),
                 CamposFormularioCrud.selecao(
                         ColunasPedido.CAMPO_MUNICIPIO_CLIENTE,
                         ColunasPedido.LABEL_MUNICIPIO_CLIENTE,
                         false,
                         opcoesMunicipioCliente,
-                        "campo--municipio-cliente"
+                        "campo--municipio-cliente",
+                        FormularioPedidoDTO::getMunicipioCliente
                 ),
                 CamposFormularioCrud.selecao(
                         ColunasPedido.CAMPO_BAIRRO_CLIENTE,
                         ColunasPedido.LABEL_BAIRRO_CLIENTE,
                         false,
                         opcoesBairroCliente,
-                        "campo--bairro-cliente"
+                        "campo--bairro-cliente",
+                        FormularioPedidoDTO::getBairroCliente
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_CEP_CLIENTE,
@@ -227,7 +254,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         9,
-                        "campo--cep-cliente"
+                        "campo--cep-cliente",
+                        FormularioPedidoDTO::getCepCliente
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_REFERENCIA_CLIENTE,
@@ -235,7 +263,8 @@ public class FormularioPedidoViewConfig {
                         null,
                         false,
                         200,
-                        "campo--referencia-cliente"
+                        "campo--referencia-cliente",
+                        FormularioPedidoDTO::getReferenciaCliente
                 ),
                 CamposFormularioCrud.numero(
                         ColunasPedido.CAMPO_VALOR,
@@ -244,7 +273,8 @@ public class FormularioPedidoViewConfig {
                         false,
                         "0",
                         "0.01",
-                        "campo--valor"
+                        "campo--valor",
+                        FormularioPedidoDTO::getValor
                 ),
                 CamposFormularioCrud.textarea(
                         ColunasPedido.CAMPO_DESCRICAO,
@@ -253,7 +283,8 @@ public class FormularioPedidoViewConfig {
                         false,
                         4,
                         2000,
-                        "filtro-crud--completo campo--descricao"
+                        "filtro-crud--completo campo--descricao",
+                        FormularioPedidoDTO::getDescricao
                 )
         );
     }

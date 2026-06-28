@@ -1,11 +1,11 @@
 package com.example.demo.pedidos.service;
 import com.example.demo.pedidos.model.PedidoEntity;
-import com.example.demo.pedidos.dto.FormularioPedidoDTO;
+import com.example.demo.pedidos.dto.*;
+import com.example.demo.shared.crud.formulario.*;
+import com.example.demo.shared.crud.render.*;
 import com.example.demo.pedidos.config.FormularioPedidoViewConfig;
 
 import com.example.demo.shared.crud.OpcaoCrud;
-import com.example.demo.shared.crud.formulario.CampoFormularioCrud;
-import com.example.demo.shared.crud.formulario.CamposFormularioCrud;
 import com.example.demo.localidades.model.BairroEntity;
 import com.example.demo.localidades.model.EstadoEntity;
 import com.example.demo.localidades.model.MunicipioEntity;
@@ -16,7 +16,6 @@ import com.example.demo.localidades.repository.BairroRepository;
 import com.example.demo.localidades.repository.EstadoRepository;
 import com.example.demo.localidades.repository.MunicipioRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -42,53 +41,6 @@ public class FormularioPedidoService {
         this.estadoRepository = estadoRepository;
         this.municipioRepository = municipioRepository;
         this.bairroRepository = bairroRepository;
-    }
-
-    public List<String> buscarBairros(String termo, String uf, int limite) {
-        return consultaLocalidades.buscarBairros(termo, uf, limite);
-    }
-
-    public List<String> buscarMunicipios(String termo, String uf, int limite) {
-        return consultaLocalidades.buscarMunicipios(termo, uf, limite);
-    }
-
-    public void prepararPaginaFormulario(
-            Model model,
-            FormularioPedidoDTO formularioPedido,
-            String urlFormulario,
-            String tituloPagina,
-            String subtituloPagina,
-            String textoBotaoSalvar
-    ) {
-        model.addAttribute("formularioPedido", formularioPedido);
-        model.addAttribute("urlFormulario", urlFormulario);
-        model.addAttribute("tituloPagina", tituloPagina);
-        model.addAttribute("subtituloPagina", subtituloPagina);
-        model.addAttribute("textoBotaoSalvar", textoBotaoSalvar);
-        model.addAttribute("urlVoltar", "/pedidos");
-        model.addAttribute(
-                "camposFormularioPedido",
-                FormularioPedidoViewConfig.criarCampos(
-                        opcoesUf(formularioPedido.getUf()),
-                        opcoesUf(formularioPedido.getUfCliente()),
-                        opcoesBairrosPorUf(
-                                formularioPedido.getUf(),
-                                formularioPedido.getBairro()
-                        ),
-                        opcoesBairrosPorUf(
-                                formularioPedido.getUfCliente(),
-                                formularioPedido.getBairroCliente()
-                        ),
-                        opcoesMunicipiosPorUf(
-                                formularioPedido.getUf(),
-                                formularioPedido.getMunicipio()
-                        ),
-                        opcoesMunicipiosPorUf(
-                                formularioPedido.getUfCliente(),
-                                formularioPedido.getMunicipioCliente()
-                        )
-                )
-        );
     }
 
     public FormularioPedidoDTO criarFormularioDePedido(PedidoEntity pedido) {
@@ -182,7 +134,7 @@ public class FormularioPedidoService {
         }
         return estadoRepository.findById(estadoId)
                 .map(EstadoEntity::getSigla)
-                .filter(valor -> valor != null && !valor.isBlank())
+                .filter(valor -> !valor.isBlank())
                 .orElse("SC");
     }
 
@@ -304,5 +256,45 @@ public class FormularioPedidoService {
         }
 
         return opcoes;
+    }
+
+    public List<CampoRender> obterCamposRender(FormularioPedidoDTO formularioPedido) {
+        List<CampoFormularioCrud<FormularioPedidoDTO>> camposBase = FormularioPedidoViewConfig.criarCampos(
+                opcoesUf(formularioPedido.getUf()),
+                opcoesUf(formularioPedido.getUfCliente()),
+                opcoesBairrosPorUf(
+                        formularioPedido.getUf(),
+                        formularioPedido.getBairro()
+                ),
+                opcoesBairrosPorUf(
+                        formularioPedido.getUfCliente(),
+                        formularioPedido.getBairroCliente()
+                ),
+                opcoesMunicipiosPorUf(
+                        formularioPedido.getUf(),
+                        formularioPedido.getMunicipio()
+                ),
+                opcoesMunicipiosPorUf(
+                        formularioPedido.getUfCliente(),
+                        formularioPedido.getMunicipioCliente()
+                )
+        );
+
+        List<CampoRender> camposRender = new ArrayList<>();
+
+        for (CampoFormularioCrud<FormularioPedidoDTO> base : camposBase) {
+            // Seções do formulário
+            if ("uf".equals(base.nome())) {
+                camposRender.add(new SecaoRender("Endereço da Obra"));
+            } else if ("ufCliente".equals(base.nome())) {
+                camposRender.add(new SecaoRender("Endereço do Cliente"));
+            } else if ("valor".equals(base.nome())) {
+                camposRender.add(new SecaoRender("Financeiro & Descrição"));
+            }
+
+            camposRender.add(base.renderizar(formularioPedido));
+        }
+
+        return camposRender;
     }
 }

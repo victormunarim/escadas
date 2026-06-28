@@ -1,13 +1,9 @@
 package com.example.demo.drive.controller;
-import com.example.demo.drive.service.CredenciaisDriveService;
-import com.example.demo.drive.service.TokenDriveService;
-import com.example.demo.drive.service.OAuthDriveService;
 
+import com.example.demo.drive.service.OAuthDriveService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -15,53 +11,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class TokenDriveController {
 
     private final OAuthDriveService servicoOAuthDrive;
-    private final TokenDriveService servicoTokenDrive;
-    private final CredenciaisDriveService servicoCredenciaisDrive;
 
-    public TokenDriveController(
-            OAuthDriveService servicoOAuthDrive,
-            TokenDriveService servicoTokenDrive,
-            CredenciaisDriveService servicoCredenciaisDrive
-    ) {
+    public TokenDriveController(OAuthDriveService servicoOAuthDrive) {
         this.servicoOAuthDrive = servicoOAuthDrive;
-        this.servicoTokenDrive = servicoTokenDrive;
-        this.servicoCredenciaisDrive = servicoCredenciaisDrive;
-    }
-
-    @GetMapping("/token")
-    public String token(
-            @RequestParam(required = false) String sucesso,
-            @RequestParam(required = false) String erro,
-            Model model
-    ) {
-        model.addAttribute("tokenConfigurado", servicoTokenDrive.tokenConfigurado());
-        model.addAttribute("nomeToken", TokenDriveService.NOME_PADRAO);
-        model.addAttribute("credenciaisConfiguradas", servicoCredenciaisDrive.credenciaisConfiguradas());
-        servicoCredenciaisDrive.obterCredenciaisDto().ifPresent(cred -> {
-            model.addAttribute("clientId", cred.getClientId());
-            model.addAttribute("projectId", cred.getProjectId());
-            model.addAttribute("parentFolder", cred.getParentFolder());
-        });
-        model.addAttribute("sucesso", sucesso);
-        model.addAttribute("erro", erro);
-        return "token";
-    }
-
-    @PostMapping("/token/credenciais")
-    public String atualizarCredenciais(
-            @RequestParam(required = false) String clientId,
-            @RequestParam(required = false) String projectId,
-            @RequestParam(required = false) String clientSecret,
-            @RequestParam(required = false) String parentFolder,
-            RedirectAttributes redirectAttributes
-    ) {
-        try {
-            servicoCredenciaisDrive.salvarCredenciais(clientId, projectId, clientSecret, parentFolder);
-            redirectAttributes.addAttribute("sucesso", "Credenciais do Google Drive atualizadas.");
-        } catch (Exception e) {
-            redirectAttributes.addAttribute("erro", e.getMessage());
-        }
-        return "redirect:/token";
     }
 
     @GetMapping("/oauth/google/start")
