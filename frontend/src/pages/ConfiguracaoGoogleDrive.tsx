@@ -121,17 +121,20 @@ export default function ConfiguracaoGoogleDrive() {
                             }
                         </p>
                         
-                        {!tokenConfigurado && (
-                            <button 
-                                className="busca-crud__botao" 
-                                style={{ width: '100%', display: 'block' }}
-                                onClick={lidarComVinculoConta}
-                                disabled={!credenciaisConfiguradas}
-                                title={!credenciaisConfiguradas ? 'Salve as credenciais primeiro' : ''}
-                            >
-                                Vincular Conta Google
-                            </button>
-                        )}
+                        <button 
+                            className="busca-crud__botao" 
+                            style={{ 
+                                width: '100%', 
+                                display: 'block', 
+                                backgroundColor: tokenConfigurado ? '#4b5563' : 'var(--cor-destaque)',
+                                borderColor: tokenConfigurado ? '#4b5563' : 'var(--cor-destaque)'
+                            }}
+                            onClick={lidarComVinculoConta}
+                            disabled={!credenciaisConfiguradas}
+                            title={!credenciaisConfiguradas ? 'Salve as credenciais primeiro' : ''}
+                        >
+                            {tokenConfigurado ? 'Reconectar / Alterar Conta Google' : 'Vincular Conta Google'}
+                        </button>
                     </div>
                 </section>
 

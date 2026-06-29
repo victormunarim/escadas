@@ -15,7 +15,8 @@ public class FormularioPedidoViewConfig {
             List<OpcaoCrud> opcoesBairro,
             List<OpcaoCrud> opcoesBairroCliente,
             List<OpcaoCrud> opcoesMunicipio,
-            List<OpcaoCrud> opcoesMunicipioCliente
+            List<OpcaoCrud> opcoesMunicipioCliente,
+            List<OpcaoCrud> opcoesOrcamento
     ) {
         return List.of(
                 CamposFormularioCrud.numero(
@@ -27,6 +28,14 @@ public class FormularioPedidoViewConfig {
                         null,
                         "campo--numero-pedido",
                         FormularioPedidoDTO::getNumeroPedido
+                ),
+                CamposFormularioCrud.selecao(
+                        "orcamentoId",
+                        "Orçamento Vinculado",
+                        false,
+                        opcoesOrcamento,
+                        "campo--orcamento-vinculado",
+                        FormularioPedidoDTO::getOrcamentoId
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_CLIENTE_NOME,

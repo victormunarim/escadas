@@ -100,12 +100,16 @@ export default function FormularioPedido() {
         try {
             const url = ehEdicao ? `/api/pedidos/${id}` : '/api/pedidos';
             const metodo = ehEdicao ? 'PUT' : 'POST';
-            await requisicaoApi(url, {
+            const resposta = await requisicaoApi<{ id?: number }>(url, {
                 method: metodo,
-                body: JSON.stringify(payload)
+                body: payload
             });
-            alert(ehEdicao ? 'Pedido atualizado com sucesso!' : 'Pedido cadastrado com sucesso!');
-            window.location.href = '/pedidos';
+            const targetId = ehEdicao ? id : (resposta?.id);
+            if (targetId) {
+                window.location.href = `/pedidos/${targetId}/visualizar`;
+            } else {
+                window.location.href = '/pedidos';
+            }
         } catch (erroRequisicao: any) {
             alert(erroRequisicao.message || 'Erro ao salvar o pedido.');
         } finally {

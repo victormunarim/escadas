@@ -36,9 +36,10 @@ public abstract class AbstractCrudRestController<TFormDTO> {
     @PostMapping
     public ResponseEntity<?> salvar(@RequestBody TFormDTO formulario) {
         try {
-            getService().salvarFormulario(formulario);
-            Map<String, String> response = new HashMap<>();
+            Long id = getService().salvarFormulario(formulario);
+            Map<String, Object> response = new HashMap<>();
             response.put("sucesso", "Registro cadastrado com sucesso.");
+            response.put("id", id);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();

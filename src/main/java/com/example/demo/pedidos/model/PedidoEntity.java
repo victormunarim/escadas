@@ -1,5 +1,7 @@
 package com.example.demo.pedidos.model;
 
+import com.example.demo.orcamentos.model.OrcamentoEntity;
+
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -37,6 +39,10 @@ public class PedidoEntity {
 
     @Column(name = "flag_oculto")
     private Boolean flagOculto;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "orcamento_id")
+    private OrcamentoEntity orcamento;
 
     @Column(name = "cliente_nome")
     private String clienteNome;
@@ -438,4 +444,11 @@ public class PedidoEntity {
         }
     }
 
+    public OrcamentoEntity getOrcamento() {
+        return orcamento;
+    }
+
+    public void setOrcamento(OrcamentoEntity orcamento) {
+        this.orcamento = orcamento;
+    }
 }

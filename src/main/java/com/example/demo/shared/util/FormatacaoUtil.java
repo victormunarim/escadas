@@ -150,6 +150,26 @@ public final class FormatacaoUtil {
         return cliente + " - Pedido " + numero;
     }
 
+    public static String nomePastaOrcamento(String nome, Long orcamentoId) {
+        String orcamentoNome = formatarTexto(nome);
+        if ("-".equals(orcamentoNome)) {
+            orcamentoNome = "Orcamento";
+        }
+
+        orcamentoNome = Normalizer.normalize(orcamentoNome, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}+", "")
+                .replaceAll("[^a-zA-Z0-9\\s-]", "")
+                .trim()
+                .replaceAll("\\s+", " ");
+
+        if (orcamentoNome.isBlank()) {
+            orcamentoNome = "Orcamento";
+        }
+
+        String numero = orcamentoId == null ? "SemId" : String.valueOf(orcamentoId);
+        return orcamentoNome + " - Orcamento " + numero;
+    }
+
     private static DecimalFormat criarFormatoMoeda() {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.forLanguageTag("pt-BR"));
         symbols.setDecimalSeparator(',');

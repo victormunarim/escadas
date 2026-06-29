@@ -9,6 +9,7 @@ public class ListagemPedidosViewConfig {
     public static List<ColunaConfig<PedidoDTO>> obterConfiguracaoColunas() {
         return List.of(
                 new ColunaConfig<>("id", "ID", PedidoDTO::id),
+                new ColunaConfig<>("orcamentoId", "ID Orçamento", p -> p.getOrcamentoId() == null ? "-" : String.valueOf(p.getOrcamentoId())),
                 new ColunaConfig<>("numeroPedido", "Número do Pedido", PedidoDTO::numeroPedido),
                 new ColunaConfig<>("nomeCliente", "Cliente Nome", PedidoDTO::nomeCliente),
                 new ColunaConfig<>("email", "Email", PedidoDTO::email),

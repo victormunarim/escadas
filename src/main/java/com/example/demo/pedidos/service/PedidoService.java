@@ -9,7 +9,15 @@ import com.example.demo.pedidos.config.ListagemPedidosViewConfig;
 import com.example.demo.shared.crud.listagem.ColunaConfig;
 import com.example.demo.pedidos.exception.PedidoNaoEncontradoException;
 import com.example.demo.shared.crud.OpcaoCrud;
+import com.example.demo.tarefas.repository.TarefaRepository;
+import com.example.demo.tarefas.repository.TipoTarefaRepository;
+import com.example.demo.auth.repository.UsuarioRepository;
+import com.example.demo.orcamentos.repository.OrcamentoRepository;
+import com.example.demo.orcamentos.model.OrcamentoEntity;
 
+import com.example.demo.shared.arquivos.dto.ArquivoDTO;
+import com.example.demo.shared.arquivos.service.ArquivoService;
+import com.example.demo.shared.util.FormatacaoUtil;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,19 +33,31 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
 
     private final PedidoRepository repositorioPedido;
     private final FormularioPedidoService formularioPedidoService;
-    private final ArquivoPedidoService servicoArquivoPedido;
+    private final ArquivoService servicoArquivo;
     private final GeradorPdfPedidoService geradorPdfPedido;
+    private final TarefaRepository repositorioTarefa;
+    private final TipoTarefaRepository repositorioTipoTarefa;
+    private final UsuarioRepository repositorioUsuario;
+    private final OrcamentoRepository repositorioOrcamento;
 
     public PedidoService(
             PedidoRepository repositorioPedido,
             FormularioPedidoService formularioPedidoService,
-            ArquivoPedidoService servicoArquivoPedido,
-            GeradorPdfPedidoService geradorPdfPedido
+            ArquivoService servicoArquivo,
+            GeradorPdfPedidoService geradorPdfPedido,
+            TarefaRepository repositorioTarefa,
+            TipoTarefaRepository repositorioTipoTarefa,
+            UsuarioRepository repositorioUsuario,
+            OrcamentoRepository repositorioOrcamento
     ) {
         this.repositorioPedido = repositorioPedido;
         this.formularioPedidoService = formularioPedidoService;
-        this.servicoArquivoPedido = servicoArquivoPedido;
+        this.servicoArquivo = servicoArquivo;
         this.geradorPdfPedido = geradorPdfPedido;
+        this.repositorioTarefa = repositorioTarefa;
+        this.repositorioTipoTarefa = repositorioTipoTarefa;
+        this.repositorioUsuario = repositorioUsuario;
+        this.repositorioOrcamento = repositorioOrcamento;
     }
 
     public ListagemDTO listarResumo(Map<String, String> parametros) {
@@ -46,6 +66,7 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
         String dia = parametros.getOrDefault("dia", "").trim();
         String mes = parametros.getOrDefault("mes", "").trim();
         String ano = parametros.getOrDefault("ano", "").trim();
+        String comOrcamento = parametros.getOrDefault("com_orcamento", "").trim();
 
         LocalDate hoje = LocalDate.now();
         if (!parametros.containsKey("mes")) {
@@ -59,11 +80,14 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
         if (!parametros.containsKey("dia")) {
             parametros.put("dia", "");
         }
+        if (!parametros.containsKey("com_orcamento")) {
+            parametros.put("com_orcamento", "");
+        }
 
         int size = tamanhoPagina(parametros.getOrDefault("size", "50"));
 
         List<PedidoDTO> pedidos = repositorioPedido.findAll(
-                EspecificacaoPedido.filtro(busca, numeroBusca, dia, mes, ano),
+                EspecificacaoPedido.filtro(busca, numeroBusca, dia, mes, ano, comOrcamento),
                 PageRequest.of(0, size)
         ).stream()
                 .map(PedidoDTO::new)
@@ -106,6 +130,18 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
                         null,
                         "Número...",
                         parametros.getOrDefault("numero_busca", "")
+                ),
+                new CampoSelecaoRender(
+                        "Com orçamento",
+                        "com_orcamento",
+                        "filtro-crud",
+                        false,
+                        parametros.getOrDefault("com_orcamento", ""),
+                        List.of(
+                                new OpcaoCrud("", "Selecione"),
+                                new OpcaoCrud("true", "Sim"),
+                                new OpcaoCrud("false", "Não")
+                        )
                 ),
                 new CampoSelecaoRender(
                         "Dia",
@@ -165,32 +201,83 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
         return new PedidoDTO(obterPedido(id));
     }
 
+    @Override
     @Transactional
-    public void salvarFormulario(FormularioPedidoDTO formularioPedido) {
+    public Long salvarFormulario(FormularioPedidoDTO formularioPedido) {
         PedidoEntity pedido = new PedidoEntity();
         formularioPedidoService.aplicarFormularioNoPedido(formularioPedido, pedido);
         pedido.setFlagOculto(Boolean.FALSE);
-        new PedidoDTO(repositorioPedido.save(pedido));
+        PedidoEntity pedidoSalvo = repositorioPedido.save(pedido);
+
+        try {
+            com.example.demo.tarefas.model.TipoTarefaEntity tipo = repositorioTipoTarefa.findByNomeIgnoreCase("Vincular a um orçamento")
+                    .orElseGet(() -> repositorioTipoTarefa.save(new com.example.demo.tarefas.model.TipoTarefaEntity("Vincular a um orçamento")));
+
+            com.example.demo.auth.model.UsuarioEntity elvira = repositorioUsuario.findByLogin("Elvira")
+                    .orElseGet(() -> {
+                        com.example.demo.auth.model.UsuarioEntity u = new com.example.demo.auth.model.UsuarioEntity();
+                        u.setId(2L);
+                        u.setLogin("Elvira");
+                        u.setSenha("elvira");
+                        u.setEmail("elvira@local");
+                        return repositorioUsuario.save(u);
+                    });
+
+            com.example.demo.tarefas.model.TarefaEntity tarefa = new com.example.demo.tarefas.model.TarefaEntity();
+            tarefa.setTipoTarefa(tipo);
+            tarefa.setResponsavel(elvira);
+            tarefa.setFlagConcluida(Boolean.FALSE);
+            tarefa.setFlagOculto(Boolean.FALSE);
+            tarefa.setExtChave("pedido_id");
+            tarefa.setExtId(Long.valueOf(pedidoSalvo.getId()));
+            tarefa.setDescricao("Vincular o novo pedido #" + pedidoSalvo.getNumeroPedido() + " a um orçamento correspondente.");
+
+            repositorioTarefa.save(tarefa);
+        } catch (Exception e) {
+            System.err.println("Erro ao criar tarefa automática de vinculação: " + e.getMessage());
+        }
+
+        if (pedidoSalvo.getOrcamento() != null) {
+            OrcamentoEntity orcamento = pedidoSalvo.getOrcamento();
+            orcamento.setFlagEncerrado(Boolean.TRUE);
+            repositorioOrcamento.save(orcamento);
+        }
+
+        return Long.valueOf(pedidoSalvo.getId());
     }
 
+    @Override
     @Transactional
     public void atualizarFormulario(Long id, FormularioPedidoDTO formularioPedido) {
         PedidoEntity pedido = obterPedido(id);
         formularioPedidoService.aplicarFormularioNoPedido(formularioPedido, pedido);
-        repositorioPedido.save(pedido);
+        PedidoEntity pedidoSalvo = repositorioPedido.save(pedido);
+
+        if (pedidoSalvo.getOrcamento() != null) {
+            OrcamentoEntity orcamento = pedidoSalvo.getOrcamento();
+            orcamento.setFlagEncerrado(Boolean.TRUE);
+            repositorioOrcamento.save(orcamento);
+        }
     }
 
     public FormularioPedidoDTO criarFormulario(Long id) {
         return formularioPedidoService.criarFormularioDePedido(obterPedido(id));
     }
 
-    public List<ArquivoPedidoDTO> listarArquivos(Long pedidoId) {
-        return servicoArquivoPedido.listarPorPedido(pedidoId);
+    public List<ArquivoDTO> listarArquivos(Long pedidoId) {
+        return servicoArquivo.listar("pedido_id", pedidoId);
     }
 
     @Transactional
     public void enviarArquivo(Long pedidoId, MultipartFile arquivo) {
-        servicoArquivoPedido.enviarERegistrar(obterPedido(pedidoId), arquivo);
+        PedidoEntity pedido = obterPedido(pedidoId);
+        String nomePasta = FormatacaoUtil.nomePastaPedido(pedido.getNomeCliente(), pedido.getNumeroPedido());
+        servicoArquivo.enviarERegistrar("pedido_id", pedidoId, nomePasta, arquivo);
+    }
+
+    @Transactional
+    public void excluirArquivo(Long arquivoId) {
+        servicoArquivo.excluir(arquivoId);
     }
 
     public byte[] gerarPdf(Long pedidoId) {
@@ -232,7 +319,7 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
 
     private List<OpcaoCrud> criarOpcoesDias() {
         List<OpcaoCrud> opcoes = new java.util.ArrayList<>();
-        opcoes.add(new OpcaoCrud("", "Todos"));
+        opcoes.add(new OpcaoCrud("", "Selecione"));
         for (int i = 1; i <= 31; i++) {
             String val = String.valueOf(i);
             opcoes.add(new OpcaoCrud(val, val));
@@ -242,7 +329,7 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
 
     private List<OpcaoCrud> criarOpcoesMeses() {
         return List.of(
-                new OpcaoCrud("", "Todos"),
+                new OpcaoCrud("", "Selecione"),
                 new OpcaoCrud("1", "Janeiro"),
                 new OpcaoCrud("2", "Fevereiro"),
                 new OpcaoCrud("3", "Março"),
@@ -260,7 +347,7 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
 
     private List<OpcaoCrud> criarOpcoesAnos() {
         List<OpcaoCrud> opcoes = new java.util.ArrayList<>();
-        opcoes.add(new OpcaoCrud("", "Todos"));
+        opcoes.add(new OpcaoCrud("", "Selecione"));
         for (int i = 2020; i <= 2030; i++) {
             String val = String.valueOf(i);
             opcoes.add(new OpcaoCrud(val, val));

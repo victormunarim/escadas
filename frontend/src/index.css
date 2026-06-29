@@ -601,6 +601,12 @@ main{
     white-space: nowrap;
 }
 
+.tabela-crud__coluna:last-child,
+.tabela-crud__celula:last-child {
+    width: 1%;
+}
+
+
 .formulario-crud {
     display: grid;
     gap: 16px;

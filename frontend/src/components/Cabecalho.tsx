@@ -29,6 +29,9 @@ export default function Cabecalho() {
                 <div className="navegacao">
                     <NavLink to="/pedidos" end>Pedidos</NavLink>
                     <NavLink to="/pedidos/novo">Novo Pedido</NavLink>
+                    <NavLink to="/orcamentos" end>Orçamentos</NavLink>
+                    <NavLink to="/orcamentos/novo">Novo Orçamento</NavLink>
+                    <NavLink to="/tarefas" end>Tarefas</NavLink>
                     <NavLink to="/token">Google Drive</NavLink>
                 </div>
 

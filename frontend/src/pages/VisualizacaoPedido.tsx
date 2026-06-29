@@ -4,8 +4,10 @@ import { useParams, Link } from 'react-router-dom';
 import { requisicaoApi } from '../api';
 import Carregando from '../components/Carregando';
 import BlocoDetalhes from '../components/BlocoDetalhes';
+import BlocoTarefas from '../components/BlocoTarefas';
 
 interface ArquivoPedido {
+    id: number;
     nome: string;
     link: string;
 }
@@ -17,7 +19,21 @@ interface DetalhesPedido {
     enderecoObra: Record<string, string>;
     enderecoCliente: Record<string, string>;
     arquivosPedido: ArquivoPedido[];
+    orcamentoId?: number;
+    orcamentoNome?: string;
 }
+
+const obterLinkDownload = (link: string) => {
+    if (!link) return '';
+    if (link.includes('/file/d/')) {
+        const partes = link.split('/file/d/');
+        if (partes.length > 1) {
+            const id = partes[1].split('/')[0];
+            return `https://drive.google.com/uc?export=download&id=${id}`;
+        }
+    }
+    return link;
+};
 
 export default function VisualizacaoPedido() {
     const { id } = useParams<{ id: string }>();
@@ -68,6 +84,21 @@ export default function VisualizacaoPedido() {
         }
     };
 
+    const lidarComExclusaoArquivo = async (arquivoId: number) => {
+        if (!window.confirm('Tem certeza que deseja excluir este arquivo?')) {
+            return;
+        }
+
+        try {
+            await requisicaoApi(`/api/pedidos/${id}/arquivos/${arquivoId}`, {
+                method: 'DELETE'
+            });
+            window.location.reload();
+        } catch (erroRequisicao: any) {
+            alert(erroRequisicao.message || 'Erro ao excluir arquivo.');
+        }
+    };
+
     if (dadosPedido === undefined) {
         return <Carregando mensagem="Carregando detalhes do pedido..." margemSuperior />;
     }
@@ -90,7 +121,17 @@ export default function VisualizacaoPedido() {
             <header className="pagina__cabecalho pedido-visualizacao__cabecalho">
                 <div>
                     <h1 className="pagina__titulo">Visualização do Pedido</h1>
-                    <p className="pagina__subtitulo">Pedido #{pedidoId}</p>
+                    <p className="pagina__subtitulo">
+                        Pedido #{pedidoId}
+                        {dadosPedido.orcamentoId && (
+                            <span>
+                                {' '}| Vinculado ao Orçamento:{' '}
+                                <Link to={`/orcamentos/${dadosPedido.orcamentoId}/visualizar`} style={{ color: '#13508c', fontWeight: 600, textDecoration: 'underline' }}>
+                                    #{dadosPedido.orcamentoId} - {dadosPedido.orcamentoNome}
+                                </Link>
+                            </span>
+                        )}
+                    </p>
                 </div>
                 <div className="pedido-visualizacao__acoes">
                     <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`/pedidos/${pedidoId}/editar`}>
@@ -131,15 +172,47 @@ export default function VisualizacaoPedido() {
                     </div>
                 ) : (
                     <ul className="pedido-visualizacao__arquivos-lista">
-                        {arquivosPedido.map((arquivo, indice) => (
-                            <li key={indice} className="pedido-visualizacao__arquivo-item">
+                        {arquivosPedido.map((arquivo) => (
+                            <li key={arquivo.id} className="pedido-visualizacao__arquivo-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <span>{arquivo.nome}</span>
-                                <a href={arquivo.link} target="_blank" rel="noopener noreferrer">Abrir</a>
+                                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                    <a 
+                                        href={obterLinkDownload(arquivo.link)} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="acoes-tabela__botao"
+                                        style={{ 
+                                            backgroundColor: '#17a2b8', 
+                                            borderColor: '#17a2b8', 
+                                            color: '#fff', 
+                                            padding: '2px 8px', 
+                                            fontSize: '0.8rem', 
+                                            height: 'auto', 
+                                            lineHeight: 1.2,
+                                            textDecoration: 'none',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        Download
+                                    </a>
+                                    <button 
+                                        className="acoes-tabela__botao acoes-tabela__botao--excluir" 
+                                        type="button"
+                                        style={{ padding: '2px 8px', fontSize: '0.8rem', height: 'auto', lineHeight: 1 }}
+                                        onClick={() => lidarComExclusaoArquivo(arquivo.id)}
+                                    >
+                                        Excluir
+                                    </button>
+                                </div>
                             </li>
                         ))}
                     </ul>
                 )}
             </section>
+
+            <BlocoTarefas extChave="pedido_id" extId={pedidoId} />
         </section>
     );
 }

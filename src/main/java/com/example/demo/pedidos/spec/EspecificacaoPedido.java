@@ -16,7 +16,8 @@ public class EspecificacaoPedido {
             String numeroBusca,
             String dia,
             String mes,
-            String ano
+            String ano,
+            String comOrcamento
     ) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -56,6 +57,12 @@ public class EspecificacaoPedido {
                 }
             } else if (anoValor != null) {
                 predicates.add(cb.equal(cb.function("year", Integer.class, root.get("dataCadastro")), anoValor));
+            }
+
+            if ("true".equalsIgnoreCase(comOrcamento)) {
+                predicates.add(cb.isNotNull(root.get("orcamento")));
+            } else if ("false".equalsIgnoreCase(comOrcamento)) {
+                predicates.add(cb.isNull(root.get("orcamento")));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

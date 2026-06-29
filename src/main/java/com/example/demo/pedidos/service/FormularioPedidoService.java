@@ -15,6 +15,7 @@ import com.example.demo.shared.util.NumeroUtil;
 import com.example.demo.localidades.repository.BairroRepository;
 import com.example.demo.localidades.repository.EstadoRepository;
 import com.example.demo.localidades.repository.MunicipioRepository;
+import com.example.demo.orcamentos.repository.OrcamentoRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -30,17 +31,20 @@ public class FormularioPedidoService {
     private final EstadoRepository estadoRepository;
     private final MunicipioRepository municipioRepository;
     private final BairroRepository bairroRepository;
+    private final OrcamentoRepository orcamentoRepository;
 
     public FormularioPedidoService(
             ConsultaLocalidadesService consultaLocalidades,
             EstadoRepository estadoRepository,
             MunicipioRepository municipioRepository,
-            BairroRepository bairroRepository
+            BairroRepository bairroRepository,
+            OrcamentoRepository orcamentoRepository
     ) {
         this.consultaLocalidades = consultaLocalidades;
         this.estadoRepository = estadoRepository;
         this.municipioRepository = municipioRepository;
         this.bairroRepository = bairroRepository;
+        this.orcamentoRepository = orcamentoRepository;
     }
 
     public FormularioPedidoDTO criarFormularioDePedido(PedidoEntity pedido) {
@@ -75,6 +79,7 @@ public class FormularioPedidoService {
         formulario.setCepCliente(FormatacaoUtil.formatarCep(pedido.getCepCliente()));
         formulario.setReferenciaCliente(pedido.getReferenciaCliente());
         formulario.setValor(pedido.getValor());
+        formulario.setOrcamentoId(pedido.getOrcamento() != null ? pedido.getOrcamento().getId() : null);
         return formulario;
     }
 
@@ -108,7 +113,13 @@ public class FormularioPedidoService {
         pedido.setBairroClienteId(resolverBairroId(formularioPedido.getMunicipioCliente(), formularioPedido.getBairroCliente(), pedido.getMunicipioClienteId()));
         pedido.setCepCliente(NumeroUtil.paraInteiro(formularioPedido.getCepCliente(), 8));
         pedido.setReferenciaCliente(vazioSeNulo(formularioPedido.getReferenciaCliente()));
-        pedido.setValor(zeroSeNulo(formularioPedido.getValor()));
+        pedido.setValor(formularioPedido.getValor());
+
+        if (formularioPedido.getOrcamentoId() != null) {
+            pedido.setOrcamento(orcamentoRepository.findById(formularioPedido.getOrcamentoId()).orElse(null));
+        } else {
+            pedido.setOrcamento(null);
+        }
     }
 
 
@@ -277,7 +288,8 @@ public class FormularioPedidoService {
                 opcoesMunicipiosPorUf(
                         formularioPedido.getUfCliente(),
                         formularioPedido.getMunicipioCliente()
-                )
+                ),
+                obterOpcoesOrcamentosNaoEncerrados(formularioPedido.getOrcamentoId())
         );
 
         List<CampoRender> camposRender = new ArrayList<>();
@@ -296,5 +308,28 @@ public class FormularioPedidoService {
         }
 
         return camposRender;
+    }
+
+    private List<OpcaoCrud> obterOpcoesOrcamentosNaoEncerrados(Long orcamentoIdVinculado) {
+        List<OpcaoCrud> opcoes = new ArrayList<>();
+        opcoes.add(new OpcaoCrud("", "Nenhum"));
+
+        List<com.example.demo.orcamentos.model.OrcamentoEntity> orcamentos = orcamentoRepository.findByFlagOcultoFalseAndFlagEncerradoFalseOrderByIdDesc();
+
+        boolean vinculadoEstaNaLista = false;
+        for (com.example.demo.orcamentos.model.OrcamentoEntity o : orcamentos) {
+            if (orcamentoIdVinculado != null && o.getId().equals(orcamentoIdVinculado)) {
+                vinculadoEstaNaLista = true;
+            }
+            opcoes.add(new OpcaoCrud(String.valueOf(o.getId()), "#" + o.getId() + " - " + o.getNome()));
+        }
+
+        if (orcamentoIdVinculado != null && !vinculadoEstaNaLista) {
+            orcamentoRepository.findById(orcamentoIdVinculado).ifPresent(o -> {
+                opcoes.add(new OpcaoCrud(String.valueOf(o.getId()), "#" + o.getId() + " - " + o.getNome() + " (Encerrado)"));
+            });
+        }
+
+        return opcoes;
     }
 }

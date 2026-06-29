@@ -8,7 +8,7 @@ public interface CrudService<TFormDTO> {
     ListagemDTO listarResumo(Map<String, String> parametros);
     List<CampoRender> obterCamposRenderNovo();
     List<CampoRender> obterCamposRenderEdicao(Long id);
-    void salvarFormulario(TFormDTO formulario);
+    Long salvarFormulario(TFormDTO formulario);
     void atualizarFormulario(Long id, TFormDTO formulario);
     void excluir(Long id);
 }

@@ -291,4 +291,14 @@ public class FormularioPedidoDTO {
     public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
+
+    private Long orcamentoId;
+
+    public Long getOrcamentoId() {
+        return orcamentoId;
+    }
+
+    public void setOrcamentoId(Long orcamentoId) {
+        this.orcamentoId = orcamentoId;
+    }
 }

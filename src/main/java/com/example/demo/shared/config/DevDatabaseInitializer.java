@@ -42,5 +42,20 @@ public class DevDatabaseInitializer implements CommandLineRunner {
             usuario.setEmail("escadas@local");
             usuarioRepository.save(usuario);
         });
+
+        usuarioRepository.findByLogin("Elvira").ifPresentOrElse(usuario -> {
+            boolean senhaCorreta = passwordEncoder.matches("elvira", usuario.getSenha());
+            if (!senhaCorreta) {
+                usuario.setSenha(passwordEncoder.encode("elvira"));
+                usuarioRepository.save(usuario);
+            }
+        }, () -> {
+            UsuarioEntity usuario = new UsuarioEntity();
+            usuario.setId(2L);
+            usuario.setLogin("Elvira");
+            usuario.setSenha(passwordEncoder.encode("elvira"));
+            usuario.setEmail("elvira@local");
+            usuarioRepository.save(usuario);
+        });
     }
 }

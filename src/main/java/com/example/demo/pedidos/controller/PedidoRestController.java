@@ -1,7 +1,7 @@
 package com.example.demo.pedidos.controller;
 
 import com.example.demo.pedidos.config.PedidoViewPresenter;
-import com.example.demo.pedidos.dto.ArquivoPedidoDTO;
+import com.example.demo.shared.arquivos.dto.ArquivoDTO;
 import com.example.demo.pedidos.dto.FormularioPedidoDTO;
 import com.example.demo.pedidos.dto.PedidoDTO;
 import com.example.demo.shared.crud.controller.AbstractCrudRestController;
@@ -40,7 +40,7 @@ public class PedidoRestController extends AbstractCrudRestController<FormularioP
     public ResponseEntity<?> buscarPedido(@PathVariable Long id) {
         try {
             PedidoDTO pedido = pedidoService.buscarPorId(id);
-            List<ArquivoPedidoDTO> arquivosPedido = pedidoService.listarArquivos(id);
+            List<ArquivoDTO> arquivosPedido = pedidoService.listarArquivos(id);
 
             Map<String, Object> response = new HashMap<>();
             response.put("pedidoId", pedido.getId());
@@ -49,6 +49,8 @@ public class PedidoRestController extends AbstractCrudRestController<FormularioP
             response.put("enderecoObra", PedidoViewPresenter.montarEnderecoObra(pedido, consultaLocalidadesService));
             response.put("enderecoCliente", PedidoViewPresenter.montarEnderecoCliente(pedido, consultaLocalidadesService));
             response.put("arquivosPedido", arquivosPedido);
+            response.put("orcamentoId", pedido.getOrcamentoId());
+            response.put("orcamentoNome", pedido.getOrcamentoNome());
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -70,6 +72,25 @@ public class PedidoRestController extends AbstractCrudRestController<FormularioP
         try {
             pedidoService.enviarArquivo(id, arquivo);
             response.put("sucesso", "Arquivo enviado e vinculado ao pedido.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("erro", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @DeleteMapping("/{id}/arquivos/{arquivoId}")
+    public ResponseEntity<?> excluirArquivo(
+            @PathVariable Long id,
+            @PathVariable Long arquivoId
+    ) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            pedidoService.listarArquivos(id); // validates that the pedido exists
+            // We can delegate this to a generic delete method in a shared service or just call delete
+            // Since we refactored PedidoService to use generic ArquivoService, we can add a delete method there
+            pedidoService.excluirArquivo(arquivoId);
+            response.put("sucesso", "Arquivo excluído com sucesso.");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("erro", e.getMessage());

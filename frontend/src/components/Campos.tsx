@@ -73,7 +73,7 @@ export function CampoRenderizador({ campo, onChange }: CampoRenderizadorProps) {
                 onChange={onChange}
             >
                 <option value="">Selecione</option>
-                {campo.options?.map(opt => (
+                {campo.options?.filter(opt => opt.valor !== "" && opt.valor !== null && opt.valor !== undefined).map(opt => (
                     <option key={opt.valor} value={opt.valor}>{opt.rotulo}</option>
                 ))}
             </CampoSelect>
