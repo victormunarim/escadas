@@ -169,6 +169,7 @@ export default function VisualizacaoOrcamento() {
 
     const { id: itemKey, nome, detalhes, arquivos, resumoPedido, dadosCliente, enderecoObra, enderecoCliente, pedidoId, pedidoNumero, pedidoCliente } = dadosOrcamento;
 
+    const podeGerenciarArquivos = !dadosOrcamento.flagEncerrado || ehTecnico;
     const listEtapas = Array.from({ length: etapasVisiveis }, (_, index) => etapasVisiveis - index);
 
     return (
@@ -234,7 +235,7 @@ export default function VisualizacaoOrcamento() {
             <section className="cartao-crud pedido-visualizacao__bloco-arquivos" style={{ marginTop: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid #eee', paddingBottom: '10px' }}>
                     <h2 style={{ fontSize: '1.4rem', fontWeight: 600, margin: 0, color: '#333' }}>{`Arquivos do ${tituloModulo} por Etapas`}</h2>
-                    {!dadosOrcamento.flagEncerrado && (
+                    {podeGerenciarArquivos && (
                         <button 
                             className="busca-crud__botao" 
                             type="button"
@@ -256,7 +257,7 @@ export default function VisualizacaoOrcamento() {
                                     Etapa {etapa}
                                 </h3>
 
-                                {!dadosOrcamento.flagEncerrado && (
+                                {podeGerenciarArquivos && (
                                     <form className="pedido-visualizacao__upload" onSubmit={(e) => lidarComEnvioArquivo(e, etapa)} style={{ marginBottom: '16px' }}>
                                         <input 
                                             className="pedido-visualizacao__arquivo-input" 
@@ -302,7 +303,7 @@ export default function VisualizacaoOrcamento() {
                                                     >
                                                         Download
                                                     </a>
-                                                    {!dadosOrcamento.flagEncerrado && (
+                                                    {podeGerenciarArquivos && (
                                                         <button 
                                                             className="acoes-tabela__botao acoes-tabela__botao--excluir" 
                                                             type="button"

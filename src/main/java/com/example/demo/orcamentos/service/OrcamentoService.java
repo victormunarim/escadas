@@ -67,9 +67,11 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         String dia = parametros.getOrDefault("dia", "").trim();
         String mes = parametros.getOrDefault("mes", "").trim();
         String ano = parametros.getOrDefault("ano", "").trim();
-        String encerrado = parametros.getOrDefault("encerrado", "false").trim();
-        String etiquetaId = parametros.getOrDefault("etiquetaId", "").trim();
         String tecnico = parametros.getOrDefault("tecnico", "false").trim();
+        boolean ehTecnico = "true".equalsIgnoreCase(tecnico);
+        String defaultEncerrado = ehTecnico ? "" : "false";
+        String encerrado = parametros.getOrDefault("encerrado", defaultEncerrado).trim();
+        String etiquetaId = parametros.getOrDefault("etiquetaId", "").trim();
 
         if (!parametros.containsKey("mes")) {
             parametros.put("mes", "");
@@ -83,7 +85,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
             parametros.put("dia", "");
         }
         if (!parametros.containsKey("encerrado")) {
-            parametros.put("encerrado", "false");
+            parametros.put("encerrado", defaultEncerrado);
         }
         if (!parametros.containsKey("etiquetaId")) {
             parametros.put("etiquetaId", "");
@@ -118,7 +120,8 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
             linhas.add(new LinhaListagem(o.getId(), valores));
         }
 
-        List<CampoRender> filtros = List.of(
+        List<CampoRender> filtros = new ArrayList<>();
+        filtros.add(
                 new CampoTextoRender(
                         "Busca",
                         "busca",
@@ -129,7 +132,9 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                         null,
                         "Nome, bairro ou descrição...",
                         parametros.getOrDefault("busca", "")
-                ),
+                )
+        );
+        filtros.add(
                 new CampoSelecaoRender(
                         "Etiqueta",
                         "etiquetaId",
@@ -137,19 +142,25 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                         false,
                         parametros.getOrDefault("etiquetaId", ""),
                         criarOpcoesEtiquetas()
-                ),
-                new CampoSelecaoRender(
-                        "Encerrado",
-                        "encerrado",
-                        "filtro-crud",
-                        false,
-                        parametros.getOrDefault("encerrado", ""),
-                        List.of(
-                                new OpcaoCrud("", "Selecione"),
-                                new OpcaoCrud("true", "Sim"),
-                                new OpcaoCrud("false", "Não")
-                        )
-                ),
+                )
+        );
+        if (!ehTecnico) {
+            filtros.add(
+                    new CampoSelecaoRender(
+                            "Encerrado",
+                            "encerrado",
+                            "filtro-crud",
+                            false,
+                            parametros.getOrDefault("encerrado", "false"),
+                            List.of(
+                                    new OpcaoCrud("", "Selecione"),
+                                    new OpcaoCrud("true", "Sim"),
+                                    new OpcaoCrud("false", "Não")
+                            )
+                    )
+            );
+        }
+        filtros.add(
                 new CampoSelecaoRender(
                         "Dia",
                         "dia",
@@ -157,7 +168,9 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                         false,
                         parametros.getOrDefault("dia", ""),
                         criarOpcoesDias()
-                ),
+                )
+        );
+        filtros.add(
                 new CampoSelecaoRender(
                         "Mês",
                         "mes",
@@ -165,7 +178,9 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                         false,
                         parametros.getOrDefault("mes", ""),
                         criarOpcoesMeses()
-                ),
+                )
+        );
+        filtros.add(
                 new CampoSelecaoRender(
                         "Ano",
                         "ano",
@@ -173,7 +188,9 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                         false,
                         parametros.getOrDefault("ano", ""),
                         criarOpcoesAnos()
-                ),
+                )
+        );
+        filtros.add(
                 new CampoSelecaoRender(
                         "Quantidade",
                         "size",
