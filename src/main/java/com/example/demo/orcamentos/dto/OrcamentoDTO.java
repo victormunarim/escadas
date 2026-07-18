@@ -1,8 +1,12 @@
 package com.example.demo.orcamentos.dto;
 
 import com.example.demo.orcamentos.model.OrcamentoEntity;
+import com.example.demo.shared.util.FormatacaoUtil;
 import org.springframework.beans.BeanUtils;
+
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class OrcamentoDTO {
     private Long id;
@@ -80,8 +84,8 @@ public class OrcamentoDTO {
         if (dataCadastro == null) {
             return "-";
         }
-        return com.example.demo.shared.util.FormatacaoUtil.formatarDataHora(
-                java.time.LocalDateTime.ofInstant(dataCadastro, java.time.ZoneId.systemDefault())
+        return FormatacaoUtil.formatarDataHora(
+                LocalDateTime.ofInstant(dataCadastro, ZoneId.systemDefault())
         );
     }
 

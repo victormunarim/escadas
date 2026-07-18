@@ -1,8 +1,11 @@
 package com.example.demo.orcamentos.spec;
 
 import com.example.demo.orcamentos.model.OrcamentoEntity;
-import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.jpa.domain.Specification;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +81,7 @@ public class EspecificacaoOrcamento {
             }
 
             if (!Long.class.equals(query.getResultType()) && !Long.TYPE.equals(query.getResultType())) {
-                jakarta.persistence.criteria.Join<Object, Object> etiquetaJoin = root.join("etiqueta", jakarta.persistence.criteria.JoinType.LEFT);
+                Join<Object, Object> etiquetaJoin = root.join("etiqueta", JoinType.LEFT);
                 query.orderBy(
                         cb.asc(
                                 cb.selectCase()

@@ -1,5 +1,6 @@
 package com.example.demo.orcamentos.model;
 
+import com.example.demo.pedidos.model.PedidoEntity;
 import jakarta.persistence.*;
 import java.time.Instant;
 
@@ -91,7 +92,7 @@ public class OrcamentoEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pedido_id")
-    private com.example.demo.pedidos.model.PedidoEntity pedido;
+    private PedidoEntity pedido;
 
     @Column(name = "flag_encerrado", nullable = false)
     private Boolean flagEncerrado = false;
@@ -112,11 +113,11 @@ public class OrcamentoEntity {
         this.etiqueta = etiqueta;
     }
 
-    public com.example.demo.pedidos.model.PedidoEntity getPedido() {
+    public PedidoEntity getPedido() {
         return pedido;
     }
 
-    public void setPedido(com.example.demo.pedidos.model.PedidoEntity pedido) {
+    public void setPedido(PedidoEntity pedido) {
         this.pedido = pedido;
     }
 }

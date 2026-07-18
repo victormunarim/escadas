@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -187,7 +188,7 @@ public class FormularioPedidoService {
     }
 
     private List<OpcaoCrud> opcoesDoValoresAtuais(String... valoresAtuais) {
-        return java.util.Arrays.stream(valoresAtuais)
+        return Arrays.stream(valoresAtuais)
                 .filter(valor -> valor != null && !valor.isBlank())
                 .distinct()
                 .map(valor -> new OpcaoCrud(valor, valor))

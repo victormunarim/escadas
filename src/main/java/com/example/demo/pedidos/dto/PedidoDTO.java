@@ -1,5 +1,6 @@
 package com.example.demo.pedidos.dto;
 import com.example.demo.pedidos.model.PedidoEntity;
+import com.example.demo.shared.util.FormatacaoUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -124,12 +125,12 @@ public record PedidoDTO(
     public Boolean getFlagOculto() { return flagOculto; }
     public BigDecimal getValor() { return valor; }
 
-    public String getCpfFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarCpf(cpf); }
-    public String getRgFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarRg(rg); }
-    public String getCnpjFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarCnpj(cnpj); }
-    public String getTelefoneFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarTelefoneCelular(telefone); }
-    public String getTelefoneFixoFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarTelefoneFixo(telefoneFixo); }
-    public String getValorTotalFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarValor(valorTotal); }
-    public String getValorFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarValor(valor); }
-    public String getDataCadastroFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarDataHora(dataCadastro); }
+    public String getCpfFormatado() { return FormatacaoUtil.formatarCpf(cpf); }
+    public String getRgFormatado() { return FormatacaoUtil.formatarRg(rg); }
+    public String getCnpjFormatado() { return FormatacaoUtil.formatarCnpj(cnpj); }
+    public String getTelefoneFormatado() { return FormatacaoUtil.formatarTelefoneCelular(telefone); }
+    public String getTelefoneFixoFormatado() { return FormatacaoUtil.formatarTelefoneFixo(telefoneFixo); }
+    public String getValorTotalFormatado() { return FormatacaoUtil.formatarValor(valorTotal); }
+    public String getValorFormatado() { return FormatacaoUtil.formatarValor(valor); }
+    public String getDataCadastroFormatado() { return FormatacaoUtil.formatarDataHora(dataCadastro); }
 }

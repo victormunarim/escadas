@@ -1,11 +1,14 @@
 package com.example.demo.pedidos.spec;
 
+import com.example.demo.orcamentos.model.OrcamentoEntity;
 import com.example.demo.pedidos.config.ColunasPedido;
 import com.example.demo.pedidos.model.PedidoEntity;
 import com.example.demo.shared.crud.filtros.compostos.FiltroNumeroExato;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
-import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,8 +64,8 @@ public class EspecificacaoPedido {
             }
 
             if ("true".equalsIgnoreCase(temOrcamento)) {
-                jakarta.persistence.criteria.Subquery<Long> subquery = query.subquery(Long.class);
-                jakarta.persistence.criteria.Root<com.example.demo.orcamentos.model.OrcamentoEntity> orcamentoRoot = subquery.from(com.example.demo.orcamentos.model.OrcamentoEntity.class);
+                Subquery<Long> subquery = query.subquery(Long.class);
+                Root<OrcamentoEntity> orcamentoRoot = subquery.from(OrcamentoEntity.class);
                 subquery.select(orcamentoRoot.get("id"));
                 subquery.where(
                         cb.equal(orcamentoRoot.get("pedido").get("id"), root.get("id")),
@@ -70,8 +73,8 @@ public class EspecificacaoPedido {
                 );
                 predicates.add(cb.exists(subquery));
             } else if ("false".equalsIgnoreCase(temOrcamento)) {
-                jakarta.persistence.criteria.Subquery<Long> subquery = query.subquery(Long.class);
-                jakarta.persistence.criteria.Root<com.example.demo.orcamentos.model.OrcamentoEntity> orcamentoRoot = subquery.from(com.example.demo.orcamentos.model.OrcamentoEntity.class);
+                Subquery<Long> subquery = query.subquery(Long.class);
+                Root<OrcamentoEntity> orcamentoRoot = subquery.from(OrcamentoEntity.class);
                 subquery.select(orcamentoRoot.get("id"));
                 subquery.where(
                         cb.equal(orcamentoRoot.get("pedido").get("id"), root.get("id")),

@@ -1,44 +1,40 @@
 package com.example.demo.orcamentos.service;
 
-import com.example.demo.orcamentos.model.OrcamentoEntity;
-import com.example.demo.orcamentos.repository.OrcamentoRepository;
-import com.example.demo.orcamentos.repository.EtiquetaRepository;
-import com.example.demo.orcamentos.dto.*;
-import com.example.demo.orcamentos.spec.EspecificacaoOrcamento;
-import com.example.demo.orcamentos.config.ListagemOrcamentosViewConfig;
 import com.example.demo.orcamentos.config.FormularioOrcamentoViewConfig;
-import com.example.demo.shared.crud.service.CrudService;
-import com.example.demo.shared.crud.listagem.ColunaConfig;
-import com.example.demo.shared.crud.render.*;
-import com.example.demo.shared.crud.OpcaoCrud;
+import com.example.demo.orcamentos.config.ListagemOrcamentosViewConfig;
+import com.example.demo.orcamentos.dto.FormularioOrcamentoDTO;
+import com.example.demo.orcamentos.dto.OrcamentoDTO;
+import com.example.demo.orcamentos.model.EtiquetaEntity;
+import com.example.demo.orcamentos.model.OrcamentoEntity;
+import com.example.demo.orcamentos.repository.EtiquetaRepository;
+import com.example.demo.orcamentos.repository.OrcamentoRepository;
+import com.example.demo.orcamentos.spec.EspecificacaoOrcamento;
+import com.example.demo.pedidos.model.PedidoEntity;
+import com.example.demo.pedidos.repository.PedidoRepository;
 import com.example.demo.shared.arquivos.dto.ArquivoDTO;
 import com.example.demo.shared.arquivos.service.ArquivoService;
+import com.example.demo.shared.crud.OpcaoCrud;
+import com.example.demo.shared.crud.listagem.ColunaConfig;
+import com.example.demo.shared.crud.render.CampoRender;
+import com.example.demo.shared.crud.render.CampoSelecaoRender;
+import com.example.demo.shared.crud.render.CampoTextoRender;
+import com.example.demo.shared.crud.render.ColunaListagem;
+import com.example.demo.shared.crud.render.LinhaListagem;
+import com.example.demo.shared.crud.render.ListagemDTO;
+import com.example.demo.shared.crud.service.CrudService;
 import com.example.demo.shared.util.FormatacaoUtil;
-
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.example.demo.pedidos.repository.PedidoRepository;
-import com.example.demo.pedidos.model.PedidoEntity;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -101,8 +97,8 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                 PageRequest.of(0, size)
         ).stream()
                 .map(OrcamentoDTO::new)
-                .sorted(java.util.Comparator.comparingInt((OrcamentoDTO o) -> obterPrioridadeEtiqueta(o.getEtiquetaNome()))
-                        .thenComparing(OrcamentoDTO::getId, java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())))
+                .sorted(Comparator.comparingInt((OrcamentoDTO o) -> obterPrioridadeEtiqueta(o.getEtiquetaNome()))
+                        .thenComparing(OrcamentoDTO::getId, Comparator.nullsLast(Comparator.reverseOrder())))
                 .toList();
 
         List<ColunaConfig<OrcamentoDTO>> configColunas = ListagemOrcamentosViewConfig.obterConfiguracaoColunas();
@@ -250,7 +246,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
             throw new IllegalArgumentException("A etiqueta é obrigatória.");
         }
 
-        com.example.demo.orcamentos.model.EtiquetaEntity novaEtiqueta = repositorioEtiqueta.findById(formulario.getEtiquetaId())
+        EtiquetaEntity novaEtiqueta = repositorioEtiqueta.findById(formulario.getEtiquetaId())
                 .orElseThrow(() -> new IllegalArgumentException("Etiqueta não encontrada com o ID: " + formulario.getEtiquetaId()));
 
         if (jaEraTecnico) {
@@ -265,7 +261,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
             PedidoEntity pedido = repositorioPedido.findById(Long.valueOf(formulario.getPedidoId()))
                     .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado com o ID: " + formulario.getPedidoId()));
 
-            com.example.demo.orcamentos.model.EtiquetaEntity etiquetaVerificacao = orcamento.getEtiqueta();
+            EtiquetaEntity etiquetaVerificacao = orcamento.getEtiqueta();
             if (etiquetaVerificacao == null || !"proposta".equalsIgnoreCase(etiquetaVerificacao.getNome())) {
                 throw new IllegalArgumentException("Não é possível associar um pedido a um orçamento que não tenha a etiqueta 'Proposta'.");
             }
@@ -350,9 +346,9 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         if (incluirSelecione) {
             opcoes.add(new OpcaoCrud("", "Selecione"));
         }
-        List<com.example.demo.orcamentos.model.EtiquetaEntity> etiquetas = new ArrayList<>(repositorioEtiqueta.findAll());
-        etiquetas.sort(java.util.Comparator.comparingInt(e -> obterPrioridadeEtiqueta(e.getNome())));
-        for (com.example.demo.orcamentos.model.EtiquetaEntity e : etiquetas) {
+        List<EtiquetaEntity> etiquetas = new ArrayList<>(repositorioEtiqueta.findAll());
+        etiquetas.sort(Comparator.comparingInt(e -> obterPrioridadeEtiqueta(e.getNome())));
+        for (EtiquetaEntity e : etiquetas) {
             opcoes.add(new OpcaoCrud(String.valueOf(e.getId()), e.getNome()));
         }
         return opcoes;
@@ -362,12 +358,12 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         List<OpcaoCrud> opcoes = new ArrayList<>();
         opcoes.add(new OpcaoCrud("", "Nenhum"));
 
-        java.util.Set<Integer> pedidoIdsComOrcamento = repositorioOrcamento.findAll().stream()
+        Set<Integer> pedidoIdsComOrcamento = repositorioOrcamento.findAll().stream()
                 .filter(o -> (o.getFlagOculto() == null || !o.getFlagOculto()))
                 .filter(o -> o.getPedido() != null)
                 .filter(o -> orcamentoIdAtual == null || !o.getId().equals(orcamentoIdAtual))
                 .map(o -> o.getPedido().getId())
-                .collect(java.util.stream.Collectors.toSet());
+                .collect(Collectors.toSet());
 
         repositorioPedido.findAll().stream()
                 .filter(p -> p.getFlagOculto() == null || !p.getFlagOculto())
