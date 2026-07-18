@@ -141,7 +141,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                         "filtro-crud",
                         false,
                         parametros.getOrDefault("etiquetaId", ""),
-                        criarOpcoesEtiquetas()
+                        criarOpcoesEtiquetas(true)
                 )
         );
         if (!ehTecnico) {
@@ -246,13 +246,15 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
 
         boolean jaEraTecnico = orcamento.getPedido() != null;
 
-        com.example.demo.orcamentos.model.EtiquetaEntity novaEtiqueta = null;
-        if (formulario.getEtiquetaId() != null) {
-            novaEtiqueta = repositorioEtiqueta.findById(formulario.getEtiquetaId()).orElse(null);
+        if (formulario.getEtiquetaId() == null) {
+            throw new IllegalArgumentException("A etiqueta é obrigatória.");
         }
 
+        com.example.demo.orcamentos.model.EtiquetaEntity novaEtiqueta = repositorioEtiqueta.findById(formulario.getEtiquetaId())
+                .orElseThrow(() -> new IllegalArgumentException("Etiqueta não encontrada com o ID: " + formulario.getEtiquetaId()));
+
         if (jaEraTecnico) {
-            if (novaEtiqueta != null && orcamento.getEtiqueta() != null && !novaEtiqueta.getId().equals(orcamento.getEtiqueta().getId())) {
+            if (orcamento.getEtiqueta() != null && !novaEtiqueta.getId().equals(orcamento.getEtiqueta().getId())) {
                 throw new IllegalArgumentException("Não é possível alterar a etiqueta de um Técnico.");
             }
         } else {
@@ -330,7 +332,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
 
     @Override
     public List<CampoRender> obterCamposRenderNovo() {
-        return FormularioOrcamentoViewConfig.criarCampos(criarOpcoesEtiquetas(), criarOpcoesPedidos(null)).stream()
+        return FormularioOrcamentoViewConfig.criarCampos(criarOpcoesEtiquetas(false), criarOpcoesPedidos(null)).stream()
                 .map(base -> base.renderizar(new FormularioOrcamentoDTO()))
                 .toList();
     }
@@ -338,14 +340,16 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
     @Override
     public List<CampoRender> obterCamposRenderEdicao(Long id) {
         FormularioOrcamentoDTO form = criarFormulario(id);
-        return FormularioOrcamentoViewConfig.criarCampos(criarOpcoesEtiquetas(), criarOpcoesPedidos(id)).stream()
+        return FormularioOrcamentoViewConfig.criarCampos(criarOpcoesEtiquetas(false), criarOpcoesPedidos(id)).stream()
                 .map(base -> base.renderizar(form))
                 .toList();
     }
 
-    private List<OpcaoCrud> criarOpcoesEtiquetas() {
+    private List<OpcaoCrud> criarOpcoesEtiquetas(boolean incluirSelecione) {
         List<OpcaoCrud> opcoes = new ArrayList<>();
-        opcoes.add(new OpcaoCrud("", "Selecione"));
+        if (incluirSelecione) {
+            opcoes.add(new OpcaoCrud("", "Selecione"));
+        }
         List<com.example.demo.orcamentos.model.EtiquetaEntity> etiquetas = new ArrayList<>(repositorioEtiqueta.findAll());
         etiquetas.sort(java.util.Comparator.comparingInt(e -> obterPrioridadeEtiqueta(e.getNome())));
         for (com.example.demo.orcamentos.model.EtiquetaEntity e : etiquetas) {

@@ -25,7 +25,7 @@ public class FormularioOrcamentoViewConfig {
                 CamposFormularioCrud.selecao(
                         "etiquetaId",
                         "Etiqueta",
-                        false,
+                        true,
                         opcoesEtiqueta,
                         "campo--etiqueta",
                         FormularioOrcamentoDTO::getEtiquetaId
