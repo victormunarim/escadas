@@ -13,7 +13,8 @@ public class EspecificacaoOrcamento {
             String dia,
             String mes,
             String ano,
-            String encerrado
+            String encerrado,
+            String etiquetaId
     ) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -34,6 +35,14 @@ public class EspecificacaoOrcamento {
                                 cb.like(cb.lower(root.get("descricao")), like)
                         )
                 );
+            }
+
+            if (etiquetaId != null && !etiquetaId.isBlank()) {
+                try {
+                    Long idEtiqueta = Long.parseLong(etiquetaId.trim());
+                    predicates.add(cb.equal(root.get("etiqueta").get("id"), idEtiqueta));
+                } catch (NumberFormatException ignored) {
+                }
             }
 
             Integer mesValor = parseInt(mes);
@@ -58,6 +67,22 @@ public class EspecificacaoOrcamento {
                                 cb.isFalse(root.get("flagEncerrado")),
                                 cb.isNull(root.get("flagEncerrado"))
                         )
+                );
+            }
+
+            if (!Long.class.equals(query.getResultType()) && !Long.TYPE.equals(query.getResultType())) {
+                jakarta.persistence.criteria.Join<Object, Object> etiquetaJoin = root.join("etiqueta", jakarta.persistence.criteria.JoinType.LEFT);
+                query.orderBy(
+                        cb.asc(
+                                cb.selectCase()
+                                        .when(cb.equal(cb.lower(etiquetaJoin.get("nome")), "riscar"), 1)
+                                        .when(cb.equal(cb.lower(etiquetaJoin.get("nome")), "aguardando aprovação"), 2)
+                                        .when(cb.equal(cb.lower(etiquetaJoin.get("nome")), "aguardando aprovacao"), 2)
+                                        .when(cb.equal(cb.lower(etiquetaJoin.get("nome")), "3d / renderizar"), 3)
+                                        .when(cb.equal(cb.lower(etiquetaJoin.get("nome")), "proposta"), 4)
+                                        .otherwise(5)
+                        ),
+                        cb.desc(root.get("id"))
                 );
             }
 

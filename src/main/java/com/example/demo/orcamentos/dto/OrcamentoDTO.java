@@ -11,11 +11,18 @@ public class OrcamentoDTO {
     private String descricao;
     private Instant dataCadastro;
 
+    private Long etiquetaId;
+    private String etiquetaNome;
+
     public OrcamentoDTO() {
     }
 
     public OrcamentoDTO(OrcamentoEntity entity) {
         BeanUtils.copyProperties(entity, this);
+        if (entity.getEtiqueta() != null) {
+            this.etiquetaId = entity.getEtiqueta().getId();
+            this.etiquetaNome = entity.getEtiqueta().getNome();
+        }
     }
 
     public Long getId() {
@@ -75,5 +82,21 @@ public class OrcamentoDTO {
 
     public void setFlagEncerrado(Boolean flagEncerrado) {
         this.flagEncerrado = flagEncerrado;
+    }
+
+    public Long getEtiquetaId() {
+        return etiquetaId;
+    }
+
+    public void setEtiquetaId(Long etiquetaId) {
+        this.etiquetaId = etiquetaId;
+    }
+
+    public String getEtiquetaNome() {
+        return etiquetaNome;
+    }
+
+    public void setEtiquetaNome(String etiquetaNome) {
+        this.etiquetaNome = etiquetaNome;
     }
 }

@@ -2,6 +2,7 @@ package com.example.demo.orcamentos.service;
 
 import com.example.demo.orcamentos.model.OrcamentoEntity;
 import com.example.demo.orcamentos.repository.OrcamentoRepository;
+import com.example.demo.orcamentos.repository.EtiquetaRepository;
 import com.example.demo.orcamentos.dto.*;
 import com.example.demo.orcamentos.spec.EspecificacaoOrcamento;
 import com.example.demo.orcamentos.config.ListagemOrcamentosViewConfig;
@@ -30,13 +31,16 @@ import java.util.Map;
 public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
 
     private final OrcamentoRepository repositorioOrcamento;
+    private final EtiquetaRepository repositorioEtiqueta;
     private final ArquivoService servicoArquivo;
 
     public OrcamentoService(
             OrcamentoRepository repositorioOrcamento,
+            EtiquetaRepository repositorioEtiqueta,
             ArquivoService servicoArquivo
     ) {
         this.repositorioOrcamento = repositorioOrcamento;
+        this.repositorioEtiqueta = repositorioEtiqueta;
         this.servicoArquivo = servicoArquivo;
     }
 
@@ -47,6 +51,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         String mes = parametros.getOrDefault("mes", "").trim();
         String ano = parametros.getOrDefault("ano", "").trim();
         String encerrado = parametros.getOrDefault("encerrado", "false").trim();
+        String etiquetaId = parametros.getOrDefault("etiquetaId", "").trim();
 
         LocalDate hoje = LocalDate.now();
         if (!parametros.containsKey("mes")) {
@@ -63,14 +68,19 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         if (!parametros.containsKey("encerrado")) {
             parametros.put("encerrado", "false");
         }
+        if (!parametros.containsKey("etiquetaId")) {
+            parametros.put("etiquetaId", "");
+        }
 
         int size = tamanhoPagina(parametros.getOrDefault("size", "50"));
 
         List<OrcamentoDTO> orcamentos = repositorioOrcamento.findAll(
-                EspecificacaoOrcamento.filtro(busca, dia, mes, ano, encerrado),
+                EspecificacaoOrcamento.filtro(busca, dia, mes, ano, encerrado, etiquetaId),
                 PageRequest.of(0, size)
         ).stream()
                 .map(OrcamentoDTO::new)
+                .sorted(java.util.Comparator.comparingInt((OrcamentoDTO o) -> obterPrioridadeEtiqueta(o.getEtiquetaNome()))
+                        .thenComparing(OrcamentoDTO::getId, java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())))
                 .toList();
 
         List<ColunaConfig<OrcamentoDTO>> configColunas = ListagemOrcamentosViewConfig.obterConfiguracaoColunas();
@@ -99,6 +109,14 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                         null,
                         "Nome, bairro ou descrição...",
                         parametros.getOrDefault("busca", "")
+                ),
+                new CampoSelecaoRender(
+                        "Etiqueta",
+                        "etiquetaId",
+                        "filtro-crud",
+                        false,
+                        parametros.getOrDefault("etiquetaId", ""),
+                        criarOpcoesEtiquetas()
                 ),
                 new CampoSelecaoRender(
                         "Encerrado",
@@ -174,6 +192,9 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         orcamento.setBairro(formulario.getBairro());
         orcamento.setDescricao(formulario.getDescricao());
         orcamento.setFlagOculto(Boolean.FALSE);
+        if (formulario.getEtiquetaId() != null) {
+            orcamento.setEtiqueta(repositorioEtiqueta.findById(formulario.getEtiquetaId()).orElse(null));
+        }
         OrcamentoEntity salvo = repositorioOrcamento.save(orcamento);
         return salvo.getId();
     }
@@ -185,6 +206,11 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         orcamento.setNome(formulario.getNome());
         orcamento.setBairro(formulario.getBairro());
         orcamento.setDescricao(formulario.getDescricao());
+        if (formulario.getEtiquetaId() != null) {
+            orcamento.setEtiqueta(repositorioEtiqueta.findById(formulario.getEtiquetaId()).orElse(null));
+        } else {
+            orcamento.setEtiqueta(null);
+        }
         repositorioOrcamento.save(orcamento);
     }
 
@@ -194,6 +220,9 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         form.setNome(orcamento.getNome());
         form.setBairro(orcamento.getBairro());
         form.setDescricao(orcamento.getDescricao());
+        if (orcamento.getEtiqueta() != null) {
+            form.setEtiquetaId(orcamento.getEtiqueta().getId());
+        }
         return form;
     }
 
@@ -234,7 +263,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
 
     @Override
     public List<CampoRender> obterCamposRenderNovo() {
-        return FormularioOrcamentoViewConfig.criarCampos().stream()
+        return FormularioOrcamentoViewConfig.criarCampos(criarOpcoesEtiquetas()).stream()
                 .map(base -> base.renderizar(new FormularioOrcamentoDTO()))
                 .toList();
     }
@@ -242,9 +271,31 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
     @Override
     public List<CampoRender> obterCamposRenderEdicao(Long id) {
         FormularioOrcamentoDTO form = criarFormulario(id);
-        return FormularioOrcamentoViewConfig.criarCampos().stream()
+        return FormularioOrcamentoViewConfig.criarCampos(criarOpcoesEtiquetas()).stream()
                 .map(base -> base.renderizar(form))
                 .toList();
+    }
+
+    private List<OpcaoCrud> criarOpcoesEtiquetas() {
+        List<OpcaoCrud> opcoes = new ArrayList<>();
+        opcoes.add(new OpcaoCrud("", "Selecione"));
+        List<com.example.demo.orcamentos.model.EtiquetaEntity> etiquetas = new ArrayList<>(repositorioEtiqueta.findAll());
+        etiquetas.sort(java.util.Comparator.comparingInt(e -> obterPrioridadeEtiqueta(e.getNome())));
+        for (com.example.demo.orcamentos.model.EtiquetaEntity e : etiquetas) {
+            opcoes.add(new OpcaoCrud(String.valueOf(e.getId()), e.getNome()));
+        }
+        return opcoes;
+    }
+
+    private static int obterPrioridadeEtiqueta(String nomeEtiqueta) {
+        if (nomeEtiqueta == null) return 5;
+        return switch (nomeEtiqueta.trim().toLowerCase()) {
+            case "riscar" -> 1;
+            case "aguardando aprovação", "aguardando aprovacao" -> 2;
+            case "3d / renderizar", "3d/renderizar" -> 3;
+            case "proposta" -> 4;
+            default -> 5;
+        };
     }
 
     private OrcamentoEntity obterOrcamento(Long id) {

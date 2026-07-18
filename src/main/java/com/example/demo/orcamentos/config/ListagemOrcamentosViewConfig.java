@@ -10,6 +10,7 @@ public class ListagemOrcamentosViewConfig {
         return List.of(
                 new ColunaConfig<>("id", "ID", OrcamentoDTO::getId),
                 new ColunaConfig<>("nome", "Nome", OrcamentoDTO::getNome),
+                new ColunaConfig<>("etiquetaNome", "Etiqueta", o -> o.getEtiquetaNome() == null || o.getEtiquetaNome().isBlank() ? "-" : o.getEtiquetaNome()),
                 new ColunaConfig<>("bairro", "Bairro", OrcamentoDTO::getBairro),
                 new ColunaConfig<>("descricao", "Descrição", OrcamentoDTO::getDescricao),
                 new ColunaConfig<>("flagEncerrado", "Encerrado", o -> o.getFlagEncerrado() != null && o.getFlagEncerrado() ? "Sim" : "Não"),

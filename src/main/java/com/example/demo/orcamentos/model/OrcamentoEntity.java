@@ -85,6 +85,10 @@ public class OrcamentoEntity {
         this.dataCadastro = dataCadastro;
     }
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "etiquetas_id")
+    private EtiquetaEntity etiqueta;
+
     @Column(name = "flag_encerrado", nullable = false)
     private Boolean flagEncerrado = false;
 
@@ -94,5 +98,13 @@ public class OrcamentoEntity {
 
     public void setFlagEncerrado(Boolean flagEncerrado) {
         this.flagEncerrado = flagEncerrado;
+    }
+
+    public EtiquetaEntity getEtiqueta() {
+        return etiqueta;
+    }
+
+    public void setEtiqueta(EtiquetaEntity etiqueta) {
+        this.etiqueta = etiqueta;
     }
 }

@@ -51,10 +51,13 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
             response.put("bairro", orcamento.getBairro());
             response.put("descricao", orcamento.getDescricao());
             response.put("flagEncerrado", orcamento.getFlagEncerrado());
+            response.put("etiquetaId", orcamento.getEtiquetaId());
+            response.put("etiquetaNome", orcamento.getEtiquetaNome());
 
             // Build details map for frontend display
             Map<String, String> detalhes = new HashMap<>();
             detalhes.put("Nome", orcamento.getNome());
+            detalhes.put("Etiqueta", orcamento.getEtiquetaNome() == null || orcamento.getEtiquetaNome().isBlank() ? "-" : orcamento.getEtiquetaNome());
             detalhes.put("Bairro", orcamento.getBairro() == null || orcamento.getBairro().isBlank() ? "-" : orcamento.getBairro());
             detalhes.put("Descrição", orcamento.getDescricao() == null || orcamento.getDescricao().isBlank() ? "-" : orcamento.getDescricao());
             detalhes.put("Data de Cadastro", orcamento.getDataCadastroFormatado());

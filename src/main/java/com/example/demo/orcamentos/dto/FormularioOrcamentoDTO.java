@@ -4,6 +4,7 @@ public class FormularioOrcamentoDTO {
     private String nome;
     private String bairro;
     private String descricao;
+    private Long etiquetaId;
 
     public FormularioOrcamentoDTO() {
     }
@@ -30,5 +31,13 @@ public class FormularioOrcamentoDTO {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public Long getEtiquetaId() {
+        return etiquetaId;
+    }
+
+    public void setEtiquetaId(Long etiquetaId) {
+        this.etiquetaId = etiquetaId;
     }
 }

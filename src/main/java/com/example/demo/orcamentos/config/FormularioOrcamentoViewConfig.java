@@ -1,5 +1,6 @@
 package com.example.demo.orcamentos.config;
 
+import com.example.demo.shared.crud.OpcaoCrud;
 import com.example.demo.shared.crud.formulario.CampoFormularioCrud;
 import com.example.demo.shared.crud.formulario.CamposFormularioCrud;
 import com.example.demo.orcamentos.dto.FormularioOrcamentoDTO;
@@ -7,7 +8,7 @@ import java.util.List;
 
 public class FormularioOrcamentoViewConfig {
 
-    public static List<CampoFormularioCrud<FormularioOrcamentoDTO>> criarCampos() {
+    public static List<CampoFormularioCrud<FormularioOrcamentoDTO>> criarCampos(List<OpcaoCrud> opcoesEtiqueta) {
         return List.of(
                 CamposFormularioCrud.texto(
                         "nome",
@@ -17,6 +18,14 @@ public class FormularioOrcamentoViewConfig {
                         120,
                         "campo--nome",
                         FormularioOrcamentoDTO::getNome
+                ),
+                CamposFormularioCrud.selecao(
+                        "etiquetaId",
+                        "Etiqueta",
+                        false,
+                        opcoesEtiqueta,
+                        "campo--etiqueta",
+                        FormularioOrcamentoDTO::getEtiquetaId
                 ),
                 CamposFormularioCrud.texto(
                         "bairro",
