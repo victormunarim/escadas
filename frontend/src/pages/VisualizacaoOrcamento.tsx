@@ -4,7 +4,6 @@ import { useParams, Link } from 'react-router-dom';
 import { requisicaoApi } from '../api';
 import Carregando from '../components/Carregando';
 import BlocoDetalhes from '../components/BlocoDetalhes';
-import BlocoTarefas from '../components/BlocoTarefas';
 
 interface ArquivoOrcamento {
     id: number;
@@ -294,8 +293,6 @@ export default function VisualizacaoOrcamento() {
                     })}
                 </div>
             </section>
-
-            <BlocoTarefas extChave="orcamento_id" extId={orcamentoId} desabilitado={dadosOrcamento.flagEncerrado} />
         </section>
     );
 }

@@ -8,8 +8,6 @@ import VisualizacaoPedido from './pages/VisualizacaoPedido';
 import ListagemOrcamentos from './pages/ListagemOrcamentos';
 import FormularioOrcamento from './pages/FormularioOrcamento';
 import VisualizacaoOrcamento from './pages/VisualizacaoOrcamento';
-import ListagemTarefas from './pages/ListagemTarefas';
-import FormularioTarefa from './pages/FormularioTarefa';
 import ConfiguracaoGoogleDrive from './pages/ConfiguracaoGoogleDrive';
 import RotaProtegida from './components/RotaProtegida';
 
@@ -33,10 +31,6 @@ export default function App() {
                         <Route path="/orcamentos/novo" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_ADICIONAR"><FormularioOrcamento /></RotaProtegida>} />
                         <Route path="/orcamentos/:id/editar" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_EDITAR"><FormularioOrcamento /></RotaProtegida>} />
                         <Route path="/orcamentos/:id/visualizar" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR"><VisualizacaoOrcamento /></RotaProtegida>} />
-
-                        <Route path="/tarefas" element={<RotaProtegida permissaoRequerida="TAREFAS_VISUALIZAR"><ListagemTarefas /></RotaProtegida>} />
-                        <Route path="/tarefas/novo" element={<RotaProtegida permissaoRequerida="TAREFAS_ADICIONAR"><FormularioTarefa /></RotaProtegida>} />
-                        <Route path="/tarefas/:id/editar" element={<RotaProtegida permissaoRequerida="TAREFAS_EDITAR"><FormularioTarefa /></RotaProtegida>} />
                         
                         <Route path="/token" element={<RotaProtegida permissaoRequerida="CONFIGURACAO_DRIVE"><ConfiguracaoGoogleDrive /></RotaProtegida>} />
                     </Route>

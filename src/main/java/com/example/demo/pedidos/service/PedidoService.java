@@ -9,8 +9,6 @@ import com.example.demo.pedidos.config.ListagemPedidosViewConfig;
 import com.example.demo.shared.crud.listagem.ColunaConfig;
 import com.example.demo.pedidos.exception.PedidoNaoEncontradoException;
 import com.example.demo.shared.crud.OpcaoCrud;
-import com.example.demo.tarefas.repository.TarefaRepository;
-import com.example.demo.tarefas.repository.TipoTarefaRepository;
 import com.example.demo.auth.repository.UsuarioRepository;
 import com.example.demo.orcamentos.repository.OrcamentoRepository;
 import com.example.demo.orcamentos.model.OrcamentoEntity;
@@ -35,8 +33,6 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
     private final FormularioPedidoService formularioPedidoService;
     private final ArquivoService servicoArquivo;
     private final GeradorPdfPedidoService geradorPdfPedido;
-    private final TarefaRepository repositorioTarefa;
-    private final TipoTarefaRepository repositorioTipoTarefa;
     private final UsuarioRepository repositorioUsuario;
     private final OrcamentoRepository repositorioOrcamento;
 
@@ -45,8 +41,6 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
             FormularioPedidoService formularioPedidoService,
             ArquivoService servicoArquivo,
             GeradorPdfPedidoService geradorPdfPedido,
-            TarefaRepository repositorioTarefa,
-            TipoTarefaRepository repositorioTipoTarefa,
             UsuarioRepository repositorioUsuario,
             OrcamentoRepository repositorioOrcamento
     ) {
@@ -54,8 +48,6 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
         this.formularioPedidoService = formularioPedidoService;
         this.servicoArquivo = servicoArquivo;
         this.geradorPdfPedido = geradorPdfPedido;
-        this.repositorioTarefa = repositorioTarefa;
-        this.repositorioTipoTarefa = repositorioTipoTarefa;
         this.repositorioUsuario = repositorioUsuario;
         this.repositorioOrcamento = repositorioOrcamento;
     }
@@ -208,34 +200,6 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
         formularioPedidoService.aplicarFormularioNoPedido(formularioPedido, pedido);
         pedido.setFlagOculto(Boolean.FALSE);
         PedidoEntity pedidoSalvo = repositorioPedido.save(pedido);
-
-        try {
-            com.example.demo.tarefas.model.TipoTarefaEntity tipo = repositorioTipoTarefa.findByNomeIgnoreCase("Vincular a um orçamento")
-                    .orElseGet(() -> repositorioTipoTarefa.save(new com.example.demo.tarefas.model.TipoTarefaEntity("Vincular a um orçamento")));
-
-            com.example.demo.auth.model.UsuarioEntity elvira = repositorioUsuario.findByLogin("Elvira")
-                    .orElseGet(() -> {
-                        com.example.demo.auth.model.UsuarioEntity u = new com.example.demo.auth.model.UsuarioEntity();
-                        u.setId(2L);
-                        u.setLogin("Elvira");
-                        u.setSenha("elvira");
-                        u.setEmail("elvira@local");
-                        return repositorioUsuario.save(u);
-                    });
-
-            com.example.demo.tarefas.model.TarefaEntity tarefa = new com.example.demo.tarefas.model.TarefaEntity();
-            tarefa.setTipoTarefa(tipo);
-            tarefa.setResponsavel(elvira);
-            tarefa.setFlagConcluida(Boolean.FALSE);
-            tarefa.setFlagOculto(Boolean.FALSE);
-            tarefa.setExtChave("pedido_id");
-            tarefa.setExtId(Long.valueOf(pedidoSalvo.getId()));
-            tarefa.setDescricao("Vincular o novo pedido #" + pedidoSalvo.getNumeroPedido() + " a um orçamento correspondente.");
-
-            repositorioTarefa.save(tarefa);
-        } catch (Exception e) {
-            System.err.println("Erro ao criar tarefa automática de vinculação: " + e.getMessage());
-        }
 
         if (pedidoSalvo.getOrcamento() != null) {
             OrcamentoEntity orcamento = pedidoSalvo.getOrcamento();

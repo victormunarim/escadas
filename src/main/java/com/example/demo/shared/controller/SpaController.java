@@ -17,9 +17,6 @@ public class SpaController {
         "/orcamentos/novo",
         "/orcamentos/{id}/editar",
         "/orcamentos/{id}/visualizar",
-        "/tarefas",
-        "/tarefas/novo",
-        "/tarefas/{id}/editar",
         "/token"
     })
     public String forward() {

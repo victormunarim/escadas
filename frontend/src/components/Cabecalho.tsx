@@ -31,7 +31,6 @@ export default function Cabecalho() {
                     {temPermissao('PEDIDOS_ADICIONAR') && <NavLink to="/pedidos/novo">Novo Pedido</NavLink>}
                     {temPermissao('ORCAMENTOS_VISUALIZAR') && <NavLink to="/orcamentos" end>Orçamentos</NavLink>}
                     {temPermissao('ORCAMENTOS_ADICIONAR') && <NavLink to="/orcamentos/novo">Novo Orçamento</NavLink>}
-                    {temPermissao('TAREFAS_VISUALIZAR') && <NavLink to="/tarefas" end>Tarefas</NavLink>}
                     {temPermissao('CONFIGURACAO_DRIVE') && <NavLink to="/token">Google Drive</NavLink>}
                 </div>
 

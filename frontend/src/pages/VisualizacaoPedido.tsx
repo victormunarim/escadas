@@ -4,7 +4,6 @@ import { useParams, Link } from 'react-router-dom';
 import { requisicaoApi } from '../api';
 import Carregando from '../components/Carregando';
 import BlocoDetalhes from '../components/BlocoDetalhes';
-import BlocoTarefas from '../components/BlocoTarefas';
 
 interface ArquivoPedido {
     id: number;
@@ -211,8 +210,6 @@ export default function VisualizacaoPedido() {
                     </ul>
                 )}
             </section>
-
-            <BlocoTarefas extChave="pedido_id" extId={pedidoId} />
         </section>
     );
 }

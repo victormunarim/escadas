@@ -16,7 +16,7 @@ public abstract class AbstractCrudRestController<TFormDTO> {
     
     /**
      * Retorna o nome do módulo associado ao controller para verificação de permissões.
-     * Ex: "PEDIDOS", "ORCAMENTOS", "TAREFAS"
+     * Ex: "PEDIDOS", "ORCAMENTOS"
      */
     protected abstract String getModuloNome();
 
