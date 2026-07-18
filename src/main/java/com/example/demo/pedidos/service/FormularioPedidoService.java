@@ -3,6 +3,7 @@ import com.example.demo.pedidos.model.PedidoEntity;
 import com.example.demo.pedidos.dto.*;
 import com.example.demo.shared.crud.formulario.*;
 import com.example.demo.shared.crud.render.*;
+import com.example.demo.pedidos.config.ColunasPedido;
 import com.example.demo.pedidos.config.FormularioPedidoViewConfig;
 
 import com.example.demo.shared.crud.OpcaoCrud;
@@ -296,11 +297,11 @@ public class FormularioPedidoService {
 
         for (CampoFormularioCrud<FormularioPedidoDTO> base : camposBase) {
             // Seções do formulário
-            if ("uf".equals(base.nome())) {
+            if (ColunasPedido.CAMPO_UF.equals(base.nome())) {
                 camposRender.add(new SecaoRender("Endereço da Obra"));
-            } else if ("ufCliente".equals(base.nome())) {
+            } else if (ColunasPedido.CAMPO_UF_CLIENTE.equals(base.nome())) {
                 camposRender.add(new SecaoRender("Endereço do Cliente"));
-            } else if ("valor".equals(base.nome())) {
+            } else if (ColunasPedido.CAMPO_VALOR.equals(base.nome())) {
                 camposRender.add(new SecaoRender("Financeiro & Descrição"));
             }
 

@@ -11,6 +11,7 @@ import VisualizacaoOrcamento from './pages/VisualizacaoOrcamento';
 import ListagemTarefas from './pages/ListagemTarefas';
 import FormularioTarefa from './pages/FormularioTarefa';
 import ConfiguracaoGoogleDrive from './pages/ConfiguracaoGoogleDrive';
+import RotaProtegida from './components/RotaProtegida';
 
 export default function App() {
     return (
@@ -23,21 +24,21 @@ export default function App() {
                     {/* Rotas Protegidas dentro do Layout */}
                     <Route element={<Layout />}>
                         <Route path="/" element={<Navigate to="/pedidos" replace />} />
-                        <Route path="/pedidos" element={<ListagemPedidos />} />
-                        <Route path="/pedidos/novo" element={<FormularioPedido />} />
-                        <Route path="/pedidos/:id/editar" element={<FormularioPedido />} />
-                        <Route path="/pedidos/:id/visualizar" element={<VisualizacaoPedido />} />
+                        <Route path="/pedidos" element={<RotaProtegida permissaoRequerida="PEDIDOS_VISUALIZAR"><ListagemPedidos /></RotaProtegida>} />
+                        <Route path="/pedidos/novo" element={<RotaProtegida permissaoRequerida="PEDIDOS_ADICIONAR"><FormularioPedido /></RotaProtegida>} />
+                        <Route path="/pedidos/:id/editar" element={<RotaProtegida permissaoRequerida="PEDIDOS_EDITAR"><FormularioPedido /></RotaProtegida>} />
+                        <Route path="/pedidos/:id/visualizar" element={<RotaProtegida permissaoRequerida="PEDIDOS_VISUALIZAR"><VisualizacaoPedido /></RotaProtegida>} />
                         
-                        <Route path="/orcamentos" element={<ListagemOrcamentos />} />
-                        <Route path="/orcamentos/novo" element={<FormularioOrcamento />} />
-                        <Route path="/orcamentos/:id/editar" element={<FormularioOrcamento />} />
-                        <Route path="/orcamentos/:id/visualizar" element={<VisualizacaoOrcamento />} />
+                        <Route path="/orcamentos" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR"><ListagemOrcamentos /></RotaProtegida>} />
+                        <Route path="/orcamentos/novo" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_ADICIONAR"><FormularioOrcamento /></RotaProtegida>} />
+                        <Route path="/orcamentos/:id/editar" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_EDITAR"><FormularioOrcamento /></RotaProtegida>} />
+                        <Route path="/orcamentos/:id/visualizar" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR"><VisualizacaoOrcamento /></RotaProtegida>} />
 
-                        <Route path="/tarefas" element={<ListagemTarefas />} />
-                        <Route path="/tarefas/novo" element={<FormularioTarefa />} />
-                        <Route path="/tarefas/:id/editar" element={<FormularioTarefa />} />
+                        <Route path="/tarefas" element={<RotaProtegida permissaoRequerida="TAREFAS_VISUALIZAR"><ListagemTarefas /></RotaProtegida>} />
+                        <Route path="/tarefas/novo" element={<RotaProtegida permissaoRequerida="TAREFAS_ADICIONAR"><FormularioTarefa /></RotaProtegida>} />
+                        <Route path="/tarefas/:id/editar" element={<RotaProtegida permissaoRequerida="TAREFAS_EDITAR"><FormularioTarefa /></RotaProtegida>} />
                         
-                        <Route path="/token" element={<ConfiguracaoGoogleDrive />} />
+                        <Route path="/token" element={<RotaProtegida permissaoRequerida="CONFIGURACAO_DRIVE"><ConfiguracaoGoogleDrive /></RotaProtegida>} />
                     </Route>
 
                     {/* Redirecionamento Geral */}

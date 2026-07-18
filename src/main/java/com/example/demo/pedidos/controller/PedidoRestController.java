@@ -1,5 +1,6 @@
 package com.example.demo.pedidos.controller;
 
+import com.example.demo.auth.security.SecurityUtil;
 import com.example.demo.pedidos.config.PedidoViewPresenter;
 import com.example.demo.shared.arquivos.dto.ArquivoDTO;
 import com.example.demo.pedidos.dto.FormularioPedidoDTO;
@@ -8,11 +9,13 @@ import com.example.demo.shared.crud.controller.AbstractCrudRestController;
 import com.example.demo.shared.crud.service.CrudService;
 import com.example.demo.pedidos.service.PedidoService;
 import com.example.demo.localidades.service.ConsultaLocalidadesService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,15 +39,27 @@ public class PedidoRestController extends AbstractCrudRestController<FormularioP
         return this.pedidoService;
     }
 
+    @Override
+    protected String getModuloNome() {
+        return "PEDIDOS";
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPedido(@PathVariable Long id) {
+        if (!SecurityUtil.temPermissao("PEDIDOS_VISUALIZAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
             PedidoDTO pedido = pedidoService.buscarPorId(id);
             List<ArquivoDTO> arquivosPedido = pedidoService.listarArquivos(id);
 
             Map<String, Object> response = new HashMap<>();
             response.put("pedidoId", pedido.getId());
-            response.put("resumoPedido", PedidoViewPresenter.montarResumoPedido(pedido));
+            
+            Map<String, String> resumo = new LinkedHashMap<>(PedidoViewPresenter.montarResumoPedido(pedido));
+            resumo.entrySet().removeIf(entry -> !SecurityUtil.temAcessoAoCampo(entry.getKey()));
+            response.put("resumoPedido", resumo);
+            
             response.put("dadosCliente", PedidoViewPresenter.montarDadosCliente(pedido));
             response.put("enderecoObra", PedidoViewPresenter.montarEnderecoObra(pedido, consultaLocalidadesService));
             response.put("enderecoCliente", PedidoViewPresenter.montarEnderecoCliente(pedido, consultaLocalidadesService));
@@ -63,6 +78,9 @@ public class PedidoRestController extends AbstractCrudRestController<FormularioP
             @PathVariable Long id,
             @RequestParam("arquivo") MultipartFile arquivo
     ) {
+        if (!SecurityUtil.temPermissao("PEDIDOS_EDITAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         Map<String, String> response = new HashMap<>();
         if (arquivo == null || arquivo.isEmpty()) {
             response.put("erro", "Selecione um arquivo para enviar.");
@@ -84,11 +102,12 @@ public class PedidoRestController extends AbstractCrudRestController<FormularioP
             @PathVariable Long id,
             @PathVariable Long arquivoId
     ) {
+        if (!SecurityUtil.temPermissao("PEDIDOS_EDITAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         Map<String, String> response = new HashMap<>();
         try {
-            pedidoService.listarArquivos(id); // validates that the pedido exists
-            // We can delegate this to a generic delete method in a shared service or just call delete
-            // Since we refactored PedidoService to use generic ArquivoService, we can add a delete method there
+            pedidoService.listarArquivos(id);
             pedidoService.excluirArquivo(arquivoId);
             response.put("sucesso", "Arquivo excluído com sucesso.");
             return ResponseEntity.ok(response);

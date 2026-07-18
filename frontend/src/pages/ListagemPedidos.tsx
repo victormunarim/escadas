@@ -4,9 +4,11 @@ import { requisicaoApi } from '../api';
 import Carregando from '../components/Carregando';
 import { CampoRenderizador } from '../components/Campos';
 import type { ListagemResumo } from '../types/crud';
+import { usarAutenticacao } from '../context/AuthContext';
 
 export default function ListagemPedidos() {
     const [dadosListagem, setDadosListagem] = useState<ListagemResumo | null>(null);
+    const { temPermissao } = usarAutenticacao();
 
     useEffect(() => {
         const buscarPedidos = async () => {
@@ -95,10 +97,10 @@ export default function ListagemPedidos() {
                                         })}
                                         <td className="tabela-crud__celula">
                                             <div className="acoes-tabela">
-                                                <Link className="acoes-tabela__botao acoes-tabela__botao--visualizar" to={`/pedidos/${linha.id}/visualizar`}>Visualizar</Link>
+                                                {temPermissao('PEDIDOS_VISUALIZAR') && <Link className="acoes-tabela__botao acoes-tabela__botao--visualizar" to={`/pedidos/${linha.id}/visualizar`}>Visualizar</Link>}
                                                 <a className="acoes-tabela__botao acoes-tabela__botao--pdf" href={`/pedidos/${linha.id}/pdf`} target="_blank" rel="noopener noreferrer">PDF</a>
-                                                <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`/pedidos/${linha.id}/editar`}>Editar</Link>
-                                                <button className="acoes-tabela__botao acoes-tabela__botao--excluir" onClick={() => lidarComExclusao(linha.id)}>Excluir</button>
+                                                {temPermissao('PEDIDOS_EDITAR') && <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`/pedidos/${linha.id}/editar`}>Editar</Link>}
+                                                {temPermissao('PEDIDOS_EXCLUIR') && <button className="acoes-tabela__botao acoes-tabela__botao--excluir" onClick={() => lidarComExclusao(linha.id)}>Excluir</button>}
                                             </div>
                                         </td>
                                     </tr>

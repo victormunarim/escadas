@@ -3,7 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { usarAutenticacao } from '../context/AuthContext';
 
 export default function Cabecalho() {
-    const { usuario, sair } = usarAutenticacao();
+    const { usuario, sair, temPermissao } = usarAutenticacao();
     const navegar = useNavigate();
 
     const lidarComSaida = async (e: React.FormEvent) => {
@@ -27,12 +27,12 @@ export default function Cabecalho() {
                 </Link>
 
                 <div className="navegacao">
-                    <NavLink to="/pedidos" end>Pedidos</NavLink>
-                    <NavLink to="/pedidos/novo">Novo Pedido</NavLink>
-                    <NavLink to="/orcamentos" end>Orçamentos</NavLink>
-                    <NavLink to="/orcamentos/novo">Novo Orçamento</NavLink>
-                    <NavLink to="/tarefas" end>Tarefas</NavLink>
-                    <NavLink to="/token">Google Drive</NavLink>
+                    {temPermissao('PEDIDOS_VISUALIZAR') && <NavLink to="/pedidos" end>Pedidos</NavLink>}
+                    {temPermissao('PEDIDOS_ADICIONAR') && <NavLink to="/pedidos/novo">Novo Pedido</NavLink>}
+                    {temPermissao('ORCAMENTOS_VISUALIZAR') && <NavLink to="/orcamentos" end>Orçamentos</NavLink>}
+                    {temPermissao('ORCAMENTOS_ADICIONAR') && <NavLink to="/orcamentos/novo">Novo Orçamento</NavLink>}
+                    {temPermissao('TAREFAS_VISUALIZAR') && <NavLink to="/tarefas" end>Tarefas</NavLink>}
+                    {temPermissao('CONFIGURACAO_DRIVE') && <NavLink to="/token">Google Drive</NavLink>}
                 </div>
 
                 <div className="usuario-barra">

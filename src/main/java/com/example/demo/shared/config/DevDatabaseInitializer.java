@@ -1,5 +1,6 @@
 package com.example.demo.shared.config;
 
+import com.example.demo.auth.model.Perfil;
 import com.example.demo.auth.model.UsuarioEntity;
 import com.example.demo.auth.repository.UsuarioRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -32,6 +33,9 @@ public class DevDatabaseInitializer implements CommandLineRunner {
             if (!emailPreenchido) {
                 usuario.setEmail("escadas@local");
             }
+            
+            // Força o perfil ADMIN para escadas
+            usuario.setPerfil(Perfil.ADMIN);
 
             usuarioRepository.save(usuario);
         }, () -> {
@@ -40,21 +44,24 @@ public class DevDatabaseInitializer implements CommandLineRunner {
             usuario.setLogin("escadas");
             usuario.setSenha(passwordEncoder.encode("escadas"));
             usuario.setEmail("escadas@local");
+            usuario.setPerfil(Perfil.ADMIN);
             usuarioRepository.save(usuario);
         });
 
         usuarioRepository.findByLogin("Elvira").ifPresentOrElse(usuario -> {
             boolean senhaCorreta = passwordEncoder.matches("elvira", usuario.getSenha());
+            usuario.setPerfil(Perfil.ESCRITORIO); // Define perfil ESCRITORIO
             if (!senhaCorreta) {
                 usuario.setSenha(passwordEncoder.encode("elvira"));
-                usuarioRepository.save(usuario);
             }
+            usuarioRepository.save(usuario);
         }, () -> {
             UsuarioEntity usuario = new UsuarioEntity();
             usuario.setId(2L);
             usuario.setLogin("Elvira");
             usuario.setSenha(passwordEncoder.encode("elvira"));
             usuario.setEmail("elvira@local");
+            usuario.setPerfil(Perfil.ESCRITORIO);
             usuarioRepository.save(usuario);
         });
     }

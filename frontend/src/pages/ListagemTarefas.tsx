@@ -4,9 +4,11 @@ import { requisicaoApi } from '../api';
 import Carregando from '../components/Carregando';
 import { CampoRenderizador } from '../components/Campos';
 import type { ListagemResumo } from '../types/crud';
+import { usarAutenticacao } from '../context/AuthContext';
 
 export default function ListagemTarefas() {
     const [dadosListagem, setDadosListagem] = useState<ListagemResumo | null>(null);
+    const { temPermissao } = usarAutenticacao();
 
     const buscarTarefas = async () => {
         try {
@@ -104,9 +106,9 @@ export default function ListagemTarefas() {
                                             })}
                                             <td className="tabela-crud__celula">
                                                 <div className="acoes-tabela">
-                                                    <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`/tarefas/${linha.id}/editar`}>Editar</Link>
-                                                    <button className="acoes-tabela__botao acoes-tabela__botao--excluir" onClick={() => lidarComExclusao(linha.id)}>Excluir</button>
-                                                    {!ehConcluida && (
+                                                    {temPermissao('TAREFAS_EDITAR') && <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`/tarefas/${linha.id}/editar`}>Editar</Link>}
+                                                    {temPermissao('TAREFAS_EXCLUIR') && <button className="acoes-tabela__botao acoes-tabela__botao--excluir" onClick={() => lidarComExclusao(linha.id)}>Excluir</button>}
+                                                    {!ehConcluida && temPermissao('TAREFAS_EDITAR') && (
                                                         <button 
                                                             className="acoes-tabela__botao acoes-tabela__botao--editar" 
                                                             style={{ backgroundColor: '#28a745', borderColor: '#28a745', color: '#fff' }}

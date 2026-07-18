@@ -1,5 +1,6 @@
 package com.example.demo.shared.crud.formulario;
 
+import com.example.demo.pedidos.config.ColunasPedido;
 import com.example.demo.shared.crud.OpcaoCrud;
 import com.example.demo.shared.crud.render.CampoRender;
 import com.example.demo.shared.crud.render.CampoSelecaoRender;
@@ -24,7 +25,7 @@ public record CampoFormularioSelecao<T>(
     public CampoRender renderizar(T dto) {
         Object valorRaw = extratorValor != null ? extratorValor.apply(dto) : null;
         Object valor = valorRaw;
-        if ("revestimento".equals(nome()) && valorRaw instanceof Boolean b) {
+        if (ColunasPedido.CAMPO_REVESTIMENTO.equals(nome()) && valorRaw instanceof Boolean b) {
             valor = String.valueOf(b);
         }
         return new CampoSelecaoRender(

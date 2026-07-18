@@ -1,5 +1,6 @@
 package com.example.demo.shared.crud.formulario;
 
+import com.example.demo.pedidos.config.ColunasPedido;
 import com.example.demo.shared.crud.render.CampoRender;
 import com.example.demo.shared.crud.render.CampoTextoRender;
 import java.util.function.Function;
@@ -37,14 +38,14 @@ public record CampoFormularioTexto<T>(
     }
 
     private String obterInputMode(String nomeCampo) {
-        if ("cpf".equals(nomeCampo) || "rg".equals(nomeCampo) || "telefone".equals(nomeCampo) || "telefoneFixo".equals(nomeCampo) || "numero".equals(nomeCampo) || "numeroCliente".equals(nomeCampo)) {
+        if (ColunasPedido.CAMPO_CPF.equals(nomeCampo) || ColunasPedido.CAMPO_RG.equals(nomeCampo) || ColunasPedido.CAMPO_TELEFONE.equals(nomeCampo) || ColunasPedido.CAMPO_TELEFONE_FIXO.equals(nomeCampo) || ColunasPedido.CAMPO_NUMERO.equals(nomeCampo) || ColunasPedido.CAMPO_NUMERO_CLIENTE.equals(nomeCampo)) {
             return "numeric";
         }
         return null;
     }
 
     private String obterPlaceholder(String nomeCampo) {
-        if ("cpf".equals(nomeCampo) || "rg".equals(nomeCampo)) {
+        if (ColunasPedido.CAMPO_CPF.equals(nomeCampo) || ColunasPedido.CAMPO_RG.equals(nomeCampo)) {
             return "Somente números";
         }
         return null;

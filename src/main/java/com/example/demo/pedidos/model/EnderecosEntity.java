@@ -3,6 +3,7 @@ package com.example.demo.pedidos.model;
 import com.example.demo.localidades.model.BairroEntity;
 import com.example.demo.localidades.model.EstadoEntity;
 import com.example.demo.localidades.model.MunicipioEntity;
+import com.example.demo.pedidos.config.ColunasPedido;
 import jakarta.persistence.*;
 
 @Entity
@@ -41,16 +42,16 @@ public class EnderecosEntity {
     @JoinColumn(name = "bairro_cliente_id")
     private BairroEntity bairroCliente;
 
-    @Column(name = "cep")
+    @Column(name = ColunasPedido.CEP)
     private Integer cep;
 
     @Column(name = "cep_cliente_id")
     private Integer cepClienteId;
 
-    @Column(name = "referencia")
+    @Column(name = ColunasPedido.REFERENCIA)
     private String referencia;
 
-    @Column(name = "referencia_cliente")
+    @Column(name = ColunasPedido.REFERENCIA_CLIENTE)
     private String referenciaCliente;
 
     public Integer getId() {

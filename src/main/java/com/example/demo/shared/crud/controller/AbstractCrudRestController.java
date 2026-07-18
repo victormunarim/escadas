@@ -1,7 +1,9 @@
 package com.example.demo.shared.crud.controller;
 
+import com.example.demo.auth.security.SecurityUtil;
 import com.example.demo.shared.crud.render.*;
 import com.example.demo.shared.crud.service.CrudService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
@@ -11,23 +13,41 @@ import java.util.Map;
 public abstract class AbstractCrudRestController<TFormDTO> {
 
     protected abstract CrudService<TFormDTO> getService();
+    
+    /**
+     * Retorna o nome do módulo associado ao controller para verificação de permissões.
+     * Ex: "PEDIDOS", "ORCAMENTOS", "TAREFAS"
+     */
+    protected abstract String getModuloNome();
 
     @GetMapping
-    public ResponseEntity<ListagemDTO> listar(@RequestParam Map<String, String> parametros) {
+    public ResponseEntity<?> listar(@RequestParam Map<String, String> parametros) {
+        if (!SecurityUtil.temPermissao(getModuloNome() + "_VISUALIZAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         Map<String, String> parametrosEfetivos = new HashMap<>(parametros);
         parametrosEfetivos.putIfAbsent("size", "50");
-        return ResponseEntity.ok(getService().listarResumo(parametrosEfetivos));
+        ListagemDTO listagem = getService().listarResumo(parametrosEfetivos);
+        return ResponseEntity.ok(SecurityUtil.filtrarListagem(listagem));
     }
 
     @GetMapping("/formulario")
-    public ResponseEntity<List<CampoRender>> obterFormularioNovo() {
-        return ResponseEntity.ok(getService().obterCamposRenderNovo());
+    public ResponseEntity<?> obterFormularioNovo() {
+        if (!SecurityUtil.temPermissao(getModuloNome() + "_ADICIONAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        List<CampoRender> campos = getService().obterCamposRenderNovo();
+        return ResponseEntity.ok(SecurityUtil.filtrarCampos(campos));
     }
 
     @GetMapping("/{id}/formulario")
-    public ResponseEntity<List<CampoRender>> obterFormularioEdicao(@PathVariable Long id) {
+    public ResponseEntity<?> obterFormularioEdicao(@PathVariable Long id) {
+        if (!SecurityUtil.temPermissao(getModuloNome() + "_EDITAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
-            return ResponseEntity.ok(getService().obterCamposRenderEdicao(id));
+            List<CampoRender> campos = getService().obterCamposRenderEdicao(id);
+            return ResponseEntity.ok(SecurityUtil.filtrarCampos(campos));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
@@ -35,6 +55,9 @@ public abstract class AbstractCrudRestController<TFormDTO> {
 
     @PostMapping
     public ResponseEntity<?> salvar(@RequestBody TFormDTO formulario) {
+        if (!SecurityUtil.temPermissao(getModuloNome() + "_ADICIONAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
             Long id = getService().salvarFormulario(formulario);
             Map<String, Object> response = new HashMap<>();
@@ -50,6 +73,9 @@ public abstract class AbstractCrudRestController<TFormDTO> {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody TFormDTO formulario) {
+        if (!SecurityUtil.temPermissao(getModuloNome() + "_EDITAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
             getService().atualizarFormulario(id, formulario);
             Map<String, String> response = new HashMap<>();
@@ -64,6 +90,9 @@ public abstract class AbstractCrudRestController<TFormDTO> {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> excluir(@PathVariable Long id) {
+        if (!SecurityUtil.temPermissao(getModuloNome() + "_EXCLUIR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
             getService().excluir(id);
             Map<String, String> response = new HashMap<>();

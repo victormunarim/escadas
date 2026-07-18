@@ -1,5 +1,6 @@
 package com.example.demo.auth.security;
 
+import com.example.demo.auth.service.UserDetailsImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -28,7 +29,7 @@ public class ConfiguracaoSeguranca {
 
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/logout", "/css/**", "/js/**", "/logo.png", "/images/**", "/index.html", "/assets/**", "/vite.svg", "/.well-known/**").permitAll()
+                .requestMatchers("/login", "/logout", "/error", "/css/**", "/js/**", "/logo.png", "/images/**", "/index.html", "/assets/**", "/vite.svg", "/.well-known/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -37,7 +38,13 @@ public class ConfiguracaoSeguranca {
                     response.setStatus(200);
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
-                    response.getWriter().write("{\"sucesso\":true,\"username\":\"" + authentication.getName() + "\"}");
+                    String perfil = "";
+                    String permissoesJson = "[]";
+                    if (authentication.getPrincipal() instanceof UserDetailsImpl userDetails && userDetails.getPerfil() != null) {
+                        perfil = userDetails.getPerfil().name();
+                        permissoesJson = "[" + String.join(",", userDetails.getPerfil().getPermissoes().stream().map(p -> "\"" + p + "\"").toList()) + "]";
+                    }
+                    response.getWriter().write("{\"sucesso\":true,\"username\":\"" + authentication.getName() + "\",\"perfil\":\"" + perfil + "\",\"permissoes\":" + permissoesJson + "}");
                 })
                 .failureHandler((request, response, exception) -> {
                     response.setStatus(401);
@@ -58,6 +65,26 @@ public class ConfiguracaoSeguranca {
                     response.getWriter().write("{\"sucesso\":true}");
                 })
                 .permitAll()
+            )
+            .exceptionHandling(exception -> exception
+                .defaultAccessDeniedHandlerFor(
+                    (request, response, accessDeniedException) -> {
+                        response.setStatus(403);
+                        response.setContentType("application/json");
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write("{\"erro\":\"Você não tem permissão para acessar este recurso.\"}");
+                    },
+                    r -> r.getRequestURI().startsWith("/api/")
+                )
+                .defaultAuthenticationEntryPointFor(
+                    (request, response, authException) -> {
+                        response.setStatus(401);
+                        response.setContentType("application/json");
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write("{\"erro\":\"Não autorizado.\"}");
+                    },
+                    r -> r.getRequestURI().startsWith("/api/")
+                )
             );
 
         return http.build();

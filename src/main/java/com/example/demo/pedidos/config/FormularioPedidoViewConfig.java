@@ -173,15 +173,6 @@ public class FormularioPedidoViewConfig {
                         "campo--prazo-montagem",
                         FormularioPedidoDTO::getPrazoMontagem
                 ),
-                CamposFormularioCrud.texto(
-                        ColunasPedido.CAMPO_NUMERO,
-                        ColunasPedido.LABEL_NUMERO,
-                        null,
-                        false,
-                        10,
-                        "campo--numero",
-                        FormularioPedidoDTO::getNumero
-                ),
                 CamposFormularioCrud.selecao(
                         ColunasPedido.CAMPO_UF,
                         ColunasPedido.LABEL_UF,
@@ -225,13 +216,13 @@ public class FormularioPedidoViewConfig {
                         FormularioPedidoDTO::getReferencia
                 ),
                 CamposFormularioCrud.texto(
-                        ColunasPedido.CAMPO_NUMERO_CLIENTE,
-                        ColunasPedido.LABEL_NUMERO_CLIENTE,
+                        ColunasPedido.CAMPO_NUMERO,
+                        ColunasPedido.LABEL_NUMERO,
                         null,
                         false,
                         10,
-                        "campo--numero-cliente",
-                        FormularioPedidoDTO::getNumeroCliente
+                        "campo--numero",
+                        FormularioPedidoDTO::getNumero
                 ),
                 CamposFormularioCrud.selecao(
                         ColunasPedido.CAMPO_UF_CLIENTE,
@@ -274,6 +265,15 @@ public class FormularioPedidoViewConfig {
                         200,
                         "campo--referencia-cliente",
                         FormularioPedidoDTO::getReferenciaCliente
+                ),
+                CamposFormularioCrud.texto(
+                        ColunasPedido.CAMPO_NUMERO_CLIENTE,
+                        ColunasPedido.LABEL_NUMERO_CLIENTE,
+                        null,
+                        false,
+                        10,
+                        "campo--numero-cliente",
+                        FormularioPedidoDTO::getNumeroCliente
                 ),
                 CamposFormularioCrud.numero(
                         ColunasPedido.CAMPO_VALOR,

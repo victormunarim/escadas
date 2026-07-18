@@ -3,6 +3,8 @@ import { requisicaoApi } from '../api';
 
 export interface Usuario {
     username: string;
+    perfil: string;
+    permissoes: string[];
 }
 
 export interface TipoContextoAutenticacao {
@@ -10,6 +12,7 @@ export interface TipoContextoAutenticacao {
     entrar: (usuarioNome: string, senha: string) => Promise<void>;
     sair: () => Promise<void>;
     verificarAutenticacao: () => Promise<void>;
+    temPermissao: (permissao: string) => boolean;
 }
 
 const ContextoAutenticacao = createContext<TipoContextoAutenticacao | null>(null);
@@ -50,8 +53,14 @@ export function ProvedorAutenticacao({ children }: { children: ReactNode }) {
         setUsuario(null);
     };
 
+    const temPermissao = (permissao: string) => {
+        if (!usuario) return false;
+        if (usuario.perfil === 'ADMIN') return true;
+        return usuario.permissoes.includes(permissao);
+    };
+
     return (
-        <ContextoAutenticacao.Provider value={{ usuario, entrar, sair, verificarAutenticacao }}>
+        <ContextoAutenticacao.Provider value={{ usuario, entrar, sair, verificarAutenticacao, temPermissao }}>
             {children}
         </ContextoAutenticacao.Provider>
     );

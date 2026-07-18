@@ -1,4 +1,5 @@
 package com.example.demo.pedidos.service;
+import com.example.demo.pedidos.config.ColunasPedido;
 import com.example.demo.pedidos.model.PedidoEntity;
 
 import com.example.demo.shared.util.FormatacaoUtil;
@@ -141,17 +142,17 @@ public class GeradorPdfPedidoService {
                 .append(valor(pedido.getNomeCliente()))
                 .append("</span></td>")
                 .append("</tr><tr>")
-                .append("<td><span class='label'>CPF</span><span class='value'>")
+                .append("<td><span class='label'>").append(ColunasPedido.LABEL_CPF).append("</span><span class='value'>")
                 .append(FormatacaoUtil.formatarCpf(pedido.getCpf()))
                 .append("</span></td>")
-                .append("<td><span class='label'>RG</span><span class='value'>")
+                .append("<td><span class='label'>").append(ColunasPedido.LABEL_RG).append("</span><span class='value'>")
                 .append(FormatacaoUtil.formatarRg(pedido.getRg()))
                 .append("</span></td>")
-                .append("<td><span class='label'>CNPJ</span><span class='value'>")
+                .append("<td><span class='label'>").append(ColunasPedido.LABEL_CNPJ).append("</span><span class='value'>")
                 .append(FormatacaoUtil.formatarCnpj(pedido.getCnpj()))
                 .append("</span></td>")
                 .append("</tr><tr>")
-                .append("<td colspan='2'><span class='label'>Email</span><span class='value'>")
+                .append("<td colspan='2'><span class='label'>").append(ColunasPedido.LABEL_EMAIL).append("</span><span class='value'>")
                 .append(valor(pedido.getEmail()))
                 .append("</span></td>")
                 .append("<td><span class='label'>Telefones</span><span class='value'>")
@@ -179,7 +180,7 @@ public class GeradorPdfPedidoService {
                 .append("<td colspan='2'><span class='label'>Administrador da Obra</span><span class='value'>")
                 .append(valor(pedido.getAdmObra()))
                 .append("</span></td>")
-                .append("<td><span class='label'>Serviço Social / Profissão</span><span class='value'>")
+                .append("<td><span class='label'>").append(ColunasPedido.LABEL_SERVICO_SOCIAL).append("</span><span class='value'>")
                 .append(valor(pedido.getServicoSocial()))
                 .append(" / ")
                 .append(valor(pedido.getProfissao()))
@@ -207,13 +208,13 @@ public class GeradorPdfPedidoService {
         html.append("<div class='section-title'>ESPECIFICAÇÕES TÉCNICAS</div>");
         html.append("<table class='content-table'>");
         html.append("<tr>")
-                .append("<td><span class='label'>Acabamento</span><span class='value'>")
+                .append("<td><span class='label'>").append(ColunasPedido.LABEL_ACABAMENTO).append("</span><span class='value'>")
                 .append(valor(pedido.getAcabamento()))
                 .append("</span></td>")
-                .append("<td><span class='label'>Tubos</span><span class='value'>")
+                .append("<td><span class='label'>").append(ColunasPedido.LABEL_TUBOS).append("</span><span class='value'>")
                 .append(valor(pedido.getTubos()))
                 .append("</span></td>")
-                .append("<td><span class='label'>Revestimento</span><span class='value'>")
+                .append("<td><span class='label'>").append(ColunasPedido.LABEL_REVESTIMENTO).append("</span><span class='value'>")
                 .append(Boolean.TRUE.equals(pedido.getRevestimento()) ? "Sim" : "Não")
                 .append("</span></td>")
                 .append("</tr><tr>")
@@ -232,7 +233,7 @@ public class GeradorPdfPedidoService {
                 .append("<td><span class='label'>Valor Base</span><span class='value'>R$ ")
                 .append(FormatacaoUtil.formatarValor(pedido.getValor()))
                 .append("</span></td>")
-                .append("<td><span class='label'>Valor Total</span><span class='value'>R$ ")
+                .append("<td><span class='label'>").append(ColunasPedido.LABEL_VALOR_TOTAL).append("</span><span class='value'>R$ ")
                 .append(FormatacaoUtil.formatarValor(pedido.getValorTotal()))
                 .append("</span></td>")
                 .append("</tr>");

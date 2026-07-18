@@ -4,9 +4,11 @@ import { requisicaoApi } from '../api';
 import Carregando from '../components/Carregando';
 import { CampoRenderizador } from '../components/Campos';
 import type { ListagemResumo } from '../types/crud';
+import { usarAutenticacao } from '../context/AuthContext';
 
 export default function ListagemOrcamentos() {
     const [dadosListagem, setDadosListagem] = useState<ListagemResumo | null>(null);
+    const { temPermissao } = usarAutenticacao();
 
     useEffect(() => {
         const buscarOrcamentos = async () => {
@@ -94,9 +96,9 @@ export default function ListagemOrcamentos() {
                                         })}
                                         <td className="tabela-crud__celula">
                                             <div className="acoes-tabela">
-                                                <Link className="acoes-tabela__botao acoes-tabela__botao--visualizar" to={`/orcamentos/${linha.id}/visualizar`}>Visualizar</Link>
-                                                <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`/orcamentos/${linha.id}/editar`}>Editar</Link>
-                                                <button className="acoes-tabela__botao acoes-tabela__botao--excluir" onClick={() => lidarComExclusao(linha.id)}>Excluir</button>
+                                                {temPermissao('ORCAMENTOS_VISUALIZAR') && <Link className="acoes-tabela__botao acoes-tabela__botao--visualizar" to={`/orcamentos/${linha.id}/visualizar`}>Visualizar</Link>}
+                                                {temPermissao('ORCAMENTOS_EDITAR') && <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`/orcamentos/${linha.id}/editar`}>Editar</Link>}
+                                                {temPermissao('ORCAMENTOS_EXCLUIR') && <button className="acoes-tabela__botao acoes-tabela__botao--excluir" onClick={() => lidarComExclusao(linha.id)}>Excluir</button>}
                                             </div>
                                         </td>
                                     </tr>

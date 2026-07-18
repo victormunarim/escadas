@@ -1,6 +1,7 @@
 package com.example.demo.pedidos.model;
 
 import com.example.demo.orcamentos.model.OrcamentoEntity;
+import com.example.demo.pedidos.config.ColunasPedido;
 
 import jakarta.persistence.*;
 
@@ -8,82 +9,82 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
-@Table(name = "pedidos", schema = "escadas")
+@Table(name = ColunasPedido.TABELA, schema = "escadas")
 public class PedidoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_pedido", nullable = false)
+    @Column(name = ColunasPedido.ID_PEDIDO, nullable = false)
     private Integer id;
 
-    @Column(name = "acabamento")
+    @Column(name = ColunasPedido.ACABAMENTO)
     private String acabamento;
 
-    @Column(name = "adm_obra")
+    @Column(name = ColunasPedido.ADM_OBRA)
     private String admObra;
 
-    @Column(name = "cnpj")
+    @Column(name = ColunasPedido.CNPJ)
     private String cnpj;
 
-    @Column(name = "cpf")
+    @Column(name = ColunasPedido.CPF)
     private Long cpf;
 
-    @Column(name = "data_cadastro")
+    @Column(name = ColunasPedido.DATA_CADASTRO)
     private Instant dataCadastro;
 
     @Lob
-    @Column(name = "descricao")
+    @Column(name = ColunasPedido.DESCRICAO)
     private String descricao;
 
-    @Column(name = "email")
+    @Column(name = ColunasPedido.EMAIL)
     private String email;
 
-    @Column(name = "flag_oculto")
+    @Column(name = ColunasPedido.FLAG_OCULTO)
     private Boolean flagOculto;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "orcamento_id")
     private OrcamentoEntity orcamento;
 
-    @Column(name = "cliente_nome")
+    @Column(name = ColunasPedido.CLIENTE_NOME)
     private String clienteNome;
 
-    @Column(name = "numero")
+    @Column(name = ColunasPedido.NUMERO)
     private Integer numero;
 
-    @Column(name = "numero_cliente")
+    @Column(name = ColunasPedido.NUMERO_CLIENTE)
     private Integer numeroCliente;
 
-    @Column(name = "numero_pedido")
+    @Column(name = ColunasPedido.NUMERO_PEDIDO)
     private Integer numeroPedido;
 
-    @Column(name = "prazo_montagem")
+    @Column(name = ColunasPedido.PRAZO_MONTAGEM)
     private Integer prazoMontagem;
 
-    @Column(name = "profissao")
+    @Column(name = ColunasPedido.PROFISSAO)
     private String profissao;
 
-    @Column(name = "revestimento")
+    @Column(name = ColunasPedido.REVESTIMENTO)
     private Boolean revestimento;
 
-    @Column(name = "rg")
+    @Column(name = ColunasPedido.RG)
     private Integer rg;
 
-    @Column(name = "servico_social")
+    @Column(name = ColunasPedido.SERVICO_SOCIAL)
     private String servicoSocial;
 
-    @Column(name = "telefone")
+    @Column(name = ColunasPedido.TELEFONE)
     private String telefone;
 
-    @Column(name = "telefone_fixo")
+    @Column(name = ColunasPedido.TELEFONE_FIXO)
     private String telefoneFixo;
 
-    @Column(name = "tubos")
+    @Column(name = ColunasPedido.TUBOS)
     private String tubos;
 
-    @Column(name = "valor", precision = 38, scale = 2)
+    @Column(name = ColunasPedido.VALOR, precision = 38, scale = 2)
     private BigDecimal valor;
 
-    @Column(name = "valor_total", precision = 38, scale = 2)
+    @Column(name = ColunasPedido.VALOR_TOTAL, precision = 38, scale = 2)
     private BigDecimal valorTotal;
 
     @OneToOne(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

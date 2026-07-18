@@ -1,11 +1,13 @@
 package com.example.demo.orcamentos.controller;
 
+import com.example.demo.auth.security.SecurityUtil;
 import com.example.demo.orcamentos.dto.FormularioOrcamentoDTO;
 import com.example.demo.orcamentos.dto.OrcamentoDTO;
 import com.example.demo.orcamentos.service.OrcamentoService;
 import com.example.demo.shared.crud.controller.AbstractCrudRestController;
 import com.example.demo.shared.crud.service.CrudService;
 import com.example.demo.shared.arquivos.dto.ArquivoDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,8 +31,16 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
         return this.orcamentoService;
     }
 
+    @Override
+    protected String getModuloNome() {
+        return "ORCAMENTOS";
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarOrcamento(@PathVariable Long id) {
+        if (!SecurityUtil.temPermissao("ORCAMENTOS_VISUALIZAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
             OrcamentoDTO orcamento = orcamentoService.buscarPorId(id);
             List<ArquivoDTO> arquivos = orcamentoService.listarArquivos(id);
@@ -64,6 +74,9 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
             @RequestParam("arquivo") MultipartFile arquivo,
             @RequestParam(value = "etapa", required = false) Integer etapa
     ) {
+        if (!SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         Map<String, String> response = new HashMap<>();
         if (arquivo == null || arquivo.isEmpty()) {
             response.put("erro", "Selecione um arquivo para enviar.");
@@ -85,6 +98,9 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
             @PathVariable Long id,
             @PathVariable Long arquivoId
     ) {
+        if (!SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         Map<String, String> response = new HashMap<>();
         try {
             orcamentoService.excluirArquivo(arquivoId);
@@ -98,6 +114,9 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
 
     @PutMapping("/{id}/encerrar")
     public ResponseEntity<?> encerrarOrcamento(@PathVariable Long id) {
+        if (!SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         Map<String, String> response = new HashMap<>();
         try {
             orcamentoService.encerrarOrcamento(id);
@@ -111,6 +130,9 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
 
     @PutMapping("/{id}/reabrir")
     public ResponseEntity<?> reabrirOrcamento(@PathVariable Long id) {
+        if (!SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         Map<String, String> response = new HashMap<>();
         try {
             orcamentoService.reabrirOrcamento(id);

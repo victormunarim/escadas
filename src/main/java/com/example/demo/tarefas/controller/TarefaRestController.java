@@ -1,10 +1,12 @@
 package com.example.demo.tarefas.controller;
 
+import com.example.demo.auth.security.SecurityUtil;
 import com.example.demo.tarefas.dto.FormularioTarefaDTO;
 import com.example.demo.tarefas.dto.TarefaDTO;
 import com.example.demo.tarefas.service.TarefaService;
 import com.example.demo.shared.crud.controller.AbstractCrudRestController;
 import com.example.demo.shared.crud.service.CrudService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
@@ -26,8 +28,16 @@ public class TarefaRestController extends AbstractCrudRestController<FormularioT
         return this.tarefaService;
     }
 
+    @Override
+    protected String getModuloNome() {
+        return "TAREFAS";
+    }
+
     @PutMapping("/{id}/concluir")
     public ResponseEntity<?> concluirTarefa(@PathVariable Long id) {
+        if (!SecurityUtil.temPermissao("TAREFAS_EDITAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
             tarefaService.concluirTarefa(id);
             Map<String, String> response = new HashMap<>();
@@ -41,10 +51,13 @@ public class TarefaRestController extends AbstractCrudRestController<FormularioT
     }
 
     @GetMapping("/referencia")
-    public ResponseEntity<List<TarefaDTO>> listarPorReferencia(
+    public ResponseEntity<?> listarPorReferencia(
             @RequestParam("extChave") String extChave,
             @RequestParam("extId") Long extId
     ) {
+        if (!SecurityUtil.temPermissao("TAREFAS_VISUALIZAR")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.ok(tarefaService.listarPorReferencia(extChave, extId));
     }
 }

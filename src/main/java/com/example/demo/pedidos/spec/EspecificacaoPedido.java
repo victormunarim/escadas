@@ -1,5 +1,6 @@
 package com.example.demo.pedidos.spec;
 
+import com.example.demo.pedidos.config.ColunasPedido;
 import com.example.demo.pedidos.model.PedidoEntity;
 import com.example.demo.shared.crud.filtros.compostos.FiltroNumeroExato;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,14 +25,14 @@ public class EspecificacaoPedido {
 
             predicates.add(
                     cb.or(
-                            cb.isFalse(root.get("flagOculto")),
-                            cb.isNull(root.get("flagOculto"))
+                            cb.isFalse(root.get(ColunasPedido.CAMPO_FLAG_OCULTO)),
+                            cb.isNull(root.get(ColunasPedido.CAMPO_FLAG_OCULTO))
                     )
             );
 
             Optional<Integer> numero = FiltroNumeroExato.parse(numeroBusca);
             numero.ifPresent(valor ->
-                    predicates.add(cb.equal(root.get("numeroPedido"), valor))
+                    predicates.add(cb.equal(root.get(ColunasPedido.CAMPO_NUMERO_PEDIDO), valor))
             );
 
             if (busca != null && !busca.isBlank()) {
@@ -39,8 +40,8 @@ public class EspecificacaoPedido {
                 predicates.add(
                         cb.or(
                                 cb.like(cb.lower(root.get("clienteNome")), like),
-                                cb.like(cb.lower(root.get("email")), like),
-                                cb.like(root.get("descricao"), like)
+                                cb.like(cb.lower(root.get(ColunasPedido.CAMPO_EMAIL)), like),
+                                cb.like(root.get(ColunasPedido.CAMPO_DESCRICAO), like)
                         )
                 );
             }
@@ -50,13 +51,13 @@ public class EspecificacaoPedido {
             Integer diaValor = parseInt(dia);
 
             if (anoValor != null && mesValor != null) {
-                predicates.add(cb.equal(cb.function("year", Integer.class, root.get("dataCadastro")), anoValor));
-                predicates.add(cb.equal(cb.function("month", Integer.class, root.get("dataCadastro")), mesValor));
+                predicates.add(cb.equal(cb.function("year", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), anoValor));
+                predicates.add(cb.equal(cb.function("month", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), mesValor));
                 if (diaValor != null) {
-                    predicates.add(cb.equal(cb.function("day", Integer.class, root.get("dataCadastro")), diaValor));
+                    predicates.add(cb.equal(cb.function("day", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), diaValor));
                 }
             } else if (anoValor != null) {
-                predicates.add(cb.equal(cb.function("year", Integer.class, root.get("dataCadastro")), anoValor));
+                predicates.add(cb.equal(cb.function("year", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), anoValor));
             }
 
             if ("true".equalsIgnoreCase(comOrcamento)) {
