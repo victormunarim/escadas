@@ -71,14 +71,13 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         String etiquetaId = parametros.getOrDefault("etiquetaId", "").trim();
         String tecnico = parametros.getOrDefault("tecnico", "false").trim();
 
-        LocalDate hoje = LocalDate.now();
         if (!parametros.containsKey("mes")) {
-            mes = String.valueOf(hoje.getMonthValue());
-            parametros.put("mes", mes);
+            parametros.put("mes", "");
+            mes = "";
         }
         if (!parametros.containsKey("ano")) {
-            ano = String.valueOf(hoje.getYear());
-            parametros.put("ano", ano);
+            parametros.put("ano", "");
+            ano = "";
         }
         if (!parametros.containsKey("dia")) {
             parametros.put("dia", "");

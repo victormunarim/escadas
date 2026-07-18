@@ -57,14 +57,13 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
         String ano = parametros.getOrDefault("ano", "").trim();
         String temOrcamento = parametros.getOrDefault("tem_orcamento", "false").trim();
 
-        LocalDate hoje = LocalDate.now();
         if (!parametros.containsKey("mes")) {
-            mes = String.valueOf(MesFiltro(mes, hoje));
-            parametros.put("mes", mes);
+            parametros.put("mes", "");
+            mes = "";
         }
         if (!parametros.containsKey("ano")) {
-            ano = String.valueOf(hoje.getYear());
-            parametros.put("ano", ano);
+            parametros.put("ano", "");
+            ano = "";
         }
         if (!parametros.containsKey("dia")) {
             parametros.put("dia", "");
