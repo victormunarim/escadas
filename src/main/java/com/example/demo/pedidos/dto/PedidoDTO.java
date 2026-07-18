@@ -42,9 +42,7 @@ public record PedidoDTO(
     String referenciaCliente,
     LocalDateTime dataCadastro,
     Boolean flagOculto,
-    BigDecimal valor,
-    Long orcamentoId,
-    String orcamentoNome
+    BigDecimal valor
 ) {
     public PedidoDTO(PedidoEntity pedidoEntity) {
         this(
@@ -84,9 +82,7 @@ public record PedidoDTO(
             pedidoEntity.getReferenciaCliente(),
             pedidoEntity.getDataCadastro() == null ? null : LocalDateTime.ofInstant(pedidoEntity.getDataCadastro(), ZoneId.systemDefault()),
             pedidoEntity.getFlagOculto(),
-            pedidoEntity.getValor(),
-            pedidoEntity.getOrcamento() == null ? null : pedidoEntity.getOrcamento().getId(),
-            pedidoEntity.getOrcamento() == null ? null : pedidoEntity.getOrcamento().getNome()
+            pedidoEntity.getValor()
         );
     }
 
@@ -127,8 +123,6 @@ public record PedidoDTO(
     public LocalDateTime getDataCadastro() { return dataCadastro; }
     public Boolean getFlagOculto() { return flagOculto; }
     public BigDecimal getValor() { return valor; }
-    public Long getOrcamentoId() { return orcamentoId; }
-    public String getOrcamentoNome() { return orcamentoNome; }
 
     public String getCpfFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarCpf(cpf); }
     public String getRgFormatado() { return com.example.demo.shared.util.FormatacaoUtil.formatarRg(rg); }

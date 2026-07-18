@@ -1,6 +1,5 @@
 package com.example.demo.pedidos.model;
 
-import com.example.demo.orcamentos.model.OrcamentoEntity;
 import com.example.demo.pedidos.config.ColunasPedido;
 
 import jakarta.persistence.*;
@@ -40,10 +39,6 @@ public class PedidoEntity {
 
     @Column(name = ColunasPedido.FLAG_OCULTO)
     private Boolean flagOculto;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcamento_id")
-    private OrcamentoEntity orcamento;
 
     @Column(name = ColunasPedido.CLIENTE_NOME)
     private String clienteNome;
@@ -443,13 +438,5 @@ public class PedidoEntity {
         if (this.dataCadastro == null) {
             this.dataCadastro = Instant.now();
         }
-    }
-
-    public OrcamentoEntity getOrcamento() {
-        return orcamento;
-    }
-
-    public void setOrcamento(OrcamentoEntity orcamento) {
-        this.orcamento = orcamento;
     }
 }

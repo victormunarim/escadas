@@ -14,7 +14,8 @@ public class EspecificacaoOrcamento {
             String mes,
             String ano,
             String encerrado,
-            String etiquetaId
+            String etiquetaId,
+            String tecnico
     ) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -25,6 +26,12 @@ public class EspecificacaoOrcamento {
                             cb.isNull(root.get("flagOculto"))
                     )
             );
+
+            if ("true".equalsIgnoreCase(tecnico)) {
+                predicates.add(cb.isNotNull(root.get("pedido")));
+            } else if ("false".equalsIgnoreCase(tecnico)) {
+                predicates.add(cb.isNull(root.get("pedido")));
+            }
 
             if (busca != null && !busca.isBlank()) {
                 String like = "%" + busca.trim().toLowerCase() + "%";

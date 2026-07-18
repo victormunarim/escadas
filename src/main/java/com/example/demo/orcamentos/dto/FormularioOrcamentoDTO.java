@@ -5,6 +5,7 @@ public class FormularioOrcamentoDTO {
     private String bairro;
     private String descricao;
     private Long etiquetaId;
+    private Integer pedidoId;
 
     public FormularioOrcamentoDTO() {
     }
@@ -39,5 +40,13 @@ public class FormularioOrcamentoDTO {
 
     public void setEtiquetaId(Long etiquetaId) {
         this.etiquetaId = etiquetaId;
+    }
+
+    public Integer getPedidoId() {
+        return pedidoId;
+    }
+
+    public void setPedidoId(Integer pedidoId) {
+        this.pedidoId = pedidoId;
     }
 }

@@ -8,7 +8,10 @@ import java.util.List;
 
 public class FormularioOrcamentoViewConfig {
 
-    public static List<CampoFormularioCrud<FormularioOrcamentoDTO>> criarCampos(List<OpcaoCrud> opcoesEtiqueta) {
+    public static List<CampoFormularioCrud<FormularioOrcamentoDTO>> criarCampos(
+            List<OpcaoCrud> opcoesEtiqueta,
+            List<OpcaoCrud> opcoesPedido
+    ) {
         return List.of(
                 CamposFormularioCrud.texto(
                         "nome",
@@ -26,6 +29,14 @@ public class FormularioOrcamentoViewConfig {
                         opcoesEtiqueta,
                         "campo--etiqueta",
                         FormularioOrcamentoDTO::getEtiquetaId
+                ),
+                CamposFormularioCrud.selecao(
+                        "pedidoId",
+                        "Pedido Associado",
+                        false,
+                        opcoesPedido,
+                        "campo--pedido",
+                        FormularioOrcamentoDTO::getPedidoId
                 ),
                 CamposFormularioCrud.texto(
                         "bairro",

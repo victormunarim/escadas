@@ -26,21 +26,38 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.demo.pedidos.repository.PedidoRepository;
+import com.example.demo.pedidos.model.PedidoEntity;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
 @Transactional(readOnly = true)
 public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
 
     private final OrcamentoRepository repositorioOrcamento;
     private final EtiquetaRepository repositorioEtiqueta;
+    private final PedidoRepository repositorioPedido;
     private final ArquivoService servicoArquivo;
 
     public OrcamentoService(
             OrcamentoRepository repositorioOrcamento,
             EtiquetaRepository repositorioEtiqueta,
+            PedidoRepository repositorioPedido,
             ArquivoService servicoArquivo
     ) {
         this.repositorioOrcamento = repositorioOrcamento;
         this.repositorioEtiqueta = repositorioEtiqueta;
+        this.repositorioPedido = repositorioPedido;
         this.servicoArquivo = servicoArquivo;
     }
 
@@ -52,6 +69,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         String ano = parametros.getOrDefault("ano", "").trim();
         String encerrado = parametros.getOrDefault("encerrado", "false").trim();
         String etiquetaId = parametros.getOrDefault("etiquetaId", "").trim();
+        String tecnico = parametros.getOrDefault("tecnico", "false").trim();
 
         LocalDate hoje = LocalDate.now();
         if (!parametros.containsKey("mes")) {
@@ -71,11 +89,14 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         if (!parametros.containsKey("etiquetaId")) {
             parametros.put("etiquetaId", "");
         }
+        if (!parametros.containsKey("tecnico")) {
+            parametros.put("tecnico", "false");
+        }
 
         int size = tamanhoPagina(parametros.getOrDefault("size", "50"));
 
         List<OrcamentoDTO> orcamentos = repositorioOrcamento.findAll(
-                EspecificacaoOrcamento.filtro(busca, dia, mes, ano, encerrado, etiquetaId),
+                EspecificacaoOrcamento.filtro(busca, dia, mes, ano, encerrado, etiquetaId, tecnico),
                 PageRequest.of(0, size)
         ).stream()
                 .map(OrcamentoDTO::new)
@@ -188,13 +209,8 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
     @Transactional
     public Long salvarFormulario(FormularioOrcamentoDTO formulario) {
         OrcamentoEntity orcamento = new OrcamentoEntity();
-        orcamento.setNome(formulario.getNome());
-        orcamento.setBairro(formulario.getBairro());
-        orcamento.setDescricao(formulario.getDescricao());
+        aplicarFormulario(formulario, orcamento);
         orcamento.setFlagOculto(Boolean.FALSE);
-        if (formulario.getEtiquetaId() != null) {
-            orcamento.setEtiqueta(repositorioEtiqueta.findById(formulario.getEtiquetaId()).orElse(null));
-        }
         OrcamentoEntity salvo = repositorioOrcamento.save(orcamento);
         return salvo.getId();
     }
@@ -203,15 +219,46 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
     @Transactional
     public void atualizarFormulario(Long id, FormularioOrcamentoDTO formulario) {
         OrcamentoEntity orcamento = obterOrcamento(id);
+        aplicarFormulario(formulario, orcamento);
+        repositorioOrcamento.save(orcamento);
+    }
+
+    private void aplicarFormulario(FormularioOrcamentoDTO formulario, OrcamentoEntity orcamento) {
         orcamento.setNome(formulario.getNome());
         orcamento.setBairro(formulario.getBairro());
         orcamento.setDescricao(formulario.getDescricao());
+
+        boolean jaEraTecnico = orcamento.getPedido() != null;
+
+        com.example.demo.orcamentos.model.EtiquetaEntity novaEtiqueta = null;
         if (formulario.getEtiquetaId() != null) {
-            orcamento.setEtiqueta(repositorioEtiqueta.findById(formulario.getEtiquetaId()).orElse(null));
-        } else {
-            orcamento.setEtiqueta(null);
+            novaEtiqueta = repositorioEtiqueta.findById(formulario.getEtiquetaId()).orElse(null);
         }
-        repositorioOrcamento.save(orcamento);
+
+        if (jaEraTecnico) {
+            if (novaEtiqueta != null && orcamento.getEtiqueta() != null && !novaEtiqueta.getId().equals(orcamento.getEtiqueta().getId())) {
+                throw new IllegalArgumentException("Não é possível alterar a etiqueta de um Técnico.");
+            }
+        } else {
+            orcamento.setEtiqueta(novaEtiqueta);
+        }
+
+        if (formulario.getPedidoId() != null) {
+            PedidoEntity pedido = repositorioPedido.findById(Long.valueOf(formulario.getPedidoId()))
+                    .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado com o ID: " + formulario.getPedidoId()));
+
+            com.example.demo.orcamentos.model.EtiquetaEntity etiquetaVerificacao = orcamento.getEtiqueta();
+            if (etiquetaVerificacao == null || !"proposta".equalsIgnoreCase(etiquetaVerificacao.getNome())) {
+                throw new IllegalArgumentException("Não é possível associar um pedido a um orçamento que não tenha a etiqueta 'Proposta'.");
+            }
+
+            orcamento.setPedido(pedido);
+            orcamento.setFlagEncerrado(Boolean.TRUE);
+        } else {
+            if (!jaEraTecnico) {
+                orcamento.setPedido(null);
+            }
+        }
     }
 
     public FormularioOrcamentoDTO criarFormulario(Long id) {
@@ -222,6 +269,9 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         form.setDescricao(orcamento.getDescricao());
         if (orcamento.getEtiqueta() != null) {
             form.setEtiquetaId(orcamento.getEtiqueta().getId());
+        }
+        if (orcamento.getPedido() != null) {
+            form.setPedidoId(orcamento.getPedido().getId());
         }
         return form;
     }
@@ -258,12 +308,13 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
     public void reabrirOrcamento(Long id) {
         OrcamentoEntity orcamento = obterOrcamento(id);
         orcamento.setFlagEncerrado(Boolean.FALSE);
+        orcamento.setPedido(null);
         repositorioOrcamento.save(orcamento);
     }
 
     @Override
     public List<CampoRender> obterCamposRenderNovo() {
-        return FormularioOrcamentoViewConfig.criarCampos(criarOpcoesEtiquetas()).stream()
+        return FormularioOrcamentoViewConfig.criarCampos(criarOpcoesEtiquetas(), criarOpcoesPedidos(null)).stream()
                 .map(base -> base.renderizar(new FormularioOrcamentoDTO()))
                 .toList();
     }
@@ -271,7 +322,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
     @Override
     public List<CampoRender> obterCamposRenderEdicao(Long id) {
         FormularioOrcamentoDTO form = criarFormulario(id);
-        return FormularioOrcamentoViewConfig.criarCampos(criarOpcoesEtiquetas()).stream()
+        return FormularioOrcamentoViewConfig.criarCampos(criarOpcoesEtiquetas(), criarOpcoesPedidos(id)).stream()
                 .map(base -> base.renderizar(form))
                 .toList();
     }
@@ -284,6 +335,27 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         for (com.example.demo.orcamentos.model.EtiquetaEntity e : etiquetas) {
             opcoes.add(new OpcaoCrud(String.valueOf(e.getId()), e.getNome()));
         }
+        return opcoes;
+    }
+
+    private List<OpcaoCrud> criarOpcoesPedidos(Long orcamentoIdAtual) {
+        List<OpcaoCrud> opcoes = new ArrayList<>();
+        opcoes.add(new OpcaoCrud("", "Nenhum"));
+
+        java.util.Set<Integer> pedidoIdsComOrcamento = repositorioOrcamento.findAll().stream()
+                .filter(o -> (o.getFlagOculto() == null || !o.getFlagOculto()))
+                .filter(o -> o.getPedido() != null)
+                .filter(o -> orcamentoIdAtual == null || !o.getId().equals(orcamentoIdAtual))
+                .map(o -> o.getPedido().getId())
+                .collect(java.util.stream.Collectors.toSet());
+
+        repositorioPedido.findAll().stream()
+                .filter(p -> p.getFlagOculto() == null || !p.getFlagOculto())
+                .filter(p -> !pedidoIdsComOrcamento.contains(p.getId()))
+                .forEach(p -> {
+                    String label = "Pedido #" + p.getNumeroPedido() + (p.getNomeCliente() != null && !p.getNomeCliente().isBlank() ? " - " + p.getNomeCliente() : "");
+                    opcoes.add(new OpcaoCrud(String.valueOf(p.getId()), label));
+                });
         return opcoes;
     }
 

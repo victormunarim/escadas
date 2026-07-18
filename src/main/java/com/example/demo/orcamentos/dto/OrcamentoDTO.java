@@ -14,6 +14,11 @@ public class OrcamentoDTO {
     private Long etiquetaId;
     private String etiquetaNome;
 
+    private Integer pedidoId;
+    private Integer pedidoNumero;
+    private String pedidoCliente;
+    private Boolean flagTecnico;
+
     public OrcamentoDTO() {
     }
 
@@ -23,6 +28,12 @@ public class OrcamentoDTO {
             this.etiquetaId = entity.getEtiqueta().getId();
             this.etiquetaNome = entity.getEtiqueta().getNome();
         }
+        if (entity.getPedido() != null) {
+            this.pedidoId = entity.getPedido().getId();
+            this.pedidoNumero = entity.getPedido().getNumeroPedido();
+            this.pedidoCliente = entity.getPedido().getNomeCliente();
+        }
+        this.flagTecnico = entity.getPedido() != null;
     }
 
     public Long getId() {
@@ -98,5 +109,37 @@ public class OrcamentoDTO {
 
     public void setEtiquetaNome(String etiquetaNome) {
         this.etiquetaNome = etiquetaNome;
+    }
+
+    public Integer getPedidoId() {
+        return pedidoId;
+    }
+
+    public void setPedidoId(Integer pedidoId) {
+        this.pedidoId = pedidoId;
+    }
+
+    public Integer getPedidoNumero() {
+        return pedidoNumero;
+    }
+
+    public void setPedidoNumero(Integer pedidoNumero) {
+        this.pedidoNumero = pedidoNumero;
+    }
+
+    public String getPedidoCliente() {
+        return pedidoCliente;
+    }
+
+    public void setPedidoCliente(String pedidoCliente) {
+        this.pedidoCliente = pedidoCliente;
+    }
+
+    public Boolean getFlagTecnico() {
+        return flagTecnico;
+    }
+
+    public void setFlagTecnico(Boolean flagTecnico) {
+        this.flagTecnico = flagTecnico;
     }
 }

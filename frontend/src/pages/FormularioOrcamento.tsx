@@ -9,6 +9,10 @@ import type { CampoRender } from '../types/crud';
 export default function FormularioOrcamento() {
     const { id } = useParams<{ id: string }>();
     const ehEdicao = !!id;
+    const ehTecnico = window.location.pathname.startsWith('/tecnicos');
+    const baseApiUrl = ehTecnico ? '/api/tecnicos' : '/api/orcamentos';
+    const baseRedirectUrl = ehTecnico ? '/tecnicos' : '/orcamentos';
+    const tituloModulo = ehTecnico ? 'Técnico' : 'Orçamento';
 
     const [salvando, setSalvando] = useState(false);
     const [campos, setCampos] = useState<CampoRender[] | null>(null);
@@ -16,7 +20,7 @@ export default function FormularioOrcamento() {
     useEffect(() => {
         const carregarCampos = async () => {
             try {
-                const url = ehEdicao ? `/api/orcamentos/${id}/formulario` : '/api/orcamentos/formulario';
+                const url = ehEdicao ? `${baseApiUrl}/${id}/formulario` : `${baseApiUrl}/formulario`;
                 const dados = await requisicaoApi<CampoRender[]>(url);
                 setCampos(dados);
             } catch (erroRequisicao: any) {
@@ -26,7 +30,7 @@ export default function FormularioOrcamento() {
         };
 
         carregarCampos();
-    }, [ehEdicao, id]);
+    }, [ehEdicao, id, baseApiUrl]);
 
     const lidarComEnvio = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -39,20 +43,22 @@ export default function FormularioOrcamento() {
         });
 
         try {
-            const url = ehEdicao ? `/api/orcamentos/${id}` : '/api/orcamentos';
+            const url = ehEdicao ? `${baseApiUrl}/${id}` : baseApiUrl;
             const metodo = ehEdicao ? 'PUT' : 'POST';
             const resposta = await requisicaoApi<{ id?: number }>(url, {
                 method: metodo,
                 body: payload
             });
             const targetId = ehEdicao ? id : (resposta?.id);
+            const temPedidoAssociado = payload.pedidoId !== undefined && payload.pedidoId !== null && String(payload.pedidoId).trim() !== '';
+            const finalRedirectBase = (ehTecnico || temPedidoAssociado) ? '/tecnicos' : '/orcamentos';
             if (targetId) {
-                window.location.href = `/orcamentos/${targetId}/visualizar`;
+                window.location.href = `${finalRedirectBase}/${targetId}/visualizar`;
             } else {
-                window.location.href = '/orcamentos';
+                window.location.href = finalRedirectBase;
             }
         } catch (erroRequisicao: any) {
-            alert(erroRequisicao.message || 'Erro ao salvar o orçamento.');
+            alert(erroRequisicao.message || `Erro ao salvar ${tituloModulo.toLowerCase()}.`);
         } finally {
             setSalvando(false);
         }
@@ -65,9 +71,9 @@ export default function FormularioOrcamento() {
     return (
         <section className="pagina">
             <header className="pagina__cabecalho">
-                <h1 className="pagina__titulo">{ehEdicao ? 'Editar Orçamento' : 'Novo Orçamento'}</h1>
+                <h1 className="pagina__titulo">{ehEdicao ? `Editar ${tituloModulo}` : `Novo ${tituloModulo}`}</h1>
                 <p className="pagina__subtitulo">
-                    {ehEdicao ? 'Atualize os dados do orçamento selecionado.' : 'Preencha os campos para cadastrar o orçamento.'}
+                    {ehEdicao ? `Atualize os dados do ${tituloModulo.toLowerCase()} selecionado.` : `Preencha os campos para cadastrar o ${tituloModulo.toLowerCase()}.`}
                 </p>
             </header>
 
@@ -84,9 +90,9 @@ export default function FormularioOrcamento() {
 
                     <div className="formulario-crud__acoes" style={{ marginTop: '16px' }}>
                         <button className="busca-crud__botao" type="submit" disabled={salvando}>
-                            {salvando ? 'Salvando...' : ehEdicao ? 'Salvar alterações' : 'Salvar orçamento'}
+                            {salvando ? 'Salvando...' : ehEdicao ? 'Salvar alterações' : `Salvar ${tituloModulo.toLowerCase()}`}
                         </button>
-                        <Link className="formulario-crud__link" to="/orcamentos">Voltar para listagem</Link>
+                        <Link className="formulario-crud__link" to={baseRedirectUrl}>Voltar para listagem</Link>
                     </div>
                 </form>
             </section>

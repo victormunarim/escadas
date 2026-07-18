@@ -89,6 +89,10 @@ public class OrcamentoEntity {
     @JoinColumn(name = "etiquetas_id")
     private EtiquetaEntity etiqueta;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "pedido_id")
+    private com.example.demo.pedidos.model.PedidoEntity pedido;
+
     @Column(name = "flag_encerrado", nullable = false)
     private Boolean flagEncerrado = false;
 
@@ -106,5 +110,13 @@ public class OrcamentoEntity {
 
     public void setEtiqueta(EtiquetaEntity etiqueta) {
         this.etiqueta = etiqueta;
+    }
+
+    public com.example.demo.pedidos.model.PedidoEntity getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(com.example.demo.pedidos.model.PedidoEntity pedido) {
+        this.pedido = pedido;
     }
 }

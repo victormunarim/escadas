@@ -18,7 +18,7 @@ public class EspecificacaoPedido {
             String dia,
             String mes,
             String ano,
-            String comOrcamento
+            String temOrcamento
     ) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -60,10 +60,24 @@ public class EspecificacaoPedido {
                 predicates.add(cb.equal(cb.function("year", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), anoValor));
             }
 
-            if ("true".equalsIgnoreCase(comOrcamento)) {
-                predicates.add(cb.isNotNull(root.get("orcamento")));
-            } else if ("false".equalsIgnoreCase(comOrcamento)) {
-                predicates.add(cb.isNull(root.get("orcamento")));
+            if ("true".equalsIgnoreCase(temOrcamento)) {
+                jakarta.persistence.criteria.Subquery<Long> subquery = query.subquery(Long.class);
+                jakarta.persistence.criteria.Root<com.example.demo.orcamentos.model.OrcamentoEntity> orcamentoRoot = subquery.from(com.example.demo.orcamentos.model.OrcamentoEntity.class);
+                subquery.select(orcamentoRoot.get("id"));
+                subquery.where(
+                        cb.equal(orcamentoRoot.get("pedido").get("id"), root.get("id")),
+                        cb.or(cb.isFalse(orcamentoRoot.get("flagOculto")), cb.isNull(orcamentoRoot.get("flagOculto")))
+                );
+                predicates.add(cb.exists(subquery));
+            } else if ("false".equalsIgnoreCase(temOrcamento)) {
+                jakarta.persistence.criteria.Subquery<Long> subquery = query.subquery(Long.class);
+                jakarta.persistence.criteria.Root<com.example.demo.orcamentos.model.OrcamentoEntity> orcamentoRoot = subquery.from(com.example.demo.orcamentos.model.OrcamentoEntity.class);
+                subquery.select(orcamentoRoot.get("id"));
+                subquery.where(
+                        cb.equal(orcamentoRoot.get("pedido").get("id"), root.get("id")),
+                        cb.or(cb.isFalse(orcamentoRoot.get("flagOculto")), cb.isNull(orcamentoRoot.get("flagOculto")))
+                );
+                predicates.add(cb.not(cb.exists(subquery)));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

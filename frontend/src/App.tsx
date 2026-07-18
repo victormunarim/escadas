@@ -32,6 +32,11 @@ export default function App() {
                         <Route path="/orcamentos/:id/editar" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_EDITAR"><FormularioOrcamento /></RotaProtegida>} />
                         <Route path="/orcamentos/:id/visualizar" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR"><VisualizacaoOrcamento /></RotaProtegida>} />
                         
+                        <Route path="/tecnicos" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR"><ListagemOrcamentos /></RotaProtegida>} />
+                        <Route path="/tecnicos/novo" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_ADICIONAR"><FormularioOrcamento /></RotaProtegida>} />
+                        <Route path="/tecnicos/:id/editar" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_EDITAR"><FormularioOrcamento /></RotaProtegida>} />
+                        <Route path="/tecnicos/:id/visualizar" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR"><VisualizacaoOrcamento /></RotaProtegida>} />
+
                         <Route path="/token" element={<RotaProtegida permissaoRequerida="CONFIGURACAO_DRIVE"><ConfiguracaoGoogleDrive /></RotaProtegida>} />
                     </Route>
 

@@ -34,22 +34,19 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
     private final ArquivoService servicoArquivo;
     private final GeradorPdfPedidoService geradorPdfPedido;
     private final UsuarioRepository repositorioUsuario;
-    private final OrcamentoRepository repositorioOrcamento;
 
     public PedidoService(
             PedidoRepository repositorioPedido,
             FormularioPedidoService formularioPedidoService,
             ArquivoService servicoArquivo,
             GeradorPdfPedidoService geradorPdfPedido,
-            UsuarioRepository repositorioUsuario,
-            OrcamentoRepository repositorioOrcamento
+            UsuarioRepository repositorioUsuario
     ) {
         this.repositorioPedido = repositorioPedido;
         this.formularioPedidoService = formularioPedidoService;
         this.servicoArquivo = servicoArquivo;
         this.geradorPdfPedido = geradorPdfPedido;
         this.repositorioUsuario = repositorioUsuario;
-        this.repositorioOrcamento = repositorioOrcamento;
     }
 
     public ListagemDTO listarResumo(Map<String, String> parametros) {
@@ -58,7 +55,7 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
         String dia = parametros.getOrDefault("dia", "").trim();
         String mes = parametros.getOrDefault("mes", "").trim();
         String ano = parametros.getOrDefault("ano", "").trim();
-        String comOrcamento = parametros.getOrDefault("com_orcamento", "").trim();
+        String temOrcamento = parametros.getOrDefault("tem_orcamento", "false").trim();
 
         LocalDate hoje = LocalDate.now();
         if (!parametros.containsKey("mes")) {
@@ -72,14 +69,14 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
         if (!parametros.containsKey("dia")) {
             parametros.put("dia", "");
         }
-        if (!parametros.containsKey("com_orcamento")) {
-            parametros.put("com_orcamento", "");
+        if (!parametros.containsKey("tem_orcamento")) {
+            parametros.put("tem_orcamento", "false");
         }
 
         int size = tamanhoPagina(parametros.getOrDefault("size", "50"));
 
         List<PedidoDTO> pedidos = repositorioPedido.findAll(
-                EspecificacaoPedido.filtro(busca, numeroBusca, dia, mes, ano, comOrcamento),
+                EspecificacaoPedido.filtro(busca, numeroBusca, dia, mes, ano, temOrcamento),
                 PageRequest.of(0, size)
         ).stream()
                 .map(PedidoDTO::new)
@@ -124,15 +121,15 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
                         parametros.getOrDefault("numero_busca", "")
                 ),
                 new CampoSelecaoRender(
-                        "Com orçamento",
-                        "com_orcamento",
+                        "Tem orçamento",
+                        "tem_orcamento",
                         "filtro-crud",
                         false,
-                        parametros.getOrDefault("com_orcamento", ""),
+                        parametros.getOrDefault("tem_orcamento", "false"),
                         List.of(
-                                new OpcaoCrud("", "Selecione"),
+                                new OpcaoCrud("false", "Não"),
                                 new OpcaoCrud("true", "Sim"),
-                                new OpcaoCrud("false", "Não")
+                                new OpcaoCrud("", "Selecione")
                         )
                 ),
                 new CampoSelecaoRender(
@@ -201,12 +198,6 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
         pedido.setFlagOculto(Boolean.FALSE);
         PedidoEntity pedidoSalvo = repositorioPedido.save(pedido);
 
-        if (pedidoSalvo.getOrcamento() != null) {
-            OrcamentoEntity orcamento = pedidoSalvo.getOrcamento();
-            orcamento.setFlagEncerrado(Boolean.TRUE);
-            repositorioOrcamento.save(orcamento);
-        }
-
         return Long.valueOf(pedidoSalvo.getId());
     }
 
@@ -215,13 +206,7 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
     public void atualizarFormulario(Long id, FormularioPedidoDTO formularioPedido) {
         PedidoEntity pedido = obterPedido(id);
         formularioPedidoService.aplicarFormularioNoPedido(formularioPedido, pedido);
-        PedidoEntity pedidoSalvo = repositorioPedido.save(pedido);
-
-        if (pedidoSalvo.getOrcamento() != null) {
-            OrcamentoEntity orcamento = pedidoSalvo.getOrcamento();
-            orcamento.setFlagEncerrado(Boolean.TRUE);
-            repositorioOrcamento.save(orcamento);
-        }
+        repositorioPedido.save(pedido);
     }
 
     public FormularioPedidoDTO criarFormulario(Long id) {

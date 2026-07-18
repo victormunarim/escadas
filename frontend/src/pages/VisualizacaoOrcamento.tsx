@@ -20,6 +20,13 @@ interface DetalhesOrcamento {
     detalhes: Record<string, string>;
     arquivos: ArquivoOrcamento[];
     flagEncerrado?: boolean;
+    pedidoId?: number;
+    pedidoNumero?: number;
+    pedidoCliente?: string;
+    resumoPedido?: Record<string, string>;
+    dadosCliente?: Record<string, string>;
+    enderecoObra?: Record<string, string>;
+    enderecoCliente?: Record<string, string>;
 }
 
 const obterLinkDownload = (link: string) => {
@@ -36,6 +43,11 @@ const obterLinkDownload = (link: string) => {
 
 export default function VisualizacaoOrcamento() {
     const { id } = useParams<{ id: string }>();
+    const ehTecnico = window.location.pathname.startsWith('/tecnicos');
+    const apiEndpoint = ehTecnico ? '/api/tecnicos' : '/api/orcamentos';
+    const rotaBase = ehTecnico ? '/tecnicos' : '/orcamentos';
+    const tituloModulo = ehTecnico ? 'Técnico' : 'Orçamento';
+
     const [dadosOrcamento, setDadosOrcamento] = useState<DetalhesOrcamento | null | undefined>(undefined);
     const [enviando, setEnviando] = useState<Record<number, boolean>>({});
     const [arquivosSelecionados, setArquivosSelecionados] = useState<Record<number, File>>({});
@@ -43,47 +55,47 @@ export default function VisualizacaoOrcamento() {
 
     const buscarDetalhesOrcamento = async () => {
         try {
-            const dados = await requisicaoApi<DetalhesOrcamento>(`/api/orcamentos/${id}`);
+            const dados = await requisicaoApi<DetalhesOrcamento>(`${apiEndpoint}/${id}`);
             setDadosOrcamento(dados);
         } catch (erroRequisicao: any) {
-            alert(erroRequisicao.message || 'Erro ao carregar detalhes do orçamento.');
+            alert(erroRequisicao.message || `Erro ao carregar detalhes do ${tituloModulo.toLowerCase()}.`);
             setDadosOrcamento(null);
         }
     };
 
     const lidarComEncerramento = async () => {
-        if (!window.confirm('Tem certeza que deseja encerrar este orçamento?')) {
+        if (!window.confirm(`Tem certeza que deseja encerrar este ${tituloModulo.toLowerCase()}?`)) {
             return;
         }
 
         try {
-            await requisicaoApi(`/api/orcamentos/${id}/encerrar`, {
+            await requisicaoApi(`${apiEndpoint}/${id}/encerrar`, {
                 method: 'PUT'
             });
             window.location.reload();
         } catch (erroRequisicao: any) {
-            alert(erroRequisicao.message || 'Erro ao encerrar orçamento.');
+            alert(erroRequisicao.message || `Erro ao encerrar ${tituloModulo.toLowerCase()}.`);
         }
     };
 
     const lidarComReabertura = async () => {
-        if (!window.confirm('Tem certeza que deseja reabrir este orçamento?')) {
+        if (!window.confirm(`Tem certeza que deseja reabrir este ${tituloModulo.toLowerCase()}?`)) {
             return;
         }
 
         try {
-            await requisicaoApi(`/api/orcamentos/${id}/reabrir`, {
+            await requisicaoApi(`${apiEndpoint}/${id}/reabrir`, {
                 method: 'PUT'
             });
-            window.location.reload();
+            window.location.href = `/orcamentos/${id}/visualizar`;
         } catch (erroRequisicao: any) {
-            alert(erroRequisicao.message || 'Erro ao reabrir orçamento.');
+            alert(erroRequisicao.message || `Erro ao reabrir ${tituloModulo.toLowerCase()}.`);
         }
     };
 
     useEffect(() => {
         buscarDetalhesOrcamento();
-    }, [id]);
+    }, [id, apiEndpoint]);
 
     useEffect(() => {
         if (dadosOrcamento?.arquivos) {
@@ -114,7 +126,7 @@ export default function VisualizacaoOrcamento() {
         dadosFormulario.append('arquivo', arquivoSelecionado);
 
         try {
-            await requisicaoApi<{ sucesso?: string }>(`/api/orcamentos/${id}/arquivos?etapa=${etapa}`, {
+            await requisicaoApi<{ sucesso?: string }>(`${apiEndpoint}/${id}/arquivos?etapa=${etapa}`, {
                 method: 'POST',
                 body: dadosFormulario,
             });
@@ -131,7 +143,7 @@ export default function VisualizacaoOrcamento() {
         }
 
         try {
-            await requisicaoApi(`/api/orcamentos/${id}/arquivos/${arquivoId}`, {
+            await requisicaoApi(`${apiEndpoint}/${id}/arquivos/${arquivoId}`, {
                 method: 'DELETE'
             });
             window.location.reload();
@@ -141,21 +153,21 @@ export default function VisualizacaoOrcamento() {
     };
 
     if (dadosOrcamento === undefined) {
-        return <Carregando mensagem="Carregando detalhes do orçamento..." margemSuperior />;
+        return <Carregando mensagem={`Carregando detalhes do ${tituloModulo.toLowerCase()}...`} margemSuperior />;
     }
 
     if (dadosOrcamento === null) {
         return (
             <section className="pagina">
                 <div className="alerta-formulario alerta-formulario--erro">
-                    Orçamento não encontrado.
+                    {tituloModulo} não encontrado.
                 </div>
-                <Link className="formulario-crud__link" to="/orcamentos">Voltar para listagem</Link>
+                <Link className="formulario-crud__link" to={rotaBase}>Voltar para listagem</Link>
             </section>
         );
     }
 
-    const { id: orcamentoId, nome, detalhes, arquivos } = dadosOrcamento;
+    const { id: itemKey, nome, detalhes, arquivos, resumoPedido, dadosCliente, enderecoObra, enderecoCliente, pedidoId, pedidoNumero, pedidoCliente } = dadosOrcamento;
 
     const listEtapas = Array.from({ length: etapasVisiveis }, (_, index) => etapasVisiveis - index);
 
@@ -163,12 +175,20 @@ export default function VisualizacaoOrcamento() {
         <section className="pagina pedido-visualizacao">
             <header className="pagina__cabecalho pedido-visualizacao__cabecalho">
                 <div>
-                    <h1 className="pagina__titulo">Visualização do Orçamento</h1>
+                    <h1 className="pagina__titulo">{`Visualização do ${tituloModulo}`}</h1>
                     <p className="pagina__subtitulo">
-                        Orçamento #{orcamentoId} - {nome}
+                        {`${tituloModulo} #${itemKey} - ${nome}`}
                         {dadosOrcamento.flagEncerrado && (
                             <span style={{ marginLeft: '10px', backgroundColor: '#f8d7da', color: '#721c24', padding: '2px 8px', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 600 }}>
                                 Encerrado
+                            </span>
+                        )}
+                        {pedidoId && (
+                            <span>
+                                {' '}| Vinculado ao Pedido:{' '}
+                                <Link to={`/pedidos/${pedidoId}/visualizar`} style={{ color: '#13508c', fontWeight: 600, textDecoration: 'underline' }}>
+                                    #{pedidoNumero} - {pedidoCliente}
+                                </Link>
                             </span>
                         )}
                     </p>
@@ -180,7 +200,7 @@ export default function VisualizacaoOrcamento() {
                             style={{ backgroundColor: '#dc3545', borderColor: '#dc3545', color: '#fff', padding: '6px 12px', fontSize: '0.9rem', height: 'auto', lineHeight: 1.2, cursor: 'pointer' }}
                             onClick={lidarComEncerramento}
                         >
-                            Encerrar Orçamento
+                            {`Encerrar ${tituloModulo}`}
                         </button>
                     ) : (
                         <button 
@@ -188,23 +208,32 @@ export default function VisualizacaoOrcamento() {
                             style={{ backgroundColor: '#28a745', borderColor: '#28a745', color: '#fff', padding: '6px 12px', fontSize: '0.9rem', height: 'auto', lineHeight: 1.2, cursor: 'pointer' }}
                             onClick={lidarComReabertura}
                         >
-                            Reabrir Orçamento
+                            {`Reabrir ${tituloModulo}`}
                         </button>
                     )}
-                    <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`/orcamentos/${orcamentoId}/editar`}>
+                    <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`${rotaBase}/${itemKey}/editar`}>
                         Editar
                     </Link>
-                    <Link className="formulario-crud__link" to="/orcamentos">Voltar para listagem</Link>
+                    <Link className="formulario-crud__link" to={rotaBase}>Voltar para listagem</Link>
                 </div>
             </header>
 
-            <div className="pedido-visualizacao__grade">
-                <BlocoDetalhes titulo="Resumo do Orçamento" dados={detalhes} />
-            </div>
+            {resumoPedido ? (
+                <div className="pedido-visualizacao__grade">
+                    <BlocoDetalhes titulo="Resumo do Pedido" dados={resumoPedido} />
+                    {dadosCliente && <BlocoDetalhes titulo="Dados do Cliente" dados={dadosCliente} />}
+                    {enderecoObra && <BlocoDetalhes titulo="Endereço da Obra" dados={enderecoObra} />}
+                    {enderecoCliente && <BlocoDetalhes titulo="Endereço do Cliente" dados={enderecoCliente} />}
+                </div>
+            ) : (
+                <div className="pedido-visualizacao__grade">
+                    <BlocoDetalhes titulo={`Resumo do ${tituloModulo}`} dados={detalhes} />
+                </div>
+            )}
 
             <section className="cartao-crud pedido-visualizacao__bloco-arquivos" style={{ marginTop: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid #eee', paddingBottom: '10px' }}>
-                    <h2 style={{ fontSize: '1.4rem', fontWeight: 600, margin: 0, color: '#333' }}>Arquivos do Orçamento por Etapas</h2>
+                    <h2 style={{ fontSize: '1.4rem', fontWeight: 600, margin: 0, color: '#333' }}>{`Arquivos do ${tituloModulo} por Etapas`}</h2>
                     {!dadosOrcamento.flagEncerrado && (
                         <button 
                             className="busca-crud__botao" 

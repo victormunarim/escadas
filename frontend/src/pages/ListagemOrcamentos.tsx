@@ -10,38 +10,47 @@ export default function ListagemOrcamentos() {
     const [dadosListagem, setDadosListagem] = useState<ListagemResumo | null>(null);
     const { temPermissao } = usarAutenticacao();
 
+    const ehTecnico = window.location.pathname.startsWith('/tecnicos');
+    const titulo = ehTecnico ? 'Técnicos' : 'Orçamentos';
+    const apiEndpoint = ehTecnico ? '/api/tecnicos' : '/api/orcamentos';
+    const rotaBase = ehTecnico ? '/tecnicos' : '/orcamentos';
+
+    const podeVisualizar = ehTecnico ? (temPermissao('TECNICOS_VISUALIZAR') || temPermissao('ORCAMENTOS_VISUALIZAR')) : temPermissao('ORCAMENTOS_VISUALIZAR');
+    const podeEditar = ehTecnico ? (temPermissao('TECNICOS_EDITAR') || temPermissao('ORCAMENTOS_EDITAR')) : temPermissao('ORCAMENTOS_EDITAR');
+    const podeExcluir = ehTecnico ? (temPermissao('TECNICOS_EXCLUIR') || temPermissao('ORCAMENTOS_EXCLUIR')) : temPermissao('ORCAMENTOS_EXCLUIR');
+
     useEffect(() => {
-        const buscarOrcamentos = async () => {
+        const buscarDados = async () => {
             try {
-                const dados = await requisicaoApi<ListagemResumo>(`/api/orcamentos${window.location.search}`);
+                const dados = await requisicaoApi<ListagemResumo>(`${apiEndpoint}${window.location.search}`);
                 setDadosListagem(dados);
             } catch (erroRequisicao: any) {
-                alert(erroRequisicao.message || 'Erro ao carregar orçamentos.');
+                alert(erroRequisicao.message || `Erro ao carregar ${titulo.toLowerCase()}.`);
             }
         };
 
-        buscarOrcamentos();
-    }, []);
+        buscarDados();
+    }, [apiEndpoint, titulo]);
 
     const lidarComExclusao = async (id: number) => {
-        if (!window.confirm('Tem certeza que deseja excluir este orçamento?')) {
+        if (!window.confirm(`Tem certeza que deseja excluir este ${ehTecnico ? 'técnico' : 'orçamento'}?`)) {
             return;
         }
 
         try {
-            await requisicaoApi(`/api/orcamentos/${id}`, { method: 'DELETE' });
+            await requisicaoApi(`${apiEndpoint}/${id}`, { method: 'DELETE' });
             window.location.reload();
         } catch (erroRequisicao: any) {
-            alert(erroRequisicao.message || 'Erro ao excluir orçamento.');
+            alert(erroRequisicao.message || `Erro ao excluir ${ehTecnico ? 'técnico' : 'orçamento'}.`);
         }
     };
 
     return (
         <section className="pagina">
             <header className="pagina__cabecalho">
-                <h1 className="pagina__titulo">Orçamentos</h1>
+                <h1 className="pagina__titulo">{titulo}</h1>
 
-                <form className="busca-crud" method="GET" action="/orcamentos" role="search" aria-label="Filtros">
+                <form className="busca-crud" method="GET" action={rotaBase} role="search" aria-label="Filtros">
                     <div className="filtros-crud">
                         {dadosListagem?.filtros?.map((filtro, idx) => (
                             <CampoRenderizador
@@ -59,7 +68,7 @@ export default function ListagemOrcamentos() {
 
             <section className="cartao-crud">
                 {dadosListagem === null ? (
-                    <Carregando mensagem="Carregando orçamentos..." />
+                    <Carregando mensagem={`Carregando ${titulo.toLowerCase()}...`} />
                 ) : dadosListagem.linhas.length === 0 ? (
                     <div className="vazio-crud">
                         <div className="vazio-crud__titulo">Nenhum registro encontrado</div>
@@ -67,7 +76,7 @@ export default function ListagemOrcamentos() {
                     </div>
                 ) : (
                     <div className="tabela-crud-wrap">
-                        <table className="tabela-crud" aria-label="Tabela de orçamentos">
+                        <table className="tabela-crud" aria-label={`Tabela de ${titulo.toLowerCase()}`}>
                             <thead className="tabela-crud__cabecalho">
                                 <tr className="tabela-crud__linha">
                                     {dadosListagem.colunas.map(col => (
@@ -96,9 +105,9 @@ export default function ListagemOrcamentos() {
                                         })}
                                         <td className="tabela-crud__celula">
                                             <div className="acoes-tabela">
-                                                {temPermissao('ORCAMENTOS_VISUALIZAR') && <Link className="acoes-tabela__botao acoes-tabela__botao--visualizar" to={`/orcamentos/${linha.id}/visualizar`}>Visualizar</Link>}
-                                                {temPermissao('ORCAMENTOS_EDITAR') && <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`/orcamentos/${linha.id}/editar`}>Editar</Link>}
-                                                {temPermissao('ORCAMENTOS_EXCLUIR') && <button className="acoes-tabela__botao acoes-tabela__botao--excluir" onClick={() => lidarComExclusao(linha.id)}>Excluir</button>}
+                                                {podeVisualizar && <Link className="acoes-tabela__botao acoes-tabela__botao--visualizar" to={`${rotaBase}/${linha.id}/visualizar`}>Visualizar</Link>}
+                                                {podeEditar && <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`${rotaBase}/${linha.id}/editar`}>Editar</Link>}
+                                                {podeExcluir && <button className="acoes-tabela__botao acoes-tabela__botao--excluir" onClick={() => lidarComExclusao(linha.id)}>Excluir</button>}
                                             </div>
                                         </td>
                                     </tr>
