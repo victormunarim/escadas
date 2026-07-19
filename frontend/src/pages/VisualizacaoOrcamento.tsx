@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { requisicaoApi } from '../api';
 import Carregando from '../components/Carregando';
 import BlocoDetalhes from '../components/BlocoDetalhes';
+import { obterLinkDownload } from '../utils/arquivo';
 
 interface ArquivoOrcamento {
     id: number;
@@ -24,18 +25,6 @@ interface DetalhesOrcamento {
     pedidoNumero?: number;
     pedidoCliente?: string;
 }
-
-const obterLinkDownload = (link: string) => {
-    if (!link) return '';
-    if (link.includes('/file/d/')) {
-        const partes = link.split('/file/d/');
-        if (partes.length > 1) {
-            const id = partes[1].split('/')[0];
-            return `https://drive.google.com/uc?export=download&id=${id}`;
-        }
-    }
-    return link;
-};
 
 export default function VisualizacaoOrcamento() {
     const { id } = useParams<{ id: string }>();

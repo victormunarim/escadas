@@ -20,6 +20,18 @@ public abstract class AbstractCrudRestController<TFormDTO> {
      */
     protected abstract String getModuloNome();
 
+    protected ResponseEntity<Map<String, String>> respostaSucesso(String mensagem) {
+        Map<String, String> response = new HashMap<>();
+        response.put("sucesso", mensagem);
+        return ResponseEntity.ok(response);
+    }
+
+    protected ResponseEntity<Map<String, String>> respostaErro(String mensagem) {
+        Map<String, String> response = new HashMap<>();
+        response.put("erro", mensagem);
+        return ResponseEntity.badRequest().body(response);
+    }
+
     @GetMapping
     public ResponseEntity<?> listar(@RequestParam Map<String, String> parametros) {
         if (!SecurityUtil.temPermissao(getModuloNome() + "_VISUALIZAR")) {
@@ -65,9 +77,7 @@ public abstract class AbstractCrudRestController<TFormDTO> {
             response.put("id", id);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("erro", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return respostaErro(e.getMessage());
         }
     }
 
@@ -78,13 +88,9 @@ public abstract class AbstractCrudRestController<TFormDTO> {
         }
         try {
             getService().atualizarFormulario(id, formulario);
-            Map<String, String> response = new HashMap<>();
-            response.put("sucesso", "Registro atualizado com sucesso.");
-            return ResponseEntity.ok(response);
+            return respostaSucesso("Registro atualizado com sucesso.");
         } catch (Exception e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("erro", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return respostaErro(e.getMessage());
         }
     }
 
@@ -95,13 +101,9 @@ public abstract class AbstractCrudRestController<TFormDTO> {
         }
         try {
             getService().excluir(id);
-            Map<String, String> response = new HashMap<>();
-            response.put("sucesso", "Registro excluído com sucesso.");
-            return ResponseEntity.ok(response);
+            return respostaSucesso("Registro excluído com sucesso.");
         } catch (Exception e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("erro", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return respostaErro(e.getMessage());
         }
     }
 }

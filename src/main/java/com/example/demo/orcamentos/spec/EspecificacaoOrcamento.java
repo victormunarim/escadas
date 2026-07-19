@@ -1,6 +1,7 @@
 package com.example.demo.orcamentos.spec;
 
 import com.example.demo.orcamentos.model.OrcamentoEntity;
+import com.example.demo.shared.util.NumeroUtil;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -55,9 +56,9 @@ public class EspecificacaoOrcamento {
                 }
             }
 
-            Integer mesValor = parseInt(mes);
-            Integer anoValor = parseInt(ano);
-            Integer diaValor = parseInt(dia);
+            Integer mesValor = NumeroUtil.parseIntSeguro(mes);
+            Integer anoValor = NumeroUtil.parseIntSeguro(ano);
+            Integer diaValor = NumeroUtil.parseIntSeguro(dia);
 
             if (anoValor != null && mesValor != null) {
                 predicates.add(cb.equal(cb.function("year", Integer.class, root.get("dataCadastro")), anoValor));
@@ -98,16 +99,5 @@ public class EspecificacaoOrcamento {
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
-    }
-
-    private static Integer parseInt(String valor) {
-        if (valor == null || valor.isBlank()) {
-            return null;
-        }
-        try {
-            return Integer.parseInt(valor.trim());
-        } catch (NumberFormatException ignored) {
-            return null;
-        }
     }
 }

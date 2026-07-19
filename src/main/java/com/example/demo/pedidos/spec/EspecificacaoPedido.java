@@ -4,6 +4,7 @@ import com.example.demo.orcamentos.model.OrcamentoEntity;
 import com.example.demo.pedidos.config.ColunasPedido;
 import com.example.demo.pedidos.model.PedidoEntity;
 import com.example.demo.shared.crud.filtros.compostos.FiltroNumeroExato;
+import com.example.demo.shared.util.NumeroUtil;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
@@ -49,9 +50,9 @@ public class EspecificacaoPedido {
                 );
             }
 
-            Integer mesValor = parseInt(mes);
-            Integer anoValor = parseInt(ano);
-            Integer diaValor = parseInt(dia);
+            Integer mesValor = NumeroUtil.parseIntSeguro(mes);
+            Integer anoValor = NumeroUtil.parseIntSeguro(ano);
+            Integer diaValor = NumeroUtil.parseIntSeguro(dia);
 
             if (anoValor != null && mesValor != null) {
                 predicates.add(cb.equal(cb.function("year", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), anoValor));
@@ -85,16 +86,5 @@ public class EspecificacaoPedido {
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
-    }
-
-    private static Integer parseInt(String valor) {
-        if (valor == null || valor.isBlank()) {
-            return null;
-        }
-        try {
-            return Integer.parseInt(valor.trim());
-        } catch (NumberFormatException ignored) {
-            return null;
-        }
     }
 }

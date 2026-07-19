@@ -52,4 +52,17 @@ public class FormOptionsProvider {
                 new OpcaoCrud("500", "500")
         );
     }
+
+    public static int tamanhoPagina(String valor) {
+        if (valor == null || valor.isBlank()) {
+            return 50;
+        }
+        return switch (valor.trim()) {
+            case "50" -> 50;
+            case "100" -> 100;
+            case "200" -> 200;
+            case "500" -> 500;
+            default -> 50;
+        };
+    }
 }

@@ -91,7 +91,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
             parametros.put("tecnico", "false");
         }
 
-        int size = tamanhoPagina(parametros.getOrDefault("size", "50"));
+        int size = FormOptionsProvider.tamanhoPagina(parametros.getOrDefault("size", "50"));
 
         List<OrcamentoDTO> orcamentos = repositorioOrcamento.findAll(
                 EspecificacaoOrcamento.filtro(busca, dia, mes, ano, encerrado, etiquetaId, tecnico),
@@ -367,18 +367,5 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
     private OrcamentoEntity obterOrcamento(Long id) {
         return repositorioOrcamento.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Orçamento não encontrado com o ID: " + id));
-    }
-
-    private int tamanhoPagina(String valor) {
-        if (valor == null || valor.isBlank()) {
-            return 50;
-        }
-        return switch (valor.trim()) {
-            case "50" -> 50;
-            case "100" -> 100;
-            case "200" -> 200;
-            case "500" -> 500;
-            default -> 50;
-        };
     }
 }

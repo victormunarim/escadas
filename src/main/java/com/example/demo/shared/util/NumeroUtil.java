@@ -47,6 +47,17 @@ public final class NumeroUtil {
         }
     }
 
+    public static Integer parseIntSeguro(String valor) {
+        if (valor == null || valor.isBlank()) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(valor.trim());
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
+    }
+
     public static String inteiroParaTexto(Integer valor) {
         if (valor == null || valor == 0) {
             return "";

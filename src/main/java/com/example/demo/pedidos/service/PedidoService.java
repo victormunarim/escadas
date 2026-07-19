@@ -78,7 +78,7 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
             parametros.put("tem_orcamento", "false");
         }
 
-        int size = tamanhoPagina(parametros.getOrDefault("size", "50"));
+        int size = FormOptionsProvider.tamanhoPagina(parametros.getOrDefault("size", "50"));
 
         List<PedidoDTO> pedidos = repositorioPedido.findAll(
                 EspecificacaoPedido.filtro(busca, numeroBusca, dia, mes, ano, temOrcamento),
@@ -226,19 +226,6 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
 
     public byte[] gerarPdf(Long pedidoId) {
         return geradorPdfPedido.gerarPdfPedido(obterPedido(pedidoId));
-    }
-
-    private int tamanhoPagina(String valor) {
-        if (valor == null || valor.isBlank()) {
-            return 50;
-        }
-        return switch (valor.trim()) {
-            case "50" -> 50;
-            case "100" -> 100;
-            case "200" -> 200;
-            case "500" -> 500;
-            default -> 50;
-        };
     }
 
     private PedidoEntity obterPedido(Long id) {

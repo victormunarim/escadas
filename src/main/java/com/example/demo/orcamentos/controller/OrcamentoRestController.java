@@ -79,19 +79,15 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
         if (!SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        Map<String, String> response = new HashMap<>();
         if (arquivo == null || arquivo.isEmpty()) {
-            response.put("erro", "Selecione um arquivo para enviar.");
-            return ResponseEntity.badRequest().body(response);
+            return respostaErro("Selecione um arquivo para enviar.");
         }
 
         try {
             orcamentoService.enviarArquivo(id, arquivo, etapa != null ? etapa : 1);
-            response.put("sucesso", "Arquivo enviado e vinculado ao orçamento.");
-            return ResponseEntity.ok(response);
+            return respostaSucesso("Arquivo enviado e vinculado ao orçamento.");
         } catch (Exception e) {
-            response.put("erro", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return respostaErro(e.getMessage());
         }
     }
 
@@ -103,14 +99,11 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
         if (!SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        Map<String, String> response = new HashMap<>();
         try {
             orcamentoService.excluirArquivo(arquivoId);
-            response.put("sucesso", "Arquivo excluído com sucesso.");
-            return ResponseEntity.ok(response);
+            return respostaSucesso("Arquivo excluído com sucesso.");
         } catch (Exception e) {
-            response.put("erro", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return respostaErro(e.getMessage());
         }
     }
 
@@ -119,14 +112,11 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
         if (!SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        Map<String, String> response = new HashMap<>();
         try {
             orcamentoService.encerrarOrcamento(id);
-            response.put("sucesso", "Orçamento encerrado com sucesso.");
-            return ResponseEntity.ok(response);
+            return respostaSucesso("Orçamento encerrado com sucesso.");
         } catch (Exception e) {
-            response.put("erro", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return respostaErro(e.getMessage());
         }
     }
 
@@ -135,14 +125,11 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
         if (!SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        Map<String, String> response = new HashMap<>();
         try {
             orcamentoService.reabrirOrcamento(id);
-            response.put("sucesso", "Orçamento reaberto com sucesso.");
-            return ResponseEntity.ok(response);
+            return respostaSucesso("Orçamento reaberto com sucesso.");
         } catch (Exception e) {
-            response.put("erro", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return respostaErro(e.getMessage());
         }
     }
 }
