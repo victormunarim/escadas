@@ -33,6 +33,12 @@ export default function FormularioPedido() {
         e.target.value = val.substring(0, maxLen);
     };
 
+    const limitarCaracteres = (e: React.ChangeEvent<HTMLInputElement>, maxLen: number) => {
+        if (e.target.value.length > maxLen) {
+            e.target.value = e.target.value.substring(0, maxLen);
+        }
+    };
+
     const formatarCep = (e: React.ChangeEvent<HTMLInputElement>) => {
         let val = e.target.value.replace(/\D/g, '');
         if (val.length > 8) {
@@ -143,7 +149,9 @@ export default function FormularioPedido() {
                                     (campo.name === 'uf' || campo.name === 'ufCliente')
                                         ? (e) => lidarComMudancaUf(campo.name!, e.target.value)
                                         : (campo.name === 'cpf' || campo.name === 'rg')
-                                        ? (e) => formatarApenasDigitos(e, campo.name === 'cpf' ? 14 : 12)
+                                        ? (e) => formatarApenasDigitos(e, campo.name === 'cpf' ? 11 : 7)
+                                        : campo.name === 'cnpj'
+                                        ? (e) => limitarCaracteres(e, 14)
                                         : (
                                             campo.name === 'telefone' ||
                                             campo.name === 'telefoneFixo' ||

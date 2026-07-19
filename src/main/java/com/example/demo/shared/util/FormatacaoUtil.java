@@ -26,6 +26,13 @@ public final class FormatacaoUtil {
         if (rg == null || rg == 0) {
             return "";
         }
+        String str = String.valueOf(rg);
+        if (str.length() <= 7) {
+            String seteDigitos = String.format("%07d", rg);
+            return seteDigitos.substring(0, 1) + "."
+                    + seteDigitos.substring(1, 4) + "."
+                    + seteDigitos.substring(4);
+        }
         String noveDigitos = String.format("%09d", rg);
         return noveDigitos.substring(0, 2) + "."
                 + noveDigitos.substring(2, 5) + "."
@@ -45,20 +52,23 @@ public final class FormatacaoUtil {
     }
 
     public static String formatarCnpj(String cnpj) {
-        String digitos = NumeroUtil.somenteDigitos(cnpj);
-        if (digitos.isEmpty()) {
+        if (cnpj == null || cnpj.isBlank()) {
             return "";
         }
-        if (digitos.length() < 14) {
-            digitos = String.format("%14s", digitos).replace(' ', '0');
-        } else if (digitos.length() > 14) {
-            digitos = digitos.substring(digitos.length() - 14);
+        String alfanumericos = cnpj.replaceAll("[^a-zA-Z0-9]", "").toUpperCase();
+        if (alfanumericos.isEmpty()) {
+            return "";
         }
-        return digitos.substring(0, 2) + "."
-                + digitos.substring(2, 5) + "."
-                + digitos.substring(5, 8) + "/"
-                + digitos.substring(8, 12) + "-"
-                + digitos.substring(12);
+        if (alfanumericos.length() < 14) {
+            alfanumericos = String.format("%14s", alfanumericos).replace(' ', '0');
+        } else if (alfanumericos.length() > 14) {
+            alfanumericos = alfanumericos.substring(alfanumericos.length() - 14);
+        }
+        return alfanumericos.substring(0, 2) + "."
+                + alfanumericos.substring(2, 5) + "."
+                + alfanumericos.substring(5, 8) + "/"
+                + alfanumericos.substring(8, 12) + "-"
+                + alfanumericos.substring(12);
     }
 
     public static String formatarTelefoneCelular(String telefone) {

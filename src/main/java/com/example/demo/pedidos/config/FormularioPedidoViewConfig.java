@@ -51,7 +51,7 @@ public class FormularioPedidoViewConfig {
                         ColunasPedido.LABEL_CPF,
                         null,
                         false,
-                        14,
+                        11,
                         "campo--cpf",
                         FormularioPedidoDTO::getCpf
                 ),
@@ -60,7 +60,7 @@ public class FormularioPedidoViewConfig {
                         ColunasPedido.LABEL_RG,
                         null,
                         false,
-                        12,
+                        7,
                         "campo--rg",
                         FormularioPedidoDTO::getRg
                 ),
@@ -69,7 +69,7 @@ public class FormularioPedidoViewConfig {
                         ColunasPedido.LABEL_CNPJ,
                         null,
                         false,
-                        30,
+                        14,
                         "campo--cnpj",
                         FormularioPedidoDTO::getCnpj
                 ),

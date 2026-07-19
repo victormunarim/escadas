@@ -84,9 +84,9 @@ public class FormularioPedidoService {
         pedido.setNumeroPedido(zeroSeNulo(formularioPedido.getNumeroPedido()));
         pedido.setNomeCliente(vazioSeNulo(formularioPedido.getNomeCliente()));
         pedido.setEmail(vazioSeNulo(formularioPedido.getEmail()));
-        pedido.setCpf(NumeroUtil.paraLong(formularioPedido.getCpf(), 14));
-        pedido.setRg(NumeroUtil.paraInteiro(formularioPedido.getRg(), 12));
-        pedido.setCnpj(vazioSeNulo(formularioPedido.getCnpj()));
+        pedido.setCpf(NumeroUtil.paraLong(formularioPedido.getCpf(), 11));
+        pedido.setRg(NumeroUtil.paraInteiro(formularioPedido.getRg(), 7));
+        pedido.setCnpj(limitarString(formularioPedido.getCnpj(), 14));
         pedido.setServicoSocial(vazioSeNulo(formularioPedido.getServicoSocial()));
         pedido.setProfissao(vazioSeNulo(formularioPedido.getProfissao()));
         pedido.setAdmObra(vazioSeNulo(formularioPedido.getAdmObra()));
@@ -123,6 +123,14 @@ public class FormularioPedidoService {
 
     private String vazioSeNulo(String valor) {
         return valor == null ? "" : valor;
+    }
+
+    private String limitarString(String valor, int max) {
+        if (valor == null) {
+            return "";
+        }
+        String texto = valor.trim();
+        return texto.length() > max ? texto.substring(0, max) : texto;
     }
 
     private Integer zeroSeNulo(Integer valor) {
