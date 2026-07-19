@@ -1,14 +1,4 @@
 package com.example.demo.shared.crud.service;
 
-import com.example.demo.shared.crud.render.*;
-import java.util.List;
-import java.util.Map;
-
-public interface CrudService<TFormDTO> {
-    ListagemDTO listarResumo(Map<String, String> parametros);
-    List<CampoRender> obterCamposRenderNovo();
-    List<CampoRender> obterCamposRenderEdicao(Long id);
-    Long salvarFormulario(TFormDTO formulario);
-    void atualizarFormulario(Long id, TFormDTO formulario);
-    void excluir(Long id);
+public interface CrudService<TFormDTO> extends ReadOnlyService<Long>, CommandService<TFormDTO, Long>, FormSchemaProvider<Long> {
 }

@@ -22,6 +22,7 @@ import com.example.demo.shared.crud.render.ColunaListagem;
 import com.example.demo.shared.crud.render.LinhaListagem;
 import com.example.demo.shared.crud.render.ListagemDTO;
 import com.example.demo.shared.crud.service.CrudService;
+import com.example.demo.shared.crud.util.FormOptionsProvider;
 import com.example.demo.shared.util.FormatacaoUtil;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -163,7 +164,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                         "filtro-crud",
                         false,
                         parametros.getOrDefault("dia", ""),
-                        criarOpcoesDias()
+                        FormOptionsProvider.criarOpcoesDias()
                 )
         );
         filtros.add(
@@ -173,7 +174,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                         "filtro-crud",
                         false,
                         parametros.getOrDefault("mes", ""),
-                        criarOpcoesMeses()
+                        FormOptionsProvider.criarOpcoesMeses()
                 )
         );
         filtros.add(
@@ -183,7 +184,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                         "filtro-crud",
                         false,
                         parametros.getOrDefault("ano", ""),
-                        criarOpcoesAnos()
+                        FormOptionsProvider.criarOpcoesAnos()
                 )
         );
         filtros.add(
@@ -193,12 +194,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                         "filtro-crud",
                         false,
                         parametros.getOrDefault("size", "50"),
-                        List.of(
-                                new OpcaoCrud("50", "50"),
-                                new OpcaoCrud("100", "100"),
-                                new OpcaoCrud("200", "200"),
-                                new OpcaoCrud("500", "500")
-                        )
+                        FormOptionsProvider.criarOpcoesTamanhoPagina()
                 )
         );
 
@@ -240,8 +236,6 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         orcamento.setBairro(formulario.getBairro());
         orcamento.setDescricao(formulario.getDescricao());
 
-        boolean jaEraTecnico = orcamento.getPedido() != null;
-
         if (formulario.getEtiquetaId() == null) {
             throw new IllegalArgumentException("A etiqueta é obrigatória.");
         }
@@ -249,29 +243,14 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         EtiquetaEntity novaEtiqueta = repositorioEtiqueta.findById(formulario.getEtiquetaId())
                 .orElseThrow(() -> new IllegalArgumentException("Etiqueta não encontrada com o ID: " + formulario.getEtiquetaId()));
 
-        if (jaEraTecnico) {
-            if (orcamento.getEtiqueta() != null && !novaEtiqueta.getId().equals(orcamento.getEtiqueta().getId())) {
-                throw new IllegalArgumentException("Não é possível alterar a etiqueta de um Técnico.");
-            }
-        } else {
-            orcamento.setEtiqueta(novaEtiqueta);
-        }
+        orcamento.atualizarEtiqueta(novaEtiqueta);
 
         if (formulario.getPedidoId() != null) {
             PedidoEntity pedido = repositorioPedido.findById(Long.valueOf(formulario.getPedidoId()))
                     .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado com o ID: " + formulario.getPedidoId()));
-
-            EtiquetaEntity etiquetaVerificacao = orcamento.getEtiqueta();
-            if (etiquetaVerificacao == null || !"proposta".equalsIgnoreCase(etiquetaVerificacao.getNome())) {
-                throw new IllegalArgumentException("Não é possível associar um pedido a um orçamento que não tenha a etiqueta 'Proposta'.");
-            }
-
-            orcamento.setPedido(pedido);
-            orcamento.setFlagEncerrado(Boolean.TRUE);
+            orcamento.vincularPedido(pedido);
         } else {
-            if (!jaEraTecnico) {
-                orcamento.setPedido(null);
-            }
+            orcamento.vincularPedido(null);
         }
     }
 
@@ -314,15 +293,14 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
     @Transactional
     public void encerrarOrcamento(Long id) {
         OrcamentoEntity orcamento = obterOrcamento(id);
-        orcamento.setFlagEncerrado(Boolean.TRUE);
+        orcamento.encerrar();
         repositorioOrcamento.save(orcamento);
     }
 
     @Transactional
     public void reabrirOrcamento(Long id) {
         OrcamentoEntity orcamento = obterOrcamento(id);
-        orcamento.setFlagEncerrado(Boolean.FALSE);
-        orcamento.setPedido(null);
+        orcamento.reabrir();
         repositorioOrcamento.save(orcamento);
     }
 
@@ -360,7 +338,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
 
         Set<Integer> pedidoIdsComOrcamento = repositorioOrcamento.findAll().stream()
                 .filter(o -> (o.getFlagOculto() == null || !o.getFlagOculto()))
-                .filter(o -> o.getPedido() != null)
+                .filter(OrcamentoEntity::ehTecnico)
                 .filter(o -> orcamentoIdAtual == null || !o.getId().equals(orcamentoIdAtual))
                 .map(o -> o.getPedido().getId())
                 .collect(Collectors.toSet());
@@ -402,43 +380,5 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
             case "500" -> 500;
             default -> 50;
         };
-    }
-
-    private List<OpcaoCrud> criarOpcoesDias() {
-        List<OpcaoCrud> opcoes = new ArrayList<>();
-        opcoes.add(new OpcaoCrud("", "Selecione"));
-        for (int i = 1; i <= 31; i++) {
-            String val = String.valueOf(i);
-            opcoes.add(new OpcaoCrud(val, val));
-        }
-        return opcoes;
-    }
-
-    private List<OpcaoCrud> criarOpcoesMeses() {
-        return List.of(
-                new OpcaoCrud("", "Selecione"),
-                new OpcaoCrud("1", "Janeiro"),
-                new OpcaoCrud("2", "Fevereiro"),
-                new OpcaoCrud("3", "Março"),
-                new OpcaoCrud("4", "Abril"),
-                new OpcaoCrud("5", "Maio"),
-                new OpcaoCrud("6", "Junho"),
-                new OpcaoCrud("7", "Julho"),
-                new OpcaoCrud("8", "Agosto"),
-                new OpcaoCrud("9", "Setembro"),
-                new OpcaoCrud("10", "Outubro"),
-                new OpcaoCrud("11", "Novembro"),
-                new OpcaoCrud("12", "Dezembro")
-        );
-    }
-
-    private List<OpcaoCrud> criarOpcoesAnos() {
-        List<OpcaoCrud> opcoes = new ArrayList<>();
-        opcoes.add(new OpcaoCrud("", "Selecione"));
-        for (int i = 2020; i <= 2030; i++) {
-            String val = String.valueOf(i);
-            opcoes.add(new OpcaoCrud(val, val));
-        }
-        return opcoes;
     }
 }

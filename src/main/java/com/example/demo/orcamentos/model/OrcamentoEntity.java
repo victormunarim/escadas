@@ -28,6 +28,17 @@ public class OrcamentoEntity {
     @Column(name = "data_cadastro")
     private Instant dataCadastro;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "etiquetas_id")
+    private EtiquetaEntity etiqueta;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "pedido_id")
+    private PedidoEntity pedido;
+
+    @Column(name = "flag_encerrado", nullable = false)
+    private Boolean flagEncerrado = false;
+
     public OrcamentoEntity() {
     }
 
@@ -36,6 +47,46 @@ public class OrcamentoEntity {
         if (this.dataCadastro == null) {
             this.dataCadastro = Instant.now();
         }
+    }
+
+    public boolean ehTecnico() {
+        return this.pedido != null;
+    }
+
+    public void atualizarEtiqueta(EtiquetaEntity novaEtiqueta) {
+        if (novaEtiqueta == null) {
+            throw new IllegalArgumentException("A etiqueta é obrigatória.");
+        }
+        if (ehTecnico()) {
+            if (this.etiqueta != null && !novaEtiqueta.getId().equals(this.etiqueta.getId())) {
+                throw new IllegalArgumentException("Não é possível alterar a etiqueta de um Técnico.");
+            }
+        } else {
+            this.etiqueta = novaEtiqueta;
+        }
+    }
+
+    public void vincularPedido(PedidoEntity pedido) {
+        if (pedido == null) {
+            if (!ehTecnico()) {
+                this.pedido = null;
+            }
+            return;
+        }
+        if (this.etiqueta == null || !"proposta".equalsIgnoreCase(this.etiqueta.getNome())) {
+            throw new IllegalArgumentException("Não é possível associar um pedido a um orçamento que não tenha a etiqueta 'Proposta'.");
+        }
+        this.pedido = pedido;
+        this.flagEncerrado = true;
+    }
+
+    public void encerrar() {
+        this.flagEncerrado = true;
+    }
+
+    public void reabrir() {
+        this.flagEncerrado = false;
+        this.pedido = null;
     }
 
     public Long getId() {
@@ -85,17 +136,6 @@ public class OrcamentoEntity {
     public void setDataCadastro(Instant dataCadastro) {
         this.dataCadastro = dataCadastro;
     }
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "etiquetas_id")
-    private EtiquetaEntity etiqueta;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "pedido_id")
-    private PedidoEntity pedido;
-
-    @Column(name = "flag_encerrado", nullable = false)
-    private Boolean flagEncerrado = false;
 
     public Boolean getFlagEncerrado() {
         return flagEncerrado;

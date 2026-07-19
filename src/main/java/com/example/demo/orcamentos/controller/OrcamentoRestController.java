@@ -1,12 +1,15 @@
 package com.example.demo.orcamentos.controller;
 
 import com.example.demo.auth.security.SecurityUtil;
+import com.example.demo.localidades.service.ConsultaLocalidadesService;
+import com.example.demo.orcamentos.config.OrcamentoViewPresenter;
 import com.example.demo.orcamentos.dto.FormularioOrcamentoDTO;
 import com.example.demo.orcamentos.dto.OrcamentoDTO;
 import com.example.demo.orcamentos.service.OrcamentoService;
+import com.example.demo.pedidos.service.PedidoService;
+import com.example.demo.shared.arquivos.dto.ArquivoDTO;
 import com.example.demo.shared.crud.controller.AbstractCrudRestController;
 import com.example.demo.shared.crud.service.CrudService;
-import com.example.demo.shared.arquivos.dto.ArquivoDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +19,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.demo.shared.crud.render.ListagemDTO;
-
 @RestController
 @RequestMapping("/api/orcamentos")
 public class OrcamentoRestController extends AbstractCrudRestController<FormularioOrcamentoDTO> {
 
     private final OrcamentoService orcamentoService;
+    private final PedidoService pedidoService;
+    private final ConsultaLocalidadesService localidadeService;
 
-    public OrcamentoRestController(OrcamentoService orcamentoService) {
+    public OrcamentoRestController(
+            OrcamentoService orcamentoService,
+            PedidoService pedidoService,
+            ConsultaLocalidadesService localidadeService
+    ) {
         this.orcamentoService = orcamentoService;
+        this.pedidoService = pedidoService;
+        this.localidadeService = localidadeService;
     }
 
     @Override
@@ -54,27 +63,7 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
         try {
             OrcamentoDTO orcamento = orcamentoService.buscarPorId(id);
             List<ArquivoDTO> arquivos = orcamentoService.listarArquivos(id);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("id", orcamento.getId());
-            response.put("nome", orcamento.getNome());
-            response.put("bairro", orcamento.getBairro());
-            response.put("descricao", orcamento.getDescricao());
-            response.put("flagEncerrado", orcamento.getFlagEncerrado());
-            response.put("etiquetaId", orcamento.getEtiquetaId());
-            response.put("etiquetaNome", orcamento.getEtiquetaNome());
-
-            // Build details map for frontend display
-            Map<String, String> detalhes = new HashMap<>();
-            detalhes.put("Nome", orcamento.getNome());
-            detalhes.put("Etiqueta", orcamento.getEtiquetaNome() == null || orcamento.getEtiquetaNome().isBlank() ? "-" : orcamento.getEtiquetaNome());
-            detalhes.put("Bairro", orcamento.getBairro() == null || orcamento.getBairro().isBlank() ? "-" : orcamento.getBairro());
-            detalhes.put("Descrição", orcamento.getDescricao() == null || orcamento.getDescricao().isBlank() ? "-" : orcamento.getDescricao());
-            detalhes.put("Data de Cadastro", orcamento.getDataCadastroFormatado());
-
-            response.put("detalhes", detalhes);
-            response.put("arquivos", arquivos);
-
+            Map<String, Object> response = OrcamentoViewPresenter.montarVisualizacao(orcamento, arquivos, pedidoService, localidadeService);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

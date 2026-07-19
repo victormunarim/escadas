@@ -23,10 +23,6 @@ interface DetalhesOrcamento {
     pedidoId?: number;
     pedidoNumero?: number;
     pedidoCliente?: string;
-    resumoPedido?: Record<string, string>;
-    dadosCliente?: Record<string, string>;
-    enderecoObra?: Record<string, string>;
-    enderecoCliente?: Record<string, string>;
 }
 
 const obterLinkDownload = (link: string) => {
@@ -167,7 +163,7 @@ export default function VisualizacaoOrcamento() {
         );
     }
 
-    const { id: itemKey, nome, detalhes, arquivos, resumoPedido, dadosCliente, enderecoObra, enderecoCliente, pedidoId, pedidoNumero, pedidoCliente } = dadosOrcamento;
+    const { id: itemKey, nome, detalhes, arquivos, pedidoId, pedidoNumero, pedidoCliente } = dadosOrcamento;
 
     const podeGerenciarArquivos = !dadosOrcamento.flagEncerrado || ehTecnico;
     const listEtapas = Array.from({ length: etapasVisiveis }, (_, index) => etapasVisiveis - index);
@@ -219,18 +215,9 @@ export default function VisualizacaoOrcamento() {
                 </div>
             </header>
 
-            {resumoPedido ? (
-                <div className="pedido-visualizacao__grade">
-                    <BlocoDetalhes titulo="Resumo do Pedido" dados={resumoPedido} />
-                    {dadosCliente && <BlocoDetalhes titulo="Dados do Cliente" dados={dadosCliente} />}
-                    {enderecoObra && <BlocoDetalhes titulo="Endereço da Obra" dados={enderecoObra} />}
-                    {enderecoCliente && <BlocoDetalhes titulo="Endereço do Cliente" dados={enderecoCliente} />}
-                </div>
-            ) : (
-                <div className="pedido-visualizacao__grade">
-                    <BlocoDetalhes titulo={`Resumo do ${tituloModulo}`} dados={detalhes} />
-                </div>
-            )}
+            <div className="pedido-visualizacao__grade">
+                <BlocoDetalhes titulo={`Resumo do ${tituloModulo}`} dados={detalhes} />
+            </div>
 
             <section className="cartao-crud pedido-visualizacao__bloco-arquivos" style={{ marginTop: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid #eee', paddingBottom: '10px' }}>

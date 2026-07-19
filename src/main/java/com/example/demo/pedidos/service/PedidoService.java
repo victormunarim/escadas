@@ -1,27 +1,31 @@
 package com.example.demo.pedidos.service;
+
+import com.example.demo.auth.repository.UsuarioRepository;
+import com.example.demo.pedidos.config.ListagemPedidosViewConfig;
+import com.example.demo.pedidos.dto.FormularioPedidoDTO;
+import com.example.demo.pedidos.dto.PedidoDTO;
+import com.example.demo.pedidos.exception.PedidoNaoEncontradoException;
 import com.example.demo.pedidos.model.PedidoEntity;
 import com.example.demo.pedidos.repository.PedidoRepository;
-import com.example.demo.pedidos.dto.*;
-import com.example.demo.shared.crud.render.*;
-import com.example.demo.shared.crud.service.CrudService;
 import com.example.demo.pedidos.spec.EspecificacaoPedido;
-import com.example.demo.pedidos.config.ListagemPedidosViewConfig;
-import com.example.demo.shared.crud.listagem.ColunaConfig;
-import com.example.demo.pedidos.exception.PedidoNaoEncontradoException;
-import com.example.demo.shared.crud.OpcaoCrud;
-import com.example.demo.auth.repository.UsuarioRepository;
-import com.example.demo.orcamentos.repository.OrcamentoRepository;
-import com.example.demo.orcamentos.model.OrcamentoEntity;
-
 import com.example.demo.shared.arquivos.dto.ArquivoDTO;
 import com.example.demo.shared.arquivos.service.ArquivoService;
+import com.example.demo.shared.crud.OpcaoCrud;
+import com.example.demo.shared.crud.listagem.ColunaConfig;
+import com.example.demo.shared.crud.render.CampoRender;
+import com.example.demo.shared.crud.render.CampoSelecaoRender;
+import com.example.demo.shared.crud.render.CampoTextoRender;
+import com.example.demo.shared.crud.render.ColunaListagem;
+import com.example.demo.shared.crud.render.LinhaListagem;
+import com.example.demo.shared.crud.render.ListagemDTO;
+import com.example.demo.shared.crud.service.CrudService;
+import com.example.demo.shared.crud.util.FormOptionsProvider;
 import com.example.demo.shared.util.FormatacaoUtil;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -139,7 +143,7 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
                         "filtro-crud",
                         false,
                         parametros.getOrDefault("dia", ""),
-                        criarOpcoesDias()
+                        FormOptionsProvider.criarOpcoesDias()
                 ),
                 new CampoSelecaoRender(
                         "Mês",
@@ -147,7 +151,7 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
                         "filtro-crud",
                         false,
                         parametros.getOrDefault("mes", ""),
-                        criarOpcoesMeses()
+                        FormOptionsProvider.criarOpcoesMeses()
                 ),
                 new CampoSelecaoRender(
                         "Ano",
@@ -155,7 +159,7 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
                         "filtro-crud",
                         false,
                         parametros.getOrDefault("ano", ""),
-                        criarOpcoesAnos()
+                        FormOptionsProvider.criarOpcoesAnos()
                 ),
                 new CampoSelecaoRender(
                         "Quantidade",
@@ -163,22 +167,12 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
                         "filtro-crud",
                         false,
                         parametros.getOrDefault("size", "50"),
-                        List.of(
-                                new OpcaoCrud("50", "50"),
-                                new OpcaoCrud("100", "100"),
-                                new OpcaoCrud("200", "200"),
-                                new OpcaoCrud("500", "500")
-                        )
+                        FormOptionsProvider.criarOpcoesTamanhoPagina()
                 )
         );
 
         return new ListagemDTO(colunas, linhas, filtros);
     }
-
-    private String MesFiltro(String mes, LocalDate hoje) {
-        return (mes == null || mes.isBlank()) ? String.valueOf(hoje.getMonthValue()) : mes;
-    }
-
 
     @Transactional
     public void excluir(Long id) {
@@ -265,43 +259,5 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
     public List<CampoRender> obterCamposRenderEdicao(Long id) {
         FormularioPedidoDTO form = criarFormulario(id);
         return formularioPedidoService.obterCamposRender(form);
-    }
-
-    private List<OpcaoCrud> criarOpcoesDias() {
-        List<OpcaoCrud> opcoes = new ArrayList<>();
-        opcoes.add(new OpcaoCrud("", "Selecione"));
-        for (int i = 1; i <= 31; i++) {
-            String val = String.valueOf(i);
-            opcoes.add(new OpcaoCrud(val, val));
-        }
-        return opcoes;
-    }
-
-    private List<OpcaoCrud> criarOpcoesMeses() {
-        return List.of(
-                new OpcaoCrud("", "Selecione"),
-                new OpcaoCrud("1", "Janeiro"),
-                new OpcaoCrud("2", "Fevereiro"),
-                new OpcaoCrud("3", "Março"),
-                new OpcaoCrud("4", "Abril"),
-                new OpcaoCrud("5", "Maio"),
-                new OpcaoCrud("6", "Junho"),
-                new OpcaoCrud("7", "Julho"),
-                new OpcaoCrud("8", "Agosto"),
-                new OpcaoCrud("9", "Setembro"),
-                new OpcaoCrud("10", "Outubro"),
-                new OpcaoCrud("11", "Novembro"),
-                new OpcaoCrud("12", "Dezembro")
-        );
-    }
-
-    private List<OpcaoCrud> criarOpcoesAnos() {
-        List<OpcaoCrud> opcoes = new ArrayList<>();
-        opcoes.add(new OpcaoCrud("", "Selecione"));
-        for (int i = 2020; i <= 2030; i++) {
-            String val = String.valueOf(i);
-            opcoes.add(new OpcaoCrud(val, val));
-        }
-        return opcoes;
     }
 }

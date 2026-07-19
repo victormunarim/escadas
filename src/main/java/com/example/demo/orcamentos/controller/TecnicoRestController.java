@@ -2,15 +2,13 @@ package com.example.demo.orcamentos.controller;
 
 import com.example.demo.auth.security.SecurityUtil;
 import com.example.demo.localidades.service.ConsultaLocalidadesService;
+import com.example.demo.orcamentos.config.OrcamentoViewPresenter;
 import com.example.demo.orcamentos.dto.FormularioOrcamentoDTO;
 import com.example.demo.orcamentos.dto.OrcamentoDTO;
 import com.example.demo.orcamentos.service.OrcamentoService;
-import com.example.demo.pedidos.config.PedidoViewPresenter;
-import com.example.demo.pedidos.dto.PedidoDTO;
 import com.example.demo.pedidos.service.PedidoService;
 import com.example.demo.shared.arquivos.dto.ArquivoDTO;
 import com.example.demo.shared.crud.controller.AbstractCrudRestController;
-import com.example.demo.shared.crud.render.ListagemDTO;
 import com.example.demo.shared.crud.service.CrudService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,42 +63,7 @@ public class TecnicoRestController extends AbstractCrudRestController<Formulario
         try {
             OrcamentoDTO orcamento = orcamentoService.buscarPorId(id);
             List<ArquivoDTO> arquivos = orcamentoService.listarArquivos(id);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("id", orcamento.getId());
-            response.put("nome", orcamento.getNome());
-            response.put("bairro", orcamento.getBairro());
-            response.put("descricao", orcamento.getDescricao());
-            response.put("flagEncerrado", orcamento.getFlagEncerrado());
-            response.put("etiquetaId", orcamento.getEtiquetaId());
-            response.put("etiquetaNome", orcamento.getEtiquetaNome());
-            response.put("pedidoId", orcamento.getPedidoId());
-            response.put("pedidoNumero", orcamento.getPedidoNumero());
-            response.put("pedidoCliente", orcamento.getPedidoCliente());
-            response.put("flagTecnico", orcamento.getFlagTecnico());
-
-            Map<String, String> detalhes = new HashMap<>();
-            detalhes.put("Nome", orcamento.getNome());
-            detalhes.put("Etiqueta", orcamento.getEtiquetaNome() == null || orcamento.getEtiquetaNome().isBlank() ? "-" : orcamento.getEtiquetaNome());
-            detalhes.put("Bairro", orcamento.getBairro() == null || orcamento.getBairro().isBlank() ? "-" : orcamento.getBairro());
-            detalhes.put("Descrição", orcamento.getDescricao() == null || orcamento.getDescricao().isBlank() ? "-" : orcamento.getDescricao());
-            detalhes.put("Data de Cadastro", orcamento.getDataCadastroFormatado());
-
-            if (orcamento.getPedidoId() != null) {
-                try {
-                    PedidoDTO pedido = pedidoService.buscarPorId(Long.valueOf(orcamento.getPedidoId()));
-                    detalhes.put("Pedido Associado", "#" + pedido.getNumeroPedido() + " - " + pedido.getNomeCliente());
-                    response.put("resumoPedido", PedidoViewPresenter.montarResumoPedido(pedido));
-                    response.put("dadosCliente", PedidoViewPresenter.montarDadosCliente(pedido));
-                    response.put("enderecoObra", PedidoViewPresenter.montarEnderecoObra(pedido, localidadeService));
-                    response.put("enderecoCliente", PedidoViewPresenter.montarEnderecoCliente(pedido, localidadeService));
-                } catch (Exception ignored) {
-                }
-            }
-
-            response.put("detalhes", detalhes);
-            response.put("arquivos", arquivos);
-
+            Map<String, Object> response = OrcamentoViewPresenter.montarVisualizacao(orcamento, arquivos, pedidoService, localidadeService);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
