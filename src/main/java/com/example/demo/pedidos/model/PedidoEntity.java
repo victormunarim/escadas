@@ -65,8 +65,8 @@ public class PedidoEntity {
     @Column(name = ColunasPedido.RG)
     private Integer rg;
 
-    @Column(name = ColunasPedido.SERVICO_SOCIAL)
-    private String servicoSocial;
+    @Column(name = ColunasPedido.INSCRICAO_ESTADUAL)
+    private String inscricaoEstadual;
 
     @Column(name = ColunasPedido.TELEFONE)
     private String telefone;
@@ -230,12 +230,12 @@ public class PedidoEntity {
         this.rg = rg;
     }
 
-    public String getServicoSocial() {
-        return servicoSocial;
+    public String getInscricaoEstadual() {
+        return inscricaoEstadual;
     }
 
-    public void setServicoSocial(String servicoSocial) {
-        this.servicoSocial = servicoSocial;
+    public void setInscricaoEstadual(String inscricaoEstadual) {
+        this.inscricaoEstadual = inscricaoEstadual;
     }
 
     public String getTelefone() {

@@ -34,9 +34,9 @@ public final class ColunasPedido {
     public static final String LABEL_CNPJ = "CNPJ";
     public static final String CAMPO_CNPJ = "cnpj";
 
-    public static final String SERVICO_SOCIAL = "servico_social";
-    public static final String LABEL_SERVICO_SOCIAL = "Inscrição estadual";
-    public static final String CAMPO_SERVICO_SOCIAL = "servicoSocial";
+    public static final String INSCRICAO_ESTADUAL = "inscricao_estadual";
+    public static final String LABEL_INSCRICAO_ESTADUAL = "Inscrição Estadual";
+    public static final String CAMPO_INSCRICAO_ESTADUAL = "inscricaoEstadual";
 
     public static final String PROFISSAO = "profissao";
     public static final String LABEL_PROFISSAO = "Profissão";

@@ -30,7 +30,10 @@ public class PedidoViewPresenter {
         dadosCliente.put(ColunasPedido.LABEL_CPF, FormatacaoUtil.formatarCpf(pedido.getCpf()));
         dadosCliente.put(ColunasPedido.LABEL_RG, FormatacaoUtil.formatarRg(pedido.getRg()));
         dadosCliente.put(ColunasPedido.LABEL_CNPJ, FormatacaoUtil.formatarCnpj(pedido.getCnpj()));
-        dadosCliente.put(ColunasPedido.LABEL_SERVICO_SOCIAL, FormatacaoUtil.formatarTexto(pedido.getServicoSocial()));
+        dadosCliente.put(
+                ColunasPedido.LABEL_INSCRICAO_ESTADUAL,
+                FormatacaoUtil.formatarTexto(pedido.getInscricaoEstadual())
+        );
         dadosCliente.put(ColunasPedido.LABEL_PROFISSAO, FormatacaoUtil.formatarTexto(pedido.getProfissao()));
         dadosCliente.put(ColunasPedido.LABEL_ADM_OBRA, FormatacaoUtil.formatarTexto(pedido.getAdmObra()));
         dadosCliente.put(ColunasPedido.LABEL_TELEFONE, FormatacaoUtil.formatarTelefoneCelular(pedido.getTelefone()));

@@ -30,7 +30,8 @@ public class ListagemPedidosViewConfig {
                         "cnpjFormatado", ColunasPedido.LABEL_CNPJ, PedidoDTO::getCnpjFormatado
                 ),
                 new ColunaConfig<>(
-                        ColunasPedido.CAMPO_SERVICO_SOCIAL, ColunasPedido.LABEL_SERVICO_SOCIAL, PedidoDTO::servicoSocial
+                        ColunasPedido.CAMPO_INSCRICAO_ESTADUAL, ColunasPedido.LABEL_INSCRICAO_ESTADUAL,
+                        PedidoDTO::inscricaoEstadual
                 ),
                 new ColunaConfig<>(
                         ColunasPedido.CAMPO_PROFISSAO, ColunasPedido.LABEL_PROFISSAO, PedidoDTO::profissao

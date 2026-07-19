@@ -14,7 +14,7 @@ public record PedidoDTO(
     Long cpf,
     Integer rg,
     String cnpj,
-    String servicoSocial,
+    String inscricaoEstadual,
     String profissao,
     String admObra,
     String telefone,
@@ -54,7 +54,7 @@ public record PedidoDTO(
             pedidoEntity.getCpf(),
             pedidoEntity.getRg(),
             pedidoEntity.getCnpj(),
-            pedidoEntity.getServicoSocial(),
+            pedidoEntity.getInscricaoEstadual(),
             pedidoEntity.getProfissao(),
             pedidoEntity.getAdmObra(),
             pedidoEntity.getTelefone(),
@@ -96,7 +96,7 @@ public record PedidoDTO(
     public Long getCpf() { return cpf; }
     public Integer getRg() { return rg; }
     public String getCnpj() { return cnpj; }
-    public String getServicoSocial() { return servicoSocial; }
+    public String getInscricaoEstadual() { return inscricaoEstadual; }
     public String getProfissao() { return profissao; }
     public String getAdmObra() { return admObra; }
     public String getTelefone() { return telefone; }

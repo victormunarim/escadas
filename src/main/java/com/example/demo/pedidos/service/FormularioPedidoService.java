@@ -53,7 +53,7 @@ public class FormularioPedidoService {
         formulario.setCpf(NumeroUtil.longParaTexto(pedido.getCpf()));
         formulario.setRg(NumeroUtil.inteiroParaTexto(pedido.getRg()));
         formulario.setCnpj(pedido.getCnpj());
-        formulario.setServicoSocial(pedido.getServicoSocial());
+        formulario.setInscricaoEstadual(pedido.getInscricaoEstadual());
         formulario.setProfissao(pedido.getProfissao());
         formulario.setAdmObra(pedido.getAdmObra());
         formulario.setTelefone(NumeroUtil.somenteDigitos(pedido.getTelefone()));
@@ -87,7 +87,7 @@ public class FormularioPedidoService {
         pedido.setCpf(NumeroUtil.paraLong(formularioPedido.getCpf(), 11));
         pedido.setRg(NumeroUtil.paraInteiro(formularioPedido.getRg(), 7));
         pedido.setCnpj(limitarString(formularioPedido.getCnpj(), 14));
-        pedido.setServicoSocial(vazioSeNulo(formularioPedido.getServicoSocial()));
+        pedido.setInscricaoEstadual(vazioSeNulo(formularioPedido.getInscricaoEstadual()));
         pedido.setProfissao(vazioSeNulo(formularioPedido.getProfissao()));
         pedido.setAdmObra(vazioSeNulo(formularioPedido.getAdmObra()));
         pedido.setTelefone(NumeroUtil.somenteDigitosLimitado(formularioPedido.getTelefone(), 20));

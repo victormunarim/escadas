@@ -74,13 +74,13 @@ public class FormularioPedidoViewConfig {
                         FormularioPedidoDTO::getCnpj
                 ),
                 CamposFormularioCrud.texto(
-                        ColunasPedido.CAMPO_SERVICO_SOCIAL,
-                        ColunasPedido.LABEL_SERVICO_SOCIAL,
+                        ColunasPedido.CAMPO_INSCRICAO_ESTADUAL,
+                        ColunasPedido.LABEL_INSCRICAO_ESTADUAL,
                         null,
                         false,
                         100,
-                        "campo--servico-social",
-                        FormularioPedidoDTO::getServicoSocial
+                        "campo--inscricao-estadual",
+                        FormularioPedidoDTO::getInscricaoEstadual
                 ),
                 CamposFormularioCrud.texto(
                         ColunasPedido.CAMPO_PROFISSAO,

@@ -10,7 +10,7 @@ public class FormularioPedidoDTO {
     private String cpf;
     private String rg;
     private String cnpj;
-    private String servicoSocial;
+    private String inscricaoEstadual;
     private String profissao;
     private String admObra;
     private String telefone;
@@ -84,12 +84,12 @@ public class FormularioPedidoDTO {
         this.cnpj = cnpj;
     }
 
-    public String getServicoSocial() {
-        return servicoSocial;
+    public String getInscricaoEstadual() {
+        return inscricaoEstadual;
     }
 
-    public void setServicoSocial(String servicoSocial) {
-        this.servicoSocial = servicoSocial;
+    public void setInscricaoEstadual(String inscricaoEstadual) {
+        this.inscricaoEstadual = inscricaoEstadual;
     }
 
     public String getProfissao() {
