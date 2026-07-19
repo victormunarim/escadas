@@ -57,7 +57,7 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
 
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarOrcamento(@PathVariable Long id) {
-        if (!SecurityUtil.temPermissao("ORCAMENTOS_VISUALIZAR")) {
+        if (SecurityUtil.naoTemPermissao("ORCAMENTOS_VISUALIZAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
@@ -76,7 +76,7 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
             @RequestParam("arquivo") MultipartFile arquivo,
             @RequestParam(value = "etapa", required = false) Integer etapa
     ) {
-        if (!SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
+        if (SecurityUtil.naoTemPermissao("ORCAMENTOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         if (arquivo == null || arquivo.isEmpty()) {
@@ -96,7 +96,7 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
             @PathVariable Long id,
             @PathVariable Long arquivoId
     ) {
-        if (!SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
+        if (SecurityUtil.naoTemPermissao("ORCAMENTOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
@@ -109,7 +109,7 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
 
     @PutMapping("/{id}/encerrar")
     public ResponseEntity<?> encerrarOrcamento(@PathVariable Long id) {
-        if (!SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
+        if (SecurityUtil.naoTemPermissao("ORCAMENTOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
@@ -122,7 +122,7 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
 
     @PutMapping("/{id}/reabrir")
     public ResponseEntity<?> reabrirOrcamento(@PathVariable Long id) {
-        if (!SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
+        if (SecurityUtil.naoTemPermissao("ORCAMENTOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {

@@ -182,15 +182,14 @@ public class ArquivoService {
     }
 
     private Optional<String> buscarPasta(Drive drive, String nomePasta, String pastaPaiId) throws IOException {
-        StringBuilder consulta = new StringBuilder();
-        consulta.append("mimeType = 'application/vnd.google-apps.folder' ");
-        consulta.append("and trashed = false ");
-        consulta.append("and name = '").append(nomePasta.replace("'", "\\'")).append("'");
-        consulta.append(" and '").append(pastaPaiId.trim()).append("' in parents");
+        String consulta = "mimeType = 'application/vnd.google-apps.folder' " +
+                "and trashed = false " +
+                "and name = '" + nomePasta.replace("'", "\\'") + "'" +
+                " and '" + pastaPaiId.trim() + "' in parents";
 
         FileList resposta = drive.files()
                 .list()
-                .setQ(consulta.toString())
+                .setQ(consulta)
                 .setPageSize(1)
                 .setIncludeItemsFromAllDrives(true)
                 .setSupportsAllDrives(true)

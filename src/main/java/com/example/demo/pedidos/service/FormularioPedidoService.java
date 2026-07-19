@@ -16,7 +16,6 @@ import com.example.demo.shared.util.NumeroUtil;
 import com.example.demo.localidades.repository.BairroRepository;
 import com.example.demo.localidades.repository.EstadoRepository;
 import com.example.demo.localidades.repository.MunicipioRepository;
-import com.example.demo.orcamentos.repository.OrcamentoRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -206,7 +205,7 @@ public class FormularioPedidoService {
         boolean existeUfAtual = opcoes.stream().anyMatch(opcao -> ufNormalizada.equals(opcao.valor()));
         if (!existeUfAtual) {
             opcoes = new ArrayList<>(opcoes);
-            opcoes.add(0, new OpcaoCrud(ufNormalizada, ufNormalizada));
+            opcoes.addFirst(new OpcaoCrud(ufNormalizada, ufNormalizada));
         }
         return opcoes;
     }
@@ -229,7 +228,7 @@ public class FormularioPedidoService {
                 continue;
             }
             if (valores.add(valorAtual)) {
-                opcoes.add(0, new OpcaoCrud(valorAtual, valorAtual));
+                opcoes.addFirst(new OpcaoCrud(valorAtual, valorAtual));
             }
         }
 
@@ -254,7 +253,7 @@ public class FormularioPedidoService {
                 continue;
             }
             if (valores.add(valorAtual)) {
-                opcoes.add(0, new OpcaoCrud(valorAtual, valorAtual));
+                opcoes.addFirst(new OpcaoCrud(valorAtual, valorAtual));
             }
         }
 

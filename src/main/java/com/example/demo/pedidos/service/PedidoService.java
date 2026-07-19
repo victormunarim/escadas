@@ -39,7 +39,6 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
     private final FormularioPedidoService formularioPedidoService;
     private final ArquivoService servicoArquivo;
     private final GeradorPdfPedidoService geradorPdfPedido;
-    private final UsuarioRepository repositorioUsuario;
 
     public PedidoService(
             PedidoRepository repositorioPedido,
@@ -52,7 +51,6 @@ public class PedidoService implements CrudService<FormularioPedidoDTO> {
         this.formularioPedidoService = formularioPedidoService;
         this.servicoArquivo = servicoArquivo;
         this.geradorPdfPedido = geradorPdfPedido;
-        this.repositorioUsuario = repositorioUsuario;
     }
 
     public ListagemDTO listarResumo(Map<String, String> parametros) {

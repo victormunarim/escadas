@@ -12,17 +12,17 @@ import java.util.List;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private Long id;
+    private final Long id;
 
-    private String username;
+    private final String username;
 
-    private String email;
+    private final String email;
 
-    private String password;
+    private final String password;
 
-    private Perfil perfil;
+    private final Perfil perfil;
 
-    private Collection<? extends GrantedAuthority> authorities;
+    private final Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(Long id, String username, String password, String email, Perfil perfil, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;

@@ -27,12 +27,12 @@ public class SecurityUtil {
      * Verifica se o usuário atualmente autenticado tem uma permissão específica.
      * O perfil ADMIN sempre retornará true para qualquer verificação.
      */
-    public static boolean temPermissao(String permissao) {
+    public static boolean naoTemPermissao(String permissao) {
         Perfil perfil = getPerfilUsuarioLogado();
         if (perfil == null) {
-            return false;
+            return true;
         }
-        return perfil.temPermissao(permissao);
+        return !perfil.temPermissao(permissao);
     }
 
     /**

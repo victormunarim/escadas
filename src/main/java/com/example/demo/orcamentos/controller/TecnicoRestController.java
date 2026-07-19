@@ -57,7 +57,7 @@ public class TecnicoRestController extends AbstractCrudRestController<Formulario
 
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarTecnico(@PathVariable Long id) {
-        if (!SecurityUtil.temPermissao("TECNICOS_VISUALIZAR") && !SecurityUtil.temPermissao("ORCAMENTOS_VISUALIZAR")) {
+        if (SecurityUtil.naoTemPermissao("TECNICOS_VISUALIZAR") && SecurityUtil.naoTemPermissao("ORCAMENTOS_VISUALIZAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
@@ -76,7 +76,7 @@ public class TecnicoRestController extends AbstractCrudRestController<Formulario
             @RequestParam("arquivo") MultipartFile arquivo,
             @RequestParam(value = "etapa", required = false) Integer etapa
     ) {
-        if (!SecurityUtil.temPermissao("TECNICOS_EDITAR") && !SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
+        if (SecurityUtil.naoTemPermissao("TECNICOS_EDITAR") && SecurityUtil.naoTemPermissao("ORCAMENTOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         if (arquivo == null || arquivo.isEmpty()) {
@@ -96,7 +96,7 @@ public class TecnicoRestController extends AbstractCrudRestController<Formulario
             @PathVariable Long id,
             @PathVariable Long arquivoId
     ) {
-        if (!SecurityUtil.temPermissao("TECNICOS_EDITAR") && !SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
+        if (SecurityUtil.naoTemPermissao("TECNICOS_EDITAR") && SecurityUtil.naoTemPermissao("ORCAMENTOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
@@ -109,7 +109,7 @@ public class TecnicoRestController extends AbstractCrudRestController<Formulario
 
     @PutMapping("/{id}/encerrar")
     public ResponseEntity<?> encerrarTecnico(@PathVariable Long id) {
-        if (!SecurityUtil.temPermissao("TECNICOS_EDITAR") && !SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
+        if (SecurityUtil.naoTemPermissao("TECNICOS_EDITAR") && SecurityUtil.naoTemPermissao("ORCAMENTOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
@@ -122,7 +122,7 @@ public class TecnicoRestController extends AbstractCrudRestController<Formulario
 
     @PutMapping("/{id}/reabrir")
     public ResponseEntity<?> reabrirTecnico(@PathVariable Long id) {
-        if (!SecurityUtil.temPermissao("TECNICOS_EDITAR") && !SecurityUtil.temPermissao("ORCAMENTOS_EDITAR")) {
+        if (SecurityUtil.naoTemPermissao("TECNICOS_EDITAR") && SecurityUtil.naoTemPermissao("ORCAMENTOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {

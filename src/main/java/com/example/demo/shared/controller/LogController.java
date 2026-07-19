@@ -48,7 +48,7 @@ public class LogController {
                 pointer--;
             }
 
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 lines.add(sb.reverse().toString());
             }
         }

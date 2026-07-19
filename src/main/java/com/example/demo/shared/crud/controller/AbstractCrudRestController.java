@@ -34,7 +34,7 @@ public abstract class AbstractCrudRestController<TFormDTO> {
 
     @GetMapping
     public ResponseEntity<?> listar(@RequestParam Map<String, String> parametros) {
-        if (!SecurityUtil.temPermissao(getModuloNome() + "_VISUALIZAR")) {
+        if (SecurityUtil.naoTemPermissao(getModuloNome() + "_VISUALIZAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         Map<String, String> parametrosEfetivos = new HashMap<>(parametros);
@@ -45,7 +45,7 @@ public abstract class AbstractCrudRestController<TFormDTO> {
 
     @GetMapping("/formulario")
     public ResponseEntity<?> obterFormularioNovo() {
-        if (!SecurityUtil.temPermissao(getModuloNome() + "_ADICIONAR")) {
+        if (SecurityUtil.naoTemPermissao(getModuloNome() + "_ADICIONAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         List<CampoRender> campos = getService().obterCamposRenderNovo();
@@ -54,7 +54,7 @@ public abstract class AbstractCrudRestController<TFormDTO> {
 
     @GetMapping("/{id}/formulario")
     public ResponseEntity<?> obterFormularioEdicao(@PathVariable Long id) {
-        if (!SecurityUtil.temPermissao(getModuloNome() + "_EDITAR")) {
+        if (SecurityUtil.naoTemPermissao(getModuloNome() + "_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
@@ -67,7 +67,7 @@ public abstract class AbstractCrudRestController<TFormDTO> {
 
     @PostMapping
     public ResponseEntity<?> salvar(@RequestBody TFormDTO formulario) {
-        if (!SecurityUtil.temPermissao(getModuloNome() + "_ADICIONAR")) {
+        if (SecurityUtil.naoTemPermissao(getModuloNome() + "_ADICIONAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
@@ -83,7 +83,7 @@ public abstract class AbstractCrudRestController<TFormDTO> {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody TFormDTO formulario) {
-        if (!SecurityUtil.temPermissao(getModuloNome() + "_EDITAR")) {
+        if (SecurityUtil.naoTemPermissao(getModuloNome() + "_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
@@ -96,7 +96,7 @@ public abstract class AbstractCrudRestController<TFormDTO> {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> excluir(@PathVariable Long id) {
-        if (!SecurityUtil.temPermissao(getModuloNome() + "_EXCLUIR")) {
+        if (SecurityUtil.naoTemPermissao(getModuloNome() + "_EXCLUIR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {

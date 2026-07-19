@@ -2,6 +2,7 @@ package com.example.demo.pedidos.model;
 
 import com.example.demo.pedidos.config.ColunasPedido;
 
+import com.example.demo.shared.util.NumeroUtil;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -423,14 +424,7 @@ public class PedidoEntity {
     }
 
     private Integer parseInteger(String valor) {
-        if (valor == null || valor.isBlank()) {
-            return null;
-        }
-        try {
-            return Integer.parseInt(valor.trim());
-        } catch (NumberFormatException ignored) {
-            return null;
-        }
+        return NumeroUtil.parseIntSeguro(valor);
     }
 
     @PrePersist

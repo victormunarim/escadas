@@ -46,7 +46,7 @@ public class PedidoRestController extends AbstractCrudRestController<FormularioP
 
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPedido(@PathVariable Long id) {
-        if (!SecurityUtil.temPermissao("PEDIDOS_VISUALIZAR")) {
+        if (SecurityUtil.naoTemPermissao("PEDIDOS_VISUALIZAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
@@ -76,7 +76,7 @@ public class PedidoRestController extends AbstractCrudRestController<FormularioP
             @PathVariable Long id,
             @RequestParam("arquivo") MultipartFile arquivo
     ) {
-        if (!SecurityUtil.temPermissao("PEDIDOS_EDITAR")) {
+        if (SecurityUtil.naoTemPermissao("PEDIDOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         Map<String, String> response = new HashMap<>();
@@ -100,7 +100,7 @@ public class PedidoRestController extends AbstractCrudRestController<FormularioP
             @PathVariable Long id,
             @PathVariable Long arquivoId
     ) {
-        if (!SecurityUtil.temPermissao("PEDIDOS_EDITAR")) {
+        if (SecurityUtil.naoTemPermissao("PEDIDOS_EDITAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         Map<String, String> response = new HashMap<>();

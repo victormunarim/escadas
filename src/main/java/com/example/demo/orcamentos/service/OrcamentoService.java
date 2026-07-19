@@ -339,7 +339,7 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         Set<Integer> pedidoIdsComOrcamento = repositorioOrcamento.findAll().stream()
                 .filter(o -> (o.getFlagOculto() == null || !o.getFlagOculto()))
                 .filter(OrcamentoEntity::ehTecnico)
-                .filter(o -> orcamentoIdAtual == null || !o.getId().equals(orcamentoIdAtual))
+                .filter(o -> !o.getId().equals(orcamentoIdAtual))
                 .map(o -> o.getPedido().getId())
                 .collect(Collectors.toSet());
 
