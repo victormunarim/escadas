@@ -50,7 +50,9 @@ export default function FormularioOrcamento() {
                 body: payload
             });
             const targetId = ehEdicao ? id : (resposta?.id);
-            const temPedidoAssociado = payload.pedidoId !== undefined && payload.pedidoId !== null && String(payload.pedidoId).trim() !== '';
+            const temPedidoAssociado = payload.pedidoId !== undefined
+                && payload.pedidoId !== null
+                && String(payload.pedidoId).trim() !== '';
             const finalRedirectBase = (ehTecnico || temPedidoAssociado) ? '/tecnicos' : '/orcamentos';
             if (targetId) {
                 window.location.href = `${finalRedirectBase}/${targetId}/visualizar`;
@@ -68,13 +70,21 @@ export default function FormularioOrcamento() {
         return <Carregando mensagem="Carregando formulário..." margemSuperior />;
     }
 
+    const subtituloText = ehEdicao
+        ? `Atualize os dados do ${tituloModulo.toLowerCase()} selecionado.`
+        : `Preencha os campos para cadastrar o ${tituloModulo.toLowerCase()}.`;
+
+    const textoBotao = salvando
+        ? 'Salvando...'
+        : ehEdicao
+            ? 'Salvar alterações'
+            : `Salvar ${tituloModulo.toLowerCase()}`;
+
     return (
         <section className="pagina">
             <header className="pagina__cabecalho">
                 <h1 className="pagina__titulo">{ehEdicao ? `Editar ${tituloModulo}` : `Novo ${tituloModulo}`}</h1>
-                <p className="pagina__subtitulo">
-                    {ehEdicao ? `Atualize os dados do ${tituloModulo.toLowerCase()} selecionado.` : `Preencha os campos para cadastrar o ${tituloModulo.toLowerCase()}.`}
-                </p>
+                <p className="pagina__subtitulo">{subtituloText}</p>
             </header>
 
             <section className="cartao-crud">
@@ -90,7 +100,7 @@ export default function FormularioOrcamento() {
 
                     <div className="formulario-crud__acoes" style={{ marginTop: '16px' }}>
                         <button className="busca-crud__botao" type="submit" disabled={salvando}>
-                            {salvando ? 'Salvando...' : ehEdicao ? 'Salvar alterações' : `Salvar ${tituloModulo.toLowerCase()}`}
+                            {textoBotao}
                         </button>
                         <Link className="formulario-crud__link" to={baseRedirectUrl}>Voltar para listagem</Link>
                     </div>

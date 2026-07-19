@@ -101,13 +101,20 @@ public class FormularioPedidoService {
         pedido.setNumero(NumeroUtil.paraInteiro(formularioPedido.getNumero(), 10));
         pedido.setEstadoId(resolverEstadoId(formularioPedido.getUf()));
         pedido.setMunicipioId(resolverMunicipioId(formularioPedido.getUf(), formularioPedido.getMunicipio()));
-        pedido.setBairroId(resolverBairroId(formularioPedido.getMunicipio(), formularioPedido.getBairro(), pedido.getMunicipioId()));
+        pedido.setBairroId(resolverBairroId(
+                formularioPedido.getMunicipio(), formularioPedido.getBairro(), pedido.getMunicipioId()
+        ));
         pedido.setCep(NumeroUtil.paraInteiro(formularioPedido.getCep(), 8));
         pedido.setReferencia(vazioSeNulo(formularioPedido.getReferencia()));
         pedido.setNumeroCliente(NumeroUtil.paraInteiro(formularioPedido.getNumeroCliente(), 10));
         pedido.setEstadoClienteId(resolverEstadoId(formularioPedido.getUfCliente()));
-        pedido.setMunicipioClienteId(resolverMunicipioId(formularioPedido.getUfCliente(), formularioPedido.getMunicipioCliente()));
-        pedido.setBairroClienteId(resolverBairroId(formularioPedido.getMunicipioCliente(), formularioPedido.getBairroCliente(), pedido.getMunicipioClienteId()));
+        pedido.setMunicipioClienteId(resolverMunicipioId(
+                formularioPedido.getUfCliente(), formularioPedido.getMunicipioCliente()
+        ));
+        pedido.setBairroClienteId(resolverBairroId(
+                formularioPedido.getMunicipioCliente(), formularioPedido.getBairroCliente(),
+                pedido.getMunicipioClienteId()
+        ));
         pedido.setCepCliente(NumeroUtil.paraInteiro(formularioPedido.getCepCliente(), 8));
         pedido.setReferenciaCliente(vazioSeNulo(formularioPedido.getReferenciaCliente()));
         pedido.setValor(formularioPedido.getValor());

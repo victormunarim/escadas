@@ -59,7 +59,9 @@ public class ArquivoService {
     }
 
     @Transactional
-    public void enviarERegistrar(String extChave, Long extId, String nomePasta, MultipartFile multipartFile, Integer etapa) {
+    public void enviarERegistrar(
+            String extChave, Long extId, String nomePasta, MultipartFile multipartFile, Integer etapa
+    ) {
         validarConfiguracao();
 
         String pastaPaiId = obterPastaPaiObrigatoria();
@@ -237,7 +239,8 @@ public class ArquivoService {
         }
 
         if (!servicoCredenciaisDrive.credenciaisConfiguradas()) {
-            erros.add("Credenciais do Google Drive não configuradas. Preencha client_id, project_id, client_secret e parent_folder.");
+            erros.add("Credenciais do Google Drive não configuradas. "
+                    + "Preencha client_id, project_id, client_secret e parent_folder.");
         }
 
         String pastaPai = servicoCredenciaisDrive.obterCredenciais()
@@ -289,7 +292,8 @@ public class ArquivoService {
 
         if (status == 403 && mensagem != null && mensagem.contains("storageQuotaExceeded")) {
             return new IllegalStateException(
-                    "Google Drive recusou o upload por quota. Use Shared Drive e configure uma pasta pai desse Shared Drive no módulo Google Drive.",
+                    "Google Drive recusou o upload por quota. Use Shared Drive e configure "
+                            + "uma pasta pai desse Shared Drive no módulo Google Drive.",
                     e
             );
         }

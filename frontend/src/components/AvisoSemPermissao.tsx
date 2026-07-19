@@ -42,7 +42,13 @@ export default function AvisoSemPermissao({ permissao }: PropriedadesAvisoSemPer
                 lineHeight: '1.5'
             }}>
                 Você não possui a permissão necessária para acessar esta página.
-                {permissao && <span style={{ display: 'block', fontSize: '12px', marginTop: '8px', color: '#dc2626', fontWeight: 'bold' }}>Requerido: {permissao}</span>}
+                {permissao && (
+                    <span style={{
+                        display: 'block', fontSize: '12px', marginTop: '8px', color: '#dc2626', fontWeight: 'bold'
+                    }}>
+                        Requerido: {permissao}
+                    </span>
+                )}
             </p>
             <Link 
                 to="/" 

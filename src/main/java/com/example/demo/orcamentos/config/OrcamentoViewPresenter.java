@@ -33,9 +33,12 @@ public class OrcamentoViewPresenter {
 
         Map<String, String> detalhes = new HashMap<>();
         detalhes.put("Nome", orcamento.getNome());
-        detalhes.put("Etiqueta", orcamento.getEtiquetaNome() == null || orcamento.getEtiquetaNome().isBlank() ? "-" : orcamento.getEtiquetaNome());
-        detalhes.put("Bairro", orcamento.getBairro() == null || orcamento.getBairro().isBlank() ? "-" : orcamento.getBairro());
-        detalhes.put("Descrição", orcamento.getDescricao() == null || orcamento.getDescricao().isBlank() ? "-" : orcamento.getDescricao());
+        detalhes.put("Etiqueta", orcamento.getEtiquetaNome() == null || orcamento.getEtiquetaNome().isBlank()
+                ? "-" : orcamento.getEtiquetaNome());
+        detalhes.put("Bairro", orcamento.getBairro() == null || orcamento.getBairro().isBlank()
+                ? "-" : orcamento.getBairro());
+        detalhes.put("Descrição", orcamento.getDescricao() == null || orcamento.getDescricao().isBlank()
+                ? "-" : orcamento.getDescricao());
         detalhes.put("Data de Cadastro", orcamento.getDataCadastroFormatado());
 
         if (orcamento.getPedidoId() != null && pedidoService != null) {

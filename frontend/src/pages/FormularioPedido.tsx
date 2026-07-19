@@ -126,7 +126,9 @@ export default function FormularioPedido() {
             <header className="pagina__cabecalho">
                 <h1 className="pagina__titulo">{ehEdicao ? 'Editar Pedido' : 'Novo Pedido'}</h1>
                 <p className="pagina__subtitulo">
-                    {ehEdicao ? 'Atualize os dados do pedido selecionado.' : 'Preencha todos os campos para inserir na tabela.'}
+                    {ehEdicao
+                        ? 'Atualize os dados do pedido selecionado.'
+                        : 'Preencha todos os campos para inserir na tabela.'}
                 </p>
             </header>
 
@@ -142,7 +144,12 @@ export default function FormularioPedido() {
                                         ? (e) => lidarComMudancaUf(campo.name!, e.target.value)
                                         : (campo.name === 'cpf' || campo.name === 'rg')
                                         ? (e) => formatarApenasDigitos(e, campo.name === 'cpf' ? 14 : 12)
-                                        : (campo.name === 'telefone' || campo.name === 'telefoneFixo' || campo.name === 'numero' || campo.name === 'numeroCliente')
+                                        : (
+                                            campo.name === 'telefone' ||
+                                            campo.name === 'telefoneFixo' ||
+                                            campo.name === 'numero' ||
+                                            campo.name === 'numeroCliente'
+                                        )
                                         ? (e) => formatarApenasDigitos(e, 20)
                                         : (campo.name === 'cep' || campo.name === 'cepCliente')
                                         ? formatarCep

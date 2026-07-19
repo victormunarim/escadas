@@ -16,14 +16,16 @@ public class AuthRestController {
 
     @GetMapping("/api/auth/me")
     public ResponseEntity<?> getMe(Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getPrincipal())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         Map<String, Object> user = new HashMap<>();
         user.put("username", authentication.getName());
         if (authentication.getPrincipal() instanceof UserDetailsImpl userDetails) {
             user.put("perfil", userDetails.getPerfil() != null ? userDetails.getPerfil().name() : null);
-            user.put("permissoes", userDetails.getPerfil() != null ? userDetails.getPerfil().getPermissoes() : Collections.emptySet());
+            user.put("permissoes", userDetails.getPerfil() != null
+                    ? userDetails.getPerfil().getPermissoes() : Collections.emptySet());
         }
         return ResponseEntity.ok(user);
     }

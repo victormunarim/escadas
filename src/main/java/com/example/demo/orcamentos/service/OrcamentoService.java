@@ -241,13 +241,17 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
         }
 
         EtiquetaEntity novaEtiqueta = repositorioEtiqueta.findById(formulario.getEtiquetaId())
-                .orElseThrow(() -> new IllegalArgumentException("Etiqueta não encontrada com o ID: " + formulario.getEtiquetaId()));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Etiqueta não encontrada com o ID: " + formulario.getEtiquetaId()
+                ));
 
         orcamento.atualizarEtiqueta(novaEtiqueta);
 
         if (formulario.getPedidoId() != null) {
             PedidoEntity pedido = repositorioPedido.findById(Long.valueOf(formulario.getPedidoId()))
-                    .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado com o ID: " + formulario.getPedidoId()));
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Pedido não encontrado com o ID: " + formulario.getPedidoId()
+                    ));
             orcamento.vincularPedido(pedido);
         } else {
             orcamento.vincularPedido(null);
@@ -347,7 +351,9 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                 .filter(p -> p.getFlagOculto() == null || !p.getFlagOculto())
                 .filter(p -> !pedidoIdsComOrcamento.contains(p.getId()))
                 .forEach(p -> {
-                    String label = "Pedido #" + p.getNumeroPedido() + (p.getNomeCliente() != null && !p.getNomeCliente().isBlank() ? " - " + p.getNomeCliente() : "");
+                    String clienteStr = p.getNomeCliente() != null && !p.getNomeCliente().isBlank()
+                            ? " - " + p.getNomeCliente() : "";
+                    String label = "Pedido #" + p.getNumeroPedido() + clienteStr;
                     opcoes.add(new OpcaoCrud(String.valueOf(p.getId()), label));
                 });
         return opcoes;

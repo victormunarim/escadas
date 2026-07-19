@@ -12,7 +12,10 @@ public record CampoSelecaoRender(
         Object value,
         List<OpcaoCrud> options
 ) implements CampoRender {
-    public CampoSelecaoRender(String rotulo, String name, String classeCampo, boolean required, Object value, List<OpcaoCrud> options) {
+    public CampoSelecaoRender(
+            String rotulo, String name, String classeCampo, boolean required,
+            Object value, List<OpcaoCrud> options
+    ) {
         this("select", rotulo, name, classeCampo, required, value, options);
     }
 }

@@ -74,7 +74,9 @@ public class OrcamentoEntity {
             return;
         }
         if (this.etiqueta == null || !"proposta".equalsIgnoreCase(this.etiqueta.getNome())) {
-            throw new IllegalArgumentException("Não é possível associar um pedido a um orçamento que não tenha a etiqueta 'Proposta'.");
+            throw new IllegalArgumentException(
+                    "Não é possível associar um pedido a um orçamento que não tenha a etiqueta 'Proposta'."
+            );
         }
         this.pedido = pedido;
         this.flagEncerrado = true;

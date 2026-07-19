@@ -61,8 +61,12 @@ public class PedidoRestController extends AbstractCrudRestController<FormularioP
             response.put("resumoPedido", resumo);
             
             response.put("dadosCliente", PedidoViewPresenter.montarDadosCliente(pedido));
-            response.put("enderecoObra", PedidoViewPresenter.montarEnderecoObra(pedido, consultaLocalidadesService));
-            response.put("enderecoCliente", PedidoViewPresenter.montarEnderecoCliente(pedido, consultaLocalidadesService));
+            response.put("enderecoObra", PedidoViewPresenter.montarEnderecoObra(
+                    pedido, consultaLocalidadesService
+            ));
+            response.put("enderecoCliente", PedidoViewPresenter.montarEnderecoCliente(
+                    pedido, consultaLocalidadesService
+            ));
             response.put("arquivosPedido", arquivosPedido);
 
             return ResponseEntity.ok(response);

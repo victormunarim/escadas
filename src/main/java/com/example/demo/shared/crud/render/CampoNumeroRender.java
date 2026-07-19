@@ -12,7 +12,10 @@ public record CampoNumeroRender(
         String step,
         Object value
 ) implements CampoRender {
-    public CampoNumeroRender(String rotulo, String name, String classeCampo, boolean required, String min, String max, String step, Object value) {
+    public CampoNumeroRender(
+            String rotulo, String name, String classeCampo, boolean required,
+            String min, String max, String step, Object value
+    ) {
         this("input", "number", rotulo, name, classeCampo, required, min, max, step, value);
     }
 }

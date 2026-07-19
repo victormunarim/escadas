@@ -63,7 +63,9 @@ public class OrcamentoRestController extends AbstractCrudRestController<Formular
         try {
             OrcamentoDTO orcamento = orcamentoService.buscarPorId(id);
             List<ArquivoDTO> arquivos = orcamentoService.listarArquivos(id);
-            Map<String, Object> response = OrcamentoViewPresenter.montarVisualizacao(orcamento, arquivos, pedidoService, localidadeService);
+            Map<String, Object> response = OrcamentoViewPresenter.montarVisualizacao(
+                    orcamento, arquivos, pedidoService, localidadeService
+            );
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

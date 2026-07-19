@@ -15,9 +15,15 @@ export default function ListagemOrcamentos() {
     const apiEndpoint = ehTecnico ? '/api/tecnicos' : '/api/orcamentos';
     const rotaBase = ehTecnico ? '/tecnicos' : '/orcamentos';
 
-    const podeVisualizar = ehTecnico ? (temPermissao('TECNICOS_VISUALIZAR') || temPermissao('ORCAMENTOS_VISUALIZAR')) : temPermissao('ORCAMENTOS_VISUALIZAR');
-    const podeEditar = ehTecnico ? (temPermissao('TECNICOS_EDITAR') || temPermissao('ORCAMENTOS_EDITAR')) : temPermissao('ORCAMENTOS_EDITAR');
-    const podeExcluir = ehTecnico ? (temPermissao('TECNICOS_EXCLUIR') || temPermissao('ORCAMENTOS_EXCLUIR')) : temPermissao('ORCAMENTOS_EXCLUIR');
+    const podeVisualizar = ehTecnico
+        ? (temPermissao('TECNICOS_VISUALIZAR') || temPermissao('ORCAMENTOS_VISUALIZAR'))
+        : temPermissao('ORCAMENTOS_VISUALIZAR');
+    const podeEditar = ehTecnico
+        ? (temPermissao('TECNICOS_EDITAR') || temPermissao('ORCAMENTOS_EDITAR'))
+        : temPermissao('ORCAMENTOS_EDITAR');
+    const podeExcluir = ehTecnico
+        ? (temPermissao('TECNICOS_EXCLUIR') || temPermissao('ORCAMENTOS_EXCLUIR'))
+        : temPermissao('ORCAMENTOS_EXCLUIR');
 
     useEffect(() => {
         const buscarDados = async () => {
@@ -92,7 +98,16 @@ export default function ListagemOrcamentos() {
                                             const valor = linha.valores[col.chave];
                                             if (col.chave === 'descricao') {
                                                 return (
-                                                    <td key={col.chave} className="tabela-crud__celula" style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                    <td
+                                                        key={col.chave}
+                                                        className="tabela-crud__celula"
+                                                        style={{
+                                                            maxWidth: '200px',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap'
+                                                        }}
+                                                    >
                                                         {valor}
                                                     </td>
                                                 );
@@ -105,9 +120,30 @@ export default function ListagemOrcamentos() {
                                         })}
                                         <td className="tabela-crud__celula">
                                             <div className="acoes-tabela">
-                                                {podeVisualizar && <Link className="acoes-tabela__botao acoes-tabela__botao--visualizar" to={`${rotaBase}/${linha.id}/visualizar`}>Visualizar</Link>}
-                                                {podeEditar && <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`${rotaBase}/${linha.id}/editar`}>Editar</Link>}
-                                                {podeExcluir && <button className="acoes-tabela__botao acoes-tabela__botao--excluir" onClick={() => lidarComExclusao(linha.id)}>Excluir</button>}
+                                                {podeVisualizar && (
+                                                    <Link
+                                                        className="acoes-tabela__botao acoes-tabela__botao--visualizar"
+                                                        to={`${rotaBase}/${linha.id}/visualizar`}
+                                                    >
+                                                        Visualizar
+                                                    </Link>
+                                                )}
+                                                {podeEditar && (
+                                                    <Link
+                                                        className="acoes-tabela__botao acoes-tabela__botao--editar"
+                                                        to={`${rotaBase}/${linha.id}/editar`}
+                                                    >
+                                                        Editar
+                                                    </Link>
+                                                )}
+                                                {podeExcluir && (
+                                                    <button
+                                                        className="acoes-tabela__botao acoes-tabela__botao--excluir"
+                                                        onClick={() => lidarComExclusao(linha.id)}
+                                                    >
+                                                        Excluir
+                                                    </button>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>

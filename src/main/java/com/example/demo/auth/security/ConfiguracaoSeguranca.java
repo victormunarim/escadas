@@ -28,7 +28,11 @@ public class ConfiguracaoSeguranca {
 
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/logout", "/error", "/css/**", "/js/**", "/logo.png", "/images/**", "/index.html", "/assets/**", "/vite.svg", "/.well-known/**").permitAll()
+                .requestMatchers(
+                        "/login", "/logout", "/error", "/css/**", "/js/**",
+                        "/logo.png", "/images/**", "/index.html", "/assets/**",
+                        "/vite.svg", "/.well-known/**"
+                ).permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -39,11 +43,17 @@ public class ConfiguracaoSeguranca {
                     response.setCharacterEncoding("UTF-8");
                     String perfil = "";
                     String permissoesJson = "[]";
-                    if (authentication.getPrincipal() instanceof UserDetailsImpl userDetails && userDetails.getPerfil() != null) {
+                    if (authentication.getPrincipal() instanceof UserDetailsImpl userDetails
+                            && userDetails.getPerfil() != null) {
                         perfil = userDetails.getPerfil().name();
-                        permissoesJson = "[" + String.join(",", userDetails.getPerfil().getPermissoes().stream().map(p -> "\"" + p + "\"").toList()) + "]";
+                        permissoesJson = "[" + String.join(",", userDetails.getPerfil().getPermissoes().stream()
+                                .map(p -> "\"" + p + "\"").toList()) + "]";
                     }
-                    response.getWriter().write("{\"sucesso\":true,\"username\":\"" + authentication.getName() + "\",\"perfil\":\"" + perfil + "\",\"permissoes\":" + permissoesJson + "}");
+                    response.getWriter().write(
+                            "{\"sucesso\":true,\"username\":\"" + authentication.getName()
+                                    + "\",\"perfil\":\"" + perfil
+                                    + "\",\"permissoes\":" + permissoesJson + "}"
+                    );
                 })
                 .failureHandler((request, response, exception) -> {
                     response.setStatus(401);

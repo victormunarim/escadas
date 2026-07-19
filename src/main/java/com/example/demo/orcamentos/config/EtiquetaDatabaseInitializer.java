@@ -20,7 +20,8 @@ public class EtiquetaDatabaseInitializer implements CommandLineRunner {
     public void run(String... args) {
         List<String> etiquetasPadrao = List.of("Riscar", "Aguardando aprovação", "3D / Renderizar", "Proposta");
         for (String nome : etiquetasPadrao) {
-            etiquetaRepository.findByNomeIgnoreCase(nome).orElseGet(() -> etiquetaRepository.save(new EtiquetaEntity(nome)));
+            etiquetaRepository.findByNomeIgnoreCase(nome)
+                    .orElseGet(() -> etiquetaRepository.save(new EtiquetaEntity(nome)));
         }
     }
 }

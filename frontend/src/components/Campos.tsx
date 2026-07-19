@@ -55,7 +55,12 @@ export function CampoRenderizador({ campo, onChange }: CampoRenderizadorProps) {
     if (campo.tipo === 'secao') {
         return (
             <div className="filtro-crud--completo">
-                <h3 style={{ color: 'var(--blue-900)', borderBottom: '1px solid rgba(19, 80, 140, .12)', paddingBottom: '6px', margin: '14px 0 6px 0' }}>
+                <h3 style={{
+                    color: 'var(--blue-900)',
+                    borderBottom: '1px solid rgba(19, 80, 140, .12)',
+                    paddingBottom: '6px',
+                    margin: '14px 0 6px 0'
+                }}>
                     {campo.rotulo}
                 </h3>
             </div>
@@ -63,6 +68,10 @@ export function CampoRenderizador({ campo, onChange }: CampoRenderizadorProps) {
     }
 
     if (campo.tipo === 'select') {
+        const opcoesFiltradas = campo.options?.filter(
+            opt => opt.valor !== "" && opt.valor !== null && opt.valor !== undefined
+        );
+
         return (
             <CampoSelect
                 rotulo={campo.rotulo!}
@@ -73,7 +82,7 @@ export function CampoRenderizador({ campo, onChange }: CampoRenderizadorProps) {
                 onChange={onChange}
             >
                 <option value="">Selecione</option>
-                {campo.options?.filter(opt => opt.valor !== "" && opt.valor !== null && opt.valor !== undefined).map(opt => (
+                {opcoesFiltradas?.map(opt => (
                     <option key={opt.valor} value={opt.valor}>{opt.rotulo}</option>
                 ))}
             </CampoSelect>

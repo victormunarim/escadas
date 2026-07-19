@@ -51,7 +51,10 @@ public class ConsultaLocalidadesService {
                     limiteSeguro
             );
         } catch (RuntimeException erro) {
-            log.warn("Falha na busca de bairros para termo='{}' e uf='{}': {}", termo, ufNormalizada, erro.getMessage());
+            log.warn(
+                    "Falha na busca de bairros para termo='{}' e uf='{}': {}",
+                    termo, ufNormalizada, erro.getMessage()
+            );
             return List.of();
         }
     }
@@ -74,7 +77,10 @@ public class ConsultaLocalidadesService {
                     limiteSeguro
             );
         } catch (RuntimeException erro) {
-            log.warn("Falha na busca de municipios para termo='{}' e uf='{}': {}", termo, ufNormalizada, erro.getMessage());
+            log.warn(
+                    "Falha na busca de municipios para termo='{}' e uf='{}': {}",
+                    termo, ufNormalizada, erro.getMessage()
+            );
             return List.of();
         }
     }

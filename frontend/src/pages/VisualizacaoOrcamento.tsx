@@ -165,25 +165,48 @@ export default function VisualizacaoOrcamento() {
                     <p className="pagina__subtitulo">
                         {`${tituloModulo} #${itemKey} - ${nome}`}
                         {dadosOrcamento.flagEncerrado && (
-                            <span style={{ marginLeft: '10px', backgroundColor: '#f8d7da', color: '#721c24', padding: '2px 8px', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 600 }}>
+                            <span style={{
+                                marginLeft: '10px',
+                                backgroundColor: '#f8d7da',
+                                color: '#721c24',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                fontSize: '0.85rem',
+                                fontWeight: 600
+                            }}>
                                 Encerrado
                             </span>
                         )}
                         {pedidoId && (
                             <span>
                                 {' '}| Vinculado ao Pedido:{' '}
-                                <Link to={`/pedidos/${pedidoId}/visualizar`} style={{ color: '#13508c', fontWeight: 600, textDecoration: 'underline' }}>
+                                <Link
+                                    to={`/pedidos/${pedidoId}/visualizar`}
+                                    style={{ color: '#13508c', fontWeight: 600, textDecoration: 'underline' }}
+                                >
                                     #{pedidoNumero} - {pedidoCliente}
                                 </Link>
                             </span>
                         )}
                     </p>
                 </div>
-                <div className="pedido-visualizacao__acoes" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div
+                    className="pedido-visualizacao__acoes"
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                >
                     {!dadosOrcamento.flagEncerrado ? (
                         <button 
                             className="acoes-tabela__botao" 
-                            style={{ backgroundColor: '#dc3545', borderColor: '#dc3545', color: '#fff', padding: '6px 12px', fontSize: '0.9rem', height: 'auto', lineHeight: 1.2, cursor: 'pointer' }}
+                            style={{
+                                backgroundColor: '#dc3545',
+                                borderColor: '#dc3545',
+                                color: '#fff',
+                                padding: '6px 12px',
+                                fontSize: '0.9rem',
+                                height: 'auto',
+                                lineHeight: 1.2,
+                                cursor: 'pointer'
+                            }}
                             onClick={lidarComEncerramento}
                         >
                             {`Encerrar ${tituloModulo}`}
@@ -191,13 +214,25 @@ export default function VisualizacaoOrcamento() {
                     ) : (
                         <button 
                             className="acoes-tabela__botao" 
-                            style={{ backgroundColor: '#28a745', borderColor: '#28a745', color: '#fff', padding: '6px 12px', fontSize: '0.9rem', height: 'auto', lineHeight: 1.2, cursor: 'pointer' }}
+                            style={{
+                                backgroundColor: '#28a745',
+                                borderColor: '#28a745',
+                                color: '#fff',
+                                padding: '6px 12px',
+                                fontSize: '0.9rem',
+                                height: 'auto',
+                                lineHeight: 1.2,
+                                cursor: 'pointer'
+                            }}
                             onClick={lidarComReabertura}
                         >
                             {`Reabrir ${tituloModulo}`}
                         </button>
                     )}
-                    <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`${rotaBase}/${itemKey}/editar`}>
+                    <Link
+                        className="acoes-tabela__botao acoes-tabela__botao--editar"
+                        to={`${rotaBase}/${itemKey}/editar`}
+                    >
                         Editar
                     </Link>
                     <Link className="formulario-crud__link" to={rotaBase}>Voltar para listagem</Link>
@@ -209,13 +244,28 @@ export default function VisualizacaoOrcamento() {
             </div>
 
             <section className="cartao-crud pedido-visualizacao__bloco-arquivos" style={{ marginTop: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid #eee', paddingBottom: '10px' }}>
-                    <h2 style={{ fontSize: '1.4rem', fontWeight: 600, margin: 0, color: '#333' }}>{`Arquivos do ${tituloModulo} por Etapas`}</h2>
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '20px',
+                    borderBottom: '2px solid #eee',
+                    paddingBottom: '10px'
+                }}>
+                    <h2 style={{ fontSize: '1.4rem', fontWeight: 600, margin: 0, color: '#333' }}>
+                        {`Arquivos do ${tituloModulo} por Etapas`}
+                    </h2>
                     {podeGerenciarArquivos && (
                         <button 
                             className="busca-crud__botao" 
                             type="button"
-                            style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem', padding: '6px 12px' }}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                fontSize: '0.9rem',
+                                padding: '6px 12px'
+                            }}
                             onClick={() => setEtapasVisiveis(prev => prev + 1)}
                         >
                             <strong>+</strong> Iniciar Nova Etapa
@@ -228,13 +278,32 @@ export default function VisualizacaoOrcamento() {
                         const arquivosDaEtapa = (arquivos || []).filter(arq => (arq.etapa || 1) === etapa);
 
                         return (
-                            <div key={etapa} style={{ border: '1px solid #ddd', borderRadius: '6px', padding: '16px', backgroundColor: '#fcfcfc' }}>
-                                <h3 style={{ fontSize: '1.15rem', fontWeight: 600, marginBottom: '12px', color: '#13508c', borderBottom: '1px solid #eee', paddingBottom: '6px' }}>
+                            <div
+                                key={etapa}
+                                style={{
+                                    border: '1px solid #ddd',
+                                    borderRadius: '6px',
+                                    padding: '16px',
+                                    backgroundColor: '#fcfcfc'
+                                }}
+                            >
+                                <h3 style={{
+                                    fontSize: '1.15rem',
+                                    fontWeight: 600,
+                                    marginBottom: '12px',
+                                    color: '#13508c',
+                                    borderBottom: '1px solid #eee',
+                                    paddingBottom: '6px'
+                                }}>
                                     Etapa {etapa}
                                 </h3>
 
                                 {podeGerenciarArquivos && (
-                                    <form className="pedido-visualizacao__upload" onSubmit={(e) => lidarComEnvioArquivo(e, etapa)} style={{ marginBottom: '16px' }}>
+                                    <form
+                                        className="pedido-visualizacao__upload"
+                                        onSubmit={(e) => lidarComEnvioArquivo(e, etapa)}
+                                        style={{ marginBottom: '16px' }}
+                                    >
                                         <input 
                                             className="pedido-visualizacao__arquivo-input" 
                                             type="file" 
@@ -249,13 +318,25 @@ export default function VisualizacaoOrcamento() {
                                 )}
 
                                 {arquivosDaEtapa.length === 0 ? (
-                                    <div className="pedido-visualizacao__arquivos-placeholder" style={{ margin: 0, padding: '15px' }}>
+                                    <div
+                                        className="pedido-visualizacao__arquivos-placeholder"
+                                        style={{ margin: 0, padding: '15px' }}
+                                    >
                                         Nenhum arquivo vinculado à Etapa {etapa}.
                                     </div>
                                 ) : (
                                     <ul className="pedido-visualizacao__arquivos-lista" style={{ margin: 0 }}>
                                         {arquivosDaEtapa.map((arquivo) => (
-                                            <li key={arquivo.id} className="pedido-visualizacao__arquivo-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px' }}>
+                                            <li
+                                                key={arquivo.id}
+                                                className="pedido-visualizacao__arquivo-item"
+                                                style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    padding: '8px 12px'
+                                                }}
+                                            >
                                                 <span>{arquivo.nome}</span>
                                                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                                                     <a 
@@ -280,10 +361,17 @@ export default function VisualizacaoOrcamento() {
                                                         Download
                                                     </a>
                                                     {podeGerenciarArquivos && (
-                                                        <button 
-                                                            className="acoes-tabela__botao acoes-tabela__botao--excluir" 
+                                                        <button
+                                                            className={
+                                                                'acoes-tabela__botao acoes-tabela__botao--excluir'
+                                                            }
                                                             type="button"
-                                                            style={{ padding: '2px 8px', fontSize: '0.8rem', height: 'auto', lineHeight: 1 }}
+                                                            style={{
+                                                                padding: '2px 8px',
+                                                                fontSize: '0.8rem',
+                                                                height: 'auto',
+                                                                lineHeight: 1
+                                                            }}
                                                             onClick={() => lidarComExclusaoArquivo(arquivo.id)}
                                                         >
                                                             Excluir

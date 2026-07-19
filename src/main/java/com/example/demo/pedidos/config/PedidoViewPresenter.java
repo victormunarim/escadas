@@ -34,11 +34,17 @@ public class PedidoViewPresenter {
         dadosCliente.put(ColunasPedido.LABEL_PROFISSAO, FormatacaoUtil.formatarTexto(pedido.getProfissao()));
         dadosCliente.put(ColunasPedido.LABEL_ADM_OBRA, FormatacaoUtil.formatarTexto(pedido.getAdmObra()));
         dadosCliente.put(ColunasPedido.LABEL_TELEFONE, FormatacaoUtil.formatarTelefoneCelular(pedido.getTelefone()));
-        dadosCliente.put(ColunasPedido.LABEL_TELEFONE_FIXO, FormatacaoUtil.formatarTelefoneFixo(pedido.getTelefoneFixo()));
+        dadosCliente.put(
+                ColunasPedido.LABEL_TELEFONE_FIXO,
+                FormatacaoUtil.formatarTelefoneFixo(pedido.getTelefoneFixo())
+        );
         return dadosCliente;
     }
 
-    public static Map<String, String> montarEnderecoObra(PedidoDTO pedido, ConsultaLocalidadesService localidadeService) {
+    public static Map<String, String> montarEnderecoObra(
+            PedidoDTO pedido,
+            ConsultaLocalidadesService localidadeService
+    ) {
         Map<String, String> enderecoObra = new LinkedHashMap<>();
         enderecoObra.put("Estado", localidadeService.resolverEstado(pedido.getEstadoId()));
         enderecoObra.put("Município", localidadeService.resolverMunicipio(pedido.getMunicipioId()));
@@ -49,14 +55,20 @@ public class PedidoViewPresenter {
         return enderecoObra;
     }
 
-    public static Map<String, String> montarEnderecoCliente(PedidoDTO pedido, ConsultaLocalidadesService localidadeService) {
+    public static Map<String, String> montarEnderecoCliente(
+            PedidoDTO pedido,
+            ConsultaLocalidadesService localidadeService
+    ) {
         Map<String, String> enderecoCliente = new LinkedHashMap<>();
         enderecoCliente.put("Estado", localidadeService.resolverEstado(pedido.getEstadoClienteId()));
         enderecoCliente.put("Município", localidadeService.resolverMunicipio(pedido.getMunicipioClienteId()));
         enderecoCliente.put("Bairro", localidadeService.resolverBairro(pedido.getBairroClienteId()));
         enderecoCliente.put("CEP", FormatacaoUtil.formatarCep(pedido.getCepCliente()));
         enderecoCliente.put("Referência", FormatacaoUtil.formatarTexto(pedido.getReferenciaCliente()));
-        enderecoCliente.put(ColunasPedido.LABEL_NUMERO_CLIENTE, FormatacaoUtil.formatarTexto(pedido.getNumeroCliente()));
+        enderecoCliente.put(
+                ColunasPedido.LABEL_NUMERO_CLIENTE,
+                FormatacaoUtil.formatarTexto(pedido.getNumeroCliente())
+        );
         return enderecoCliente;
     }
 }

@@ -22,22 +22,113 @@ export default function App() {
                     {/* Rotas Protegidas dentro do Layout */}
                     <Route element={<Layout />}>
                         <Route path="/" element={<Navigate to="/pedidos" replace />} />
-                        <Route path="/pedidos" element={<RotaProtegida permissaoRequerida="PEDIDOS_VISUALIZAR"><ListagemPedidos /></RotaProtegida>} />
-                        <Route path="/pedidos/novo" element={<RotaProtegida permissaoRequerida="PEDIDOS_ADICIONAR"><FormularioPedido /></RotaProtegida>} />
-                        <Route path="/pedidos/:id/editar" element={<RotaProtegida permissaoRequerida="PEDIDOS_EDITAR"><FormularioPedido /></RotaProtegida>} />
-                        <Route path="/pedidos/:id/visualizar" element={<RotaProtegida permissaoRequerida="PEDIDOS_VISUALIZAR"><VisualizacaoPedido /></RotaProtegida>} />
+                        <Route
+                            path="/pedidos"
+                            element={
+                                <RotaProtegida permissaoRequerida="PEDIDOS_VISUALIZAR">
+                                    <ListagemPedidos />
+                                </RotaProtegida>
+                            }
+                        />
+                        <Route
+                            path="/pedidos/novo"
+                            element={
+                                <RotaProtegida permissaoRequerida="PEDIDOS_ADICIONAR">
+                                    <FormularioPedido />
+                                </RotaProtegida>
+                            }
+                        />
+                        <Route
+                            path="/pedidos/:id/editar"
+                            element={
+                                <RotaProtegida permissaoRequerida="PEDIDOS_EDITAR">
+                                    <FormularioPedido />
+                                </RotaProtegida>
+                            }
+                        />
+                        <Route
+                            path="/pedidos/:id/visualizar"
+                            element={
+                                <RotaProtegida permissaoRequerida="PEDIDOS_VISUALIZAR">
+                                    <VisualizacaoPedido />
+                                </RotaProtegida>
+                            }
+                        />
                         
-                        <Route path="/orcamentos" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR"><ListagemOrcamentos /></RotaProtegida>} />
-                        <Route path="/orcamentos/novo" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_ADICIONAR"><FormularioOrcamento /></RotaProtegida>} />
-                        <Route path="/orcamentos/:id/editar" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_EDITAR"><FormularioOrcamento /></RotaProtegida>} />
-                        <Route path="/orcamentos/:id/visualizar" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR"><VisualizacaoOrcamento /></RotaProtegida>} />
+                        <Route
+                            path="/orcamentos"
+                            element={
+                                <RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR">
+                                    <ListagemOrcamentos />
+                                </RotaProtegida>
+                            }
+                        />
+                        <Route
+                            path="/orcamentos/novo"
+                            element={
+                                <RotaProtegida permissaoRequerida="ORCAMENTOS_ADICIONAR">
+                                    <FormularioOrcamento />
+                                </RotaProtegida>
+                            }
+                        />
+                        <Route
+                            path="/orcamentos/:id/editar"
+                            element={
+                                <RotaProtegida permissaoRequerida="ORCAMENTOS_EDITAR">
+                                    <FormularioOrcamento />
+                                </RotaProtegida>
+                            }
+                        />
+                        <Route
+                            path="/orcamentos/:id/visualizar"
+                            element={
+                                <RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR">
+                                    <VisualizacaoOrcamento />
+                                </RotaProtegida>
+                            }
+                        />
                         
-                        <Route path="/tecnicos" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR"><ListagemOrcamentos /></RotaProtegida>} />
-                        <Route path="/tecnicos/novo" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_ADICIONAR"><FormularioOrcamento /></RotaProtegida>} />
-                        <Route path="/tecnicos/:id/editar" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_EDITAR"><FormularioOrcamento /></RotaProtegida>} />
-                        <Route path="/tecnicos/:id/visualizar" element={<RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR"><VisualizacaoOrcamento /></RotaProtegida>} />
+                        <Route
+                            path="/tecnicos"
+                            element={
+                                <RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR">
+                                    <ListagemOrcamentos />
+                                </RotaProtegida>
+                            }
+                        />
+                        <Route
+                            path="/tecnicos/novo"
+                            element={
+                                <RotaProtegida permissaoRequerida="ORCAMENTOS_ADICIONAR">
+                                    <FormularioOrcamento />
+                                </RotaProtegida>
+                            }
+                        />
+                        <Route
+                            path="/tecnicos/:id/editar"
+                            element={
+                                <RotaProtegida permissaoRequerida="ORCAMENTOS_EDITAR">
+                                    <FormularioOrcamento />
+                                </RotaProtegida>
+                            }
+                        />
+                        <Route
+                            path="/tecnicos/:id/visualizar"
+                            element={
+                                <RotaProtegida permissaoRequerida="ORCAMENTOS_VISUALIZAR">
+                                    <VisualizacaoOrcamento />
+                                </RotaProtegida>
+                            }
+                        />
 
-                        <Route path="/token" element={<RotaProtegida permissaoRequerida="CONFIGURACAO_DRIVE"><ConfiguracaoGoogleDrive /></RotaProtegida>} />
+                        <Route
+                            path="/token"
+                            element={
+                                <RotaProtegida permissaoRequerida="CONFIGURACAO_DRIVE">
+                                    <ConfiguracaoGoogleDrive />
+                                </RotaProtegida>
+                            }
+                        />
                     </Route>
 
                     {/* Redirecionamento Geral */}

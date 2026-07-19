@@ -81,7 +81,9 @@ public record PedidoDTO(
             pedidoEntity.getMunicipioCliente(),
             pedidoEntity.getCepCliente(),
             pedidoEntity.getReferenciaCliente(),
-            pedidoEntity.getDataCadastro() == null ? null : LocalDateTime.ofInstant(pedidoEntity.getDataCadastro(), ZoneId.systemDefault()),
+            pedidoEntity.getDataCadastro() == null
+                    ? null
+                    : LocalDateTime.ofInstant(pedidoEntity.getDataCadastro(), ZoneId.systemDefault()),
             pedidoEntity.getFlagOculto(),
             pedidoEntity.getValor()
         );

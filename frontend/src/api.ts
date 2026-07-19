@@ -7,7 +7,12 @@ export async function requisicaoApi<T = any>(url: string, opcoes: OpcoesRequisic
     
     const opcoesRequisicao = { ...opcoes } as any;
     
-    if (opcoesRequisicao.body && typeof opcoesRequisicao.body === 'object' && !(opcoesRequisicao.body instanceof FormData) && !(opcoesRequisicao.body instanceof URLSearchParams)) {
+    if (
+        opcoesRequisicao.body &&
+        typeof opcoesRequisicao.body === 'object' &&
+        !(opcoesRequisicao.body instanceof FormData) &&
+        !(opcoesRequisicao.body instanceof URLSearchParams)
+    ) {
         opcoesRequisicao.headers = {
             'Content-Type': 'application/json',
             ...opcoesRequisicao.headers,

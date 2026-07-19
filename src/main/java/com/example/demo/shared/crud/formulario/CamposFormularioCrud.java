@@ -16,7 +16,9 @@ public final class CamposFormularioCrud {
             String classeCssCampo,
             Function<T, Object> extratorValor
     ) {
-        return new CampoFormularioTexto<>(nome, rotulo, dica, obrigatorio, "text", maximoCaracteres, classeCssCampo, extratorValor);
+        return new CampoFormularioTexto<>(
+                nome, rotulo, dica, obrigatorio, "text", maximoCaracteres, classeCssCampo, extratorValor
+        );
     }
 
     public static <T> CampoFormularioTexto<T> email(
@@ -28,7 +30,9 @@ public final class CamposFormularioCrud {
             String classeCssCampo,
             Function<T, Object> extratorValor
     ) {
-        return new CampoFormularioTexto<>(nome, rotulo, dica, obrigatorio, "email", maximoCaracteres, classeCssCampo, extratorValor);
+        return new CampoFormularioTexto<>(
+                nome, rotulo, dica, obrigatorio, "email", maximoCaracteres, classeCssCampo, extratorValor
+        );
     }
 
     public static <T> CampoFormularioNumero<T> numero(
@@ -42,7 +46,9 @@ public final class CamposFormularioCrud {
             String classeCssCampo,
             Function<T, Object> extratorValor
     ) {
-        return new CampoFormularioNumero<>(nome, rotulo, dica, obrigatorio, minimo, maximo, passo, classeCssCampo, extratorValor);
+        return new CampoFormularioNumero<>(
+                nome, rotulo, dica, obrigatorio, minimo, maximo, passo, classeCssCampo, extratorValor
+        );
     }
 
     public static <T> CampoFormularioNumero<T> numero(
@@ -79,6 +85,8 @@ public final class CamposFormularioCrud {
             String classeCssCampo,
             Function<T, Object> extratorValor
     ) {
-        return new CampoFormularioTextarea<>(nome, rotulo, dica, obrigatorio, linhas, maximoCaracteres, classeCssCampo, extratorValor);
+        return new CampoFormularioTextarea<>(
+                nome, rotulo, dica, obrigatorio, linhas, maximoCaracteres, classeCssCampo, extratorValor
+        );
     }
 }

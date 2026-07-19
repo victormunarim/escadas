@@ -55,13 +55,21 @@ public class EspecificacaoPedido {
             Integer diaValor = NumeroUtil.parseIntSeguro(dia);
 
             if (anoValor != null && mesValor != null) {
-                predicates.add(cb.equal(cb.function("year", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), anoValor));
-                predicates.add(cb.equal(cb.function("month", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), mesValor));
+                predicates.add(cb.equal(
+                        cb.function("year", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), anoValor
+                ));
+                predicates.add(cb.equal(
+                        cb.function("month", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), mesValor
+                ));
                 if (diaValor != null) {
-                    predicates.add(cb.equal(cb.function("day", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), diaValor));
+                    predicates.add(cb.equal(
+                            cb.function("day", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), diaValor
+                    ));
                 }
             } else if (anoValor != null) {
-                predicates.add(cb.equal(cb.function("year", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), anoValor));
+                predicates.add(cb.equal(
+                        cb.function("year", Integer.class, root.get(ColunasPedido.CAMPO_DATA_CADASTRO)), anoValor
+                ));
             }
 
             if ("true".equalsIgnoreCase(temOrcamento)) {

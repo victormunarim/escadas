@@ -114,7 +114,10 @@ export default function VisualizacaoPedido() {
                         {dadosPedido.orcamentoId && (
                             <span>
                                 {' '}| Vinculado ao Orçamento:{' '}
-                                <Link to={`/orcamentos/${dadosPedido.orcamentoId}/visualizar`} style={{ color: '#13508c', fontWeight: 600, textDecoration: 'underline' }}>
+                                <Link
+                                    to={`/orcamentos/${dadosPedido.orcamentoId}/visualizar`}
+                                    style={{ color: '#13508c', fontWeight: 600, textDecoration: 'underline' }}
+                                >
                                     #{dadosPedido.orcamentoId} - {dadosPedido.orcamentoNome}
                                 </Link>
                             </span>
@@ -122,10 +125,18 @@ export default function VisualizacaoPedido() {
                     </p>
                 </div>
                 <div className="pedido-visualizacao__acoes">
-                    <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`/pedidos/${pedidoId}/editar`}>
+                    <Link
+                        className="acoes-tabela__botao acoes-tabela__botao--editar"
+                        to={`/pedidos/${pedidoId}/editar`}
+                    >
                         Editar
                     </Link>
-                    <a className="acoes-tabela__botao acoes-tabela__botao--pdf" href={`/pedidos/${pedidoId}/pdf`} target="_blank" rel="noopener noreferrer">
+                    <a
+                        className="acoes-tabela__botao acoes-tabela__botao--pdf"
+                        href={`/pedidos/${pedidoId}/pdf`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         PDF
                     </a>
                     <Link className="formulario-crud__link" to="/pedidos">Voltar para listagem</Link>
@@ -161,7 +172,11 @@ export default function VisualizacaoPedido() {
                 ) : (
                     <ul className="pedido-visualizacao__arquivos-lista">
                         {arquivosPedido.map((arquivo) => (
-                            <li key={arquivo.id} className="pedido-visualizacao__arquivo-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <li
+                                key={arquivo.id}
+                                className="pedido-visualizacao__arquivo-item"
+                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                            >
                                 <span>{arquivo.nome}</span>
                                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                                     <a 
@@ -188,7 +203,9 @@ export default function VisualizacaoPedido() {
                                     <button 
                                         className="acoes-tabela__botao acoes-tabela__botao--excluir" 
                                         type="button"
-                                        style={{ padding: '2px 8px', fontSize: '0.8rem', height: 'auto', lineHeight: 1 }}
+                                        style={{
+                                            padding: '2px 8px', fontSize: '0.8rem', height: 'auto', lineHeight: 1
+                                        }}
                                         onClick={() => lidarComExclusaoArquivo(arquivo.id)}
                                     >
                                         Excluir

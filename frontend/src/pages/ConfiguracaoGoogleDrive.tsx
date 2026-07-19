@@ -90,18 +90,30 @@ export default function ConfiguracaoGoogleDrive() {
         <section className="pagina">
             <header className="pagina__cabecalho">
                 <h1 className="pagina__titulo">Configurações do Google Drive</h1>
-                <p className="pagina__subtitulo">Configure o envio de anexos das vistorias diretamente para sua nuvem.</p>
+                <p className="pagina__subtitulo">
+                    Configure o envio de anexos das vistorias diretamente para sua nuvem.
+                </p>
             </header>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', marginTop: '16px' }}>
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                gap: '20px',
+                marginTop: '16px'
+            }}>
                 
                 <section className="cartao-crud" style={{ marginTop: 0 }}>
-                    <h2 className="pedido-visualizacao__titulo" style={{ borderBottom: '1px solid rgba(19, 80, 140, .12)', paddingBottom: '6px' }}>
+                    <h2
+                        className="pedido-visualizacao__titulo"
+                        style={{ borderBottom: '1px solid rgba(19, 80, 140, .12)', paddingBottom: '6px' }}
+                    >
                         Integração Google API
                     </h2>
                     
                     <div style={{ margin: '14px 0' }}>
-                        <div style={{ fontWeight: '700', fontSize: '13px', color: 'var(--text-600)' }}>Status do Token</div>
+                        <div style={{ fontWeight: '700', fontSize: '13px', color: 'var(--text-600)' }}>
+                            Status do Token
+                        </div>
                         <div style={{ marginTop: '4px' }}>
                             <span className={`rodape-selo`} style={{ 
                                 background: tokenConfigurado ? 'rgba(22, 163, 74, 0.1)' : 'rgba(220, 38, 38, 0.1)',
@@ -117,7 +129,7 @@ export default function ConfiguracaoGoogleDrive() {
                         <p className="rodape-texto" style={{ marginBottom: '14px' }}>
                             {tokenConfigurado 
                                 ? 'O Google Drive está devidamente vinculado e pronto para o envio de vistorias.'
-                                : 'É necessário autorizar a conexão com a conta Google para permitir o upload dos PDFs e imagens.'
+                                : 'É necessário autorizar a conexão com o Google para upload dos anexos.'
                             }
                         </p>
                         
@@ -139,12 +151,23 @@ export default function ConfiguracaoGoogleDrive() {
                 </section>
 
                 <section className="cartao-crud" style={{ marginTop: 0 }}>
-                    <h2 className="pedido-visualizacao__titulo" style={{ borderBottom: '1px solid rgba(19, 80, 140, .12)', paddingBottom: '6px' }}>
+                    <h2
+                        className="pedido-visualizacao__titulo"
+                        style={{ borderBottom: '1px solid rgba(19, 80, 140, .12)', paddingBottom: '6px' }}
+                    >
                         Configurar Credenciais
                     </h2>
 
-                    {sucesso && <div className="alerta-formulario alerta-formulario--sucesso" style={{ margin: '10px 0' }}>{sucesso}</div>}
-                    {erro && <div className="alerta-formulario alerta-formulario--erro" style={{ margin: '10px 0' }}>{erro}</div>}
+                    {sucesso && (
+                        <div className="alerta-formulario alerta-formulario--sucesso" style={{ margin: '10px 0' }}>
+                            {sucesso}
+                        </div>
+                    )}
+                    {erro && (
+                        <div className="alerta-formulario alerta-formulario--erro" style={{ margin: '10px 0' }}>
+                            {erro}
+                        </div>
+                    )}
 
                     <form className="formulario-crud" onSubmit={lidarComEnvio} style={{ marginTop: '12px' }}>
                         <div className="formulario-crud__grade" style={{ gridTemplateColumns: '1fr' }}>
@@ -177,7 +200,11 @@ export default function ConfiguracaoGoogleDrive() {
                                     className="filtro-crud__entrada"
                                     name="clientSecret"
                                     type="password"
-                                    placeholder={credenciaisConfiguradas ? "Mantenha vazio para não alterar" : "Senha secreta do cliente"}
+                                    placeholder={
+                                        credenciaisConfiguradas
+                                            ? "Mantenha vazio para não alterar"
+                                            : "Senha secreta do cliente"
+                                    }
                                     required={!credenciaisConfiguradas}
                                     defaultValue=""
                                 />
@@ -196,7 +223,12 @@ export default function ConfiguracaoGoogleDrive() {
 
                         </div>
 
-                        <button className="busca-crud__botao" type="submit" style={{ width: '100%' }} disabled={salvando}>
+                        <button
+                            className="busca-crud__botao"
+                            type="submit"
+                            style={{ width: '100%' }}
+                            disabled={salvando}
+                        >
                             {salvando ? 'Salvando...' : 'Salvar Credenciais'}
                         </button>
                     </form>

@@ -57,13 +57,16 @@ public class TecnicoRestController extends AbstractCrudRestController<Formulario
 
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarTecnico(@PathVariable Long id) {
-        if (SecurityUtil.naoTemPermissao("TECNICOS_VISUALIZAR") && SecurityUtil.naoTemPermissao("ORCAMENTOS_VISUALIZAR")) {
+        if (SecurityUtil.naoTemPermissao("TECNICOS_VISUALIZAR")
+                && SecurityUtil.naoTemPermissao("ORCAMENTOS_VISUALIZAR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
             OrcamentoDTO orcamento = orcamentoService.buscarPorId(id);
             List<ArquivoDTO> arquivos = orcamentoService.listarArquivos(id);
-            Map<String, Object> response = OrcamentoViewPresenter.montarVisualizacao(orcamento, arquivos, pedidoService, localidadeService);
+            Map<String, Object> response = OrcamentoViewPresenter.montarVisualizacao(
+                    orcamento, arquivos, pedidoService, localidadeService
+            );
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

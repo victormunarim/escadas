@@ -38,7 +38,12 @@ public record CampoFormularioTexto<T>(
     }
 
     private String obterInputMode(String nomeCampo) {
-        if (ColunasPedido.CAMPO_CPF.equals(nomeCampo) || ColunasPedido.CAMPO_RG.equals(nomeCampo) || ColunasPedido.CAMPO_TELEFONE.equals(nomeCampo) || ColunasPedido.CAMPO_TELEFONE_FIXO.equals(nomeCampo) || ColunasPedido.CAMPO_NUMERO.equals(nomeCampo) || ColunasPedido.CAMPO_NUMERO_CLIENTE.equals(nomeCampo)) {
+        if (ColunasPedido.CAMPO_CPF.equals(nomeCampo)
+                || ColunasPedido.CAMPO_RG.equals(nomeCampo)
+                || ColunasPedido.CAMPO_TELEFONE.equals(nomeCampo)
+                || ColunasPedido.CAMPO_TELEFONE_FIXO.equals(nomeCampo)
+                || ColunasPedido.CAMPO_NUMERO.equals(nomeCampo)
+                || ColunasPedido.CAMPO_NUMERO_CLIENTE.equals(nomeCampo)) {
             return "numeric";
         }
         return null;

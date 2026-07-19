@@ -82,9 +82,18 @@ export default function ListagemPedidos() {
                                     <tr key={linha.id} className="tabela-crud__linha">
                                         {dadosListagem.colunas.map(col => {
                                             const valor = linha.valores[col.chave];
-                                            if (col.chave === 'descricao') {
+                                             if (col.chave === 'descricao') {
                                                 return (
-                                                    <td key={col.chave} className="tabela-crud__celula" style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                    <td
+                                                        key={col.chave}
+                                                        className="tabela-crud__celula"
+                                                        style={{
+                                                            maxWidth: '200px',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap'
+                                                        }}
+                                                    >
                                                         {valor}
                                                     </td>
                                                 );
@@ -97,10 +106,38 @@ export default function ListagemPedidos() {
                                         })}
                                         <td className="tabela-crud__celula">
                                             <div className="acoes-tabela">
-                                                {temPermissao('PEDIDOS_VISUALIZAR') && <Link className="acoes-tabela__botao acoes-tabela__botao--visualizar" to={`/pedidos/${linha.id}/visualizar`}>Visualizar</Link>}
-                                                <a className="acoes-tabela__botao acoes-tabela__botao--pdf" href={`/pedidos/${linha.id}/pdf`} target="_blank" rel="noopener noreferrer">PDF</a>
-                                                {temPermissao('PEDIDOS_EDITAR') && <Link className="acoes-tabela__botao acoes-tabela__botao--editar" to={`/pedidos/${linha.id}/editar`}>Editar</Link>}
-                                                {temPermissao('PEDIDOS_EXCLUIR') && <button className="acoes-tabela__botao acoes-tabela__botao--excluir" onClick={() => lidarComExclusao(linha.id)}>Excluir</button>}
+                                                {temPermissao('PEDIDOS_VISUALIZAR') && (
+                                                    <Link
+                                                        className="acoes-tabela__botao acoes-tabela__botao--visualizar"
+                                                        to={`/pedidos/${linha.id}/visualizar`}
+                                                    >
+                                                        Visualizar
+                                                    </Link>
+                                                )}
+                                                <a
+                                                    className="acoes-tabela__botao acoes-tabela__botao--pdf"
+                                                    href={`/pedidos/${linha.id}/pdf`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    PDF
+                                                </a>
+                                                {temPermissao('PEDIDOS_EDITAR') && (
+                                                    <Link
+                                                        className="acoes-tabela__botao acoes-tabela__botao--editar"
+                                                        to={`/pedidos/${linha.id}/editar`}
+                                                    >
+                                                        Editar
+                                                    </Link>
+                                                )}
+                                                {temPermissao('PEDIDOS_EXCLUIR') && (
+                                                    <button
+                                                        className="acoes-tabela__botao acoes-tabela__botao--excluir"
+                                                        onClick={() => lidarComExclusao(linha.id)}
+                                                    >
+                                                        Excluir
+                                                    </button>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>
