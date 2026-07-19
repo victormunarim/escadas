@@ -163,7 +163,7 @@ public final class FormatacaoUtil {
     public static String nomePastaOrcamento(String nome, Long orcamentoId) {
         String orcamentoNome = formatarTexto(nome);
         if ("-".equals(orcamentoNome)) {
-            orcamentoNome = "Orcamento";
+            orcamentoNome = "Orçamento";
         }
 
         orcamentoNome = Normalizer.normalize(orcamentoNome, Normalizer.Form.NFD)
@@ -173,11 +173,11 @@ public final class FormatacaoUtil {
                 .replaceAll("\\s+", " ");
 
         if (orcamentoNome.isBlank()) {
-            orcamentoNome = "Orcamento";
+            orcamentoNome = "Orçamento";
         }
 
         String numero = orcamentoId == null ? "SemId" : String.valueOf(orcamentoId);
-        return orcamentoNome + " - Orcamento " + numero;
+        return orcamentoNome + " - Orçamento " + numero;
     }
 
     private static DecimalFormat criarFormatoMoeda() {
