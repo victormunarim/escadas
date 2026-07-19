@@ -7,6 +7,25 @@ import java.util.List;
 public class ListagemOrcamentosViewConfig {
 
     public static List<ColunaConfig<OrcamentoDTO>> obterConfiguracaoColunas() {
+        return obterConfiguracaoColunas(false);
+    }
+
+    public static List<ColunaConfig<OrcamentoDTO>> obterConfiguracaoColunas(boolean ehTecnico) {
+        if (ehTecnico) {
+            return List.of(
+                    new ColunaConfig<>("id", "ID", OrcamentoDTO::getId),
+                    new ColunaConfig<>("nome", "Nome", OrcamentoDTO::getNome),
+                    new ColunaConfig<>("bairro", "Bairro", OrcamentoDTO::getBairro),
+                    new ColunaConfig<>("descricao", "Descrição", OrcamentoDTO::getDescricao),
+                    new ColunaConfig<>(
+                            "flagEncerrado", "Encerrado",
+                            o -> o.getFlagEncerrado() != null && o.getFlagEncerrado() ? "Sim" : "Não"
+                    ),
+                    new ColunaConfig<>(
+                            "dataCadastroFormatado", "Data Cadastro", OrcamentoDTO::getDataCadastroFormatado
+                    )
+            );
+        }
         return List.of(
                 new ColunaConfig<>("id", "ID", OrcamentoDTO::getId),
                 new ColunaConfig<>("nome", "Nome", OrcamentoDTO::getNome),
@@ -20,7 +39,9 @@ public class ListagemOrcamentosViewConfig {
                         "flagEncerrado", "Encerrado",
                         o -> o.getFlagEncerrado() != null && o.getFlagEncerrado() ? "Sim" : "Não"
                 ),
-                new ColunaConfig<>("dataCadastroFormatado", "Data Cadastro", OrcamentoDTO::getDataCadastroFormatado)
+                new ColunaConfig<>(
+                        "dataCadastroFormatado", "Data Cadastro", OrcamentoDTO::getDataCadastroFormatado
+                )
         );
     }
 }

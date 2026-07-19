@@ -102,7 +102,8 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                         .thenComparing(OrcamentoDTO::getId, Comparator.nullsLast(Comparator.reverseOrder())))
                 .toList();
 
-        List<ColunaConfig<OrcamentoDTO>> configColunas = ListagemOrcamentosViewConfig.obterConfiguracaoColunas();
+        List<ColunaConfig<OrcamentoDTO>> configColunas =
+                ListagemOrcamentosViewConfig.obterConfiguracaoColunas(ehTecnico);
 
         List<ColunaListagem> colunas = configColunas.stream()
                 .map(ColunaConfig::toColunaListagem)
@@ -131,16 +132,18 @@ public class OrcamentoService implements CrudService<FormularioOrcamentoDTO> {
                         parametros.getOrDefault("busca", "")
                 )
         );
-        filtros.add(
-                new CampoSelecaoRender(
-                        "Etiqueta",
-                        "etiquetaId",
-                        "filtro-crud",
-                        false,
-                        parametros.getOrDefault("etiquetaId", ""),
-                        criarOpcoesEtiquetas(true)
-                )
-        );
+        if (!ehTecnico) {
+            filtros.add(
+                    new CampoSelecaoRender(
+                            "Etiqueta",
+                            "etiquetaId",
+                            "filtro-crud",
+                            false,
+                            parametros.getOrDefault("etiquetaId", ""),
+                            criarOpcoesEtiquetas(true)
+                    )
+            );
+        }
         if (!ehTecnico) {
             filtros.add(
                     new CampoSelecaoRender(
