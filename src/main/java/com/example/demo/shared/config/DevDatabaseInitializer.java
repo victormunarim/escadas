@@ -4,12 +4,10 @@ import com.example.demo.auth.model.Perfil;
 import com.example.demo.auth.model.UsuarioEntity;
 import com.example.demo.auth.repository.UsuarioRepository;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("dev")
 public class DevDatabaseInitializer implements CommandLineRunner {
 
     private final UsuarioRepository usuarioRepository;
@@ -33,14 +31,11 @@ public class DevDatabaseInitializer implements CommandLineRunner {
             if (!emailPreenchido) {
                 usuario.setEmail("escadas@local");
             }
-            
-            // Força o perfil ADMIN para escadas
-            usuario.setPerfil(Perfil.ADMIN);
 
+            usuario.setPerfil(Perfil.ADMIN);
             usuarioRepository.save(usuario);
         }, () -> {
             UsuarioEntity usuario = new UsuarioEntity();
-            usuario.setId(1L);
             usuario.setLogin("escadas");
             usuario.setSenha(passwordEncoder.encode("escadas"));
             usuario.setEmail("escadas@local");
@@ -50,14 +45,13 @@ public class DevDatabaseInitializer implements CommandLineRunner {
 
         usuarioRepository.findByLogin("Elvira").ifPresentOrElse(usuario -> {
             boolean senhaCorreta = passwordEncoder.matches("elvira", usuario.getSenha());
-            usuario.setPerfil(Perfil.ESCRITORIO); // Define perfil ESCRITORIO
+            usuario.setPerfil(Perfil.ESCRITORIO);
             if (!senhaCorreta) {
                 usuario.setSenha(passwordEncoder.encode("elvira"));
             }
             usuarioRepository.save(usuario);
         }, () -> {
             UsuarioEntity usuario = new UsuarioEntity();
-            usuario.setId(2L);
             usuario.setLogin("Elvira");
             usuario.setSenha(passwordEncoder.encode("elvira"));
             usuario.setEmail("elvira@local");

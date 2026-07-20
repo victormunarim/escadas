@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
 public class UsuarioEntity {
 
     @Id
+    @jakarta.persistence.GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
